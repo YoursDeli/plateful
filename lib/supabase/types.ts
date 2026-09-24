@@ -67,6 +67,7 @@ export type SiteSettings = {
   accent_color: string;
   delivery_fee: number;
   free_delivery_threshold: number | null;
+  order_notification_email: string | null;
   updated_at: string;
 };
 
@@ -98,6 +99,8 @@ export type Order = {
   total: number;
   paystack_reference: string | null;
   paid_at: string | null;
+  confirmation_emailed_at: string | null;
+  vendor_emailed_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -169,11 +172,13 @@ export type Database = {
             | "accent_color"
             | "delivery_fee"
             | "free_delivery_threshold"
+            | "order_notification_email"
           >
         >
       >;
-      // Read-only for clients: written only by create_order / mark_order_paid.
-      orders: Table<Order, never, never>;
+      // Clients have no write grants: orders are written by create_order /
+      // mark_order_paid, and these email timestamps by the service role.
+      orders: Table<Order, never, Partial<Pick<Order, "confirmation_emailed_at" | "vendor_emailed_at">>>;
       order_items: Table<OrderItem, never, never>;
       order_status_history: Table<OrderStatusHistory, never, never>;
       favorites: Table<

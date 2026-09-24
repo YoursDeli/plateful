@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-24
-Current phase: **Steps 0–5 verified. Step 6 built (config done, no test order yet). Starting step 7 (Brevo emails) — one test order will verify 6 + 7 together.**
+Current phase: **Steps 0–5 verified. Steps 6 + 7 built; one test order (after Brevo template setup) verifies both.**
 
 ---
 
@@ -69,9 +69,9 @@ Current phase: **Steps 0–5 verified. Step 6 built (config done, no test order 
 - [ ] `order_status_history` table + writes on each status transition — *built: written on create + paid; admin transitions write it in step 8*
 
 ### 7. Brevo transactional emails
-- [ ] Order confirmation (customer) — include loyalty points earned
-- [ ] New order notification (vendor)
-- [ ] Status update emails (phase 2, optional for MVP)
+- [ ] Order confirmation (customer) — include loyalty points earned — *built 2026-09-28, awaiting email migration + Brevo template IDs + a test order* (points block hidden until step 10)
+- [ ] New order notification (vendor) — *built 2026-09-28, awaiting email migration + Brevo template IDs + a test order* (recipient: `/admin/settings` → Notifications, fallback `BREVO_SENDER_EMAIL`)
+- [ ] Status update emails (phase 2, optional for MVP) — *skipped for now (optional per docs)*
 
 ### 8. Order tracking + admin order management
 - [ ] `/orders/[orderId]` status timeline (per `docs/ui-components-and-styling.md` §1)
@@ -363,10 +363,34 @@ Current phase: **Steps 0–5 verified. Step 6 built (config done, no test order 
 - **2026-09-27** — Checkout's Terms/Privacy links point at `/terms` and
   `/privacy`, which 404 until step 11.
 
+- **2026-09-28** — Order emails use **Brevo dashboard templates** (HTML kept
+  in `brevo/templates/`, IDs in `BREVO_TEMPLATE_ORDER_CONFIRMATION` /
+  `BREVO_TEMPLATE_NEW_ORDER`). Sent from `settlePayment()` **only when
+  `mark_order_paid` reports `newly_paid`**, via Next `after()` so sending never
+  delays/breaks checkout; failures are logged, not retried (a resend tool can
+  use the new `orders.confirmation_emailed_at` / `vendor_emailed_at`). Money
+  is pre-formatted server-side; brand name is a param (rename-proof).
+  `order_url`/`admin_url` point at `/account` and `/admin` until step 8 adds
+  the tracking/orders pages. Brevo parses template tags inside HTML comments —
+  never put bare `{% … %}` in template comments.
+- **2026-09-28** — New-order alert recipient is admin-editable
+  (`site_settings.order_notification_email`), falling back to
+  `BREVO_SENDER_EMAIL`. Optional `SITE_URL` env overrides the request origin
+  for absolute links (Paystack callback, email buttons) — set it on Netlify
+  once there's a custom domain.
+
+- **2026-09-28** — Deploying to Netlify now (ahead of the build-order's
+  polish phase) so the Paystack webhook has a public URL. Node pinned to 22 LTS
+  via `.nvmrc` (+ `engines >=20.9.0`, Next 16's minimum). Deploy steps in
+  `README.md`.
+
 ---
 
 ## Open Blockers
 
+- **Test order not yet placed**: email migration + Brevo templates + IDs are
+  done (verified 2026-09-28), but the orders table is still empty. First test
+  order will be on the Netlify deploy (verifies steps 6 + 7 + webhook).
 - **Webhook needs a public URL**: Paystack can't reach localhost. Locally the
   return-URL verify settles payments; set the Paystack test webhook URL to
   `https://<netlify-site>/api/paystack/webhook` once deployed (or use a tunnel).
@@ -445,3 +469,11 @@ Current phase: **Steps 0–5 verified. Step 6 built (config done, no test order 
 - **2026-09-27** — User applied checkout migration + Paystack test key; no test
   order placed yet (orders table empty), so step 6 stays unverified.
   Proceeding to step 7; a single test order will verify both.
+- **2026-09-28** — Committed/pushed step 6 (`bed3260`). Built step 7:
+  email-tracking migration, Brevo helper, `notifyOrderPaid()` (customer
+  receipt + restaurant alert) fired via `after()` on newly-paid orders,
+  admin Notifications setting, two branded Brevo templates. Brevo key +
+  sender verified live (read-only API check). Build/lint/tsc clean.
+- **2026-09-28** — User finished Brevo template setup (IDs set, email
+  migration applied; no orders yet). Pinned Node 22, added Netlify deploy
+  guide to README; committing step 7 ahead of first Netlify deploy.

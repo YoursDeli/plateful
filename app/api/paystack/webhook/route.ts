@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
   if (event.event === "charge.success" && reference) {
     try {
-      const result = await settlePayment(reference);
+      const result = await settlePayment(reference, new URL(request.url).origin);
       console.info("paystack webhook settled:", reference, result.outcome);
     } catch (error) {
       // 500 → Paystack retries later, which is what we want for transient errors.

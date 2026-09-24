@@ -1,12 +1,12 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { emptyToNull, formValues, type FormState } from "@/lib/form-state";
 import { nairaToKobo } from "@/lib/money";
 import { initializeTransaction, isPaystackConfigured } from "@/lib/paystack";
+import { requestOrigin } from "@/lib/request-origin";
 import { createClient } from "@/lib/supabase/server";
 
 export type CheckoutState = FormState & { code?: "items_unavailable" };
@@ -39,18 +39,6 @@ const checkoutSchema = z
   });
 
 const FIELDS = ["fulfillment", "contact_name", "contact_phone", "delivery_address", "notes"] as const;
-
-// Where Paystack should send the shopper back. Server actions always carry an
-// Origin header (Next checks it against Host for CSRF), so this is our own
-// origin — localhost, LAN IP, or the Netlify URL.
-async function siteOrigin() {
-  const h = await headers();
-  const origin = h.get("origin");
-  if (origin) return origin;
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
-  return `${proto}://${host}`;
-}
 
 export async function placeOrder(_prev: CheckoutState, formData: FormData): Promise<CheckoutState> {
   const user = await getCurrentUser();
@@ -123,7 +111,7 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
       email: order.contact_email,
       amountKobo: nairaToKobo(order.total),
       reference: order.paystack_reference,
-      callbackUrl: `${await siteOrigin()}/checkout/verify`,
+      callbackUrl: `${await requestOrigin()}/checkout/verify`,
       metadata: { order_id: order.order_id, order_number: order.order_number },
     });
     authorizationUrl = tx.authorization_url;
@@ -154,7 +142,7 @@ export async function retryPayment(formData: FormData) {
       email: row.contact_email,
       amountKobo: nairaToKobo(row.total),
       reference: row.paystack_reference,
-      callbackUrl: `${await siteOrigin()}/checkout/verify`,
+      callbackUrl: `${await requestOrigin()}/checkout/verify`,
       metadata: { order_id: orderId },
     });
     authorizationUrl = tx.authorization_url;

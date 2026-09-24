@@ -84,6 +84,9 @@ PAYSTACK_SECRET_KEY=              # server-only; also verifies webhook signature
 
 BREVO_API_KEY=                    # server-only
 BREVO_SENDER_EMAIL=
+BREVO_TEMPLATE_ORDER_CONFIRMATION= # Brevo template ID (number) — customer receipt, see brevo/templates/
+BREVO_TEMPLATE_NEW_ORDER=         # Brevo template ID (number) — restaurant's new-order alert
+SITE_URL=                         # optional: absolute base URL for links in emails (defaults to the request origin)
 ```
 
 ## 5. Core Data Model (starting point)

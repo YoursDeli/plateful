@@ -1,0 +1,113 @@
+<!--
+  Brevo → Transactional → Templates → New template → "Code your own" (HTML)
+  Template name: New order alert (restaurant)
+  Subject:       🔔 New order #{{ params.order_number }} — {{ params.total }} ({{ params.fulfillment }})
+  From:          your verified Brevo sender
+  Put the template's ID in .env.local as BREVO_TEMPLATE_NEW_ORDER.
+  Recipient: /admin/settings → Notifications (blank = BREVO_SENDER_EMAIL).
+
+  Params are sent by lib/orders/notify.ts (same set as the customer receipt).
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light only">
+  <title>New order #{{ params.order_number }}</title>
+</head>
+<body style="margin:0; padding:0; background-color:#FBF8F3;">
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">
+    {{ params.fulfillment }} · {{ params.total }} · {{ params.customer_name }} · {{ params.customer_phone }}
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FBF8F3" style="background-color:#FBF8F3;">
+    <tr>
+      <td align="center" style="padding:24px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px; border-radius:18px; overflow:hidden; background-color:#FFFFFF; box-shadow:0 6px 24px rgba(59,42,96,0.12); font-family:Arial, Helvetica, sans-serif; color:#1A1A1A;">
+
+          <tr>
+            <td bgcolor="#3B2A60" style="background-color:#3B2A60; padding:22px 24px;">
+              <div style="font-size:12px; letter-spacing:3px; text-transform:uppercase; color:#D3C5F6;">New paid order</div>
+              <div style="font-family:Georgia, 'Times New Roman', serif; font-size:28px; line-height:34px; font-weight:bold; color:#FFFFFF; padding-top:4px;">
+                #{{ params.order_number }} · {{ params.total }}
+              </div>
+              <div style="display:inline-block; margin-top:10px; background-color:#D3C5F6; color:#3B2A60; font-size:13px; font-weight:bold; padding:5px 12px; border-radius:999px;">
+                {{ params.fulfillment }}
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px 24px 0; font-size:14px; line-height:22px;">
+              <strong style="color:#3B2A60;">Customer</strong><br>
+              {{ params.customer_name }}<br>
+              <a href="tel:{{ params.customer_phone }}" style="color:#3B2A60;">{{ params.customer_phone }}</a> ·
+              <a href="mailto:{{ params.customer_email }}" style="color:#3B2A60;">{{ params.customer_email }}</a>
+            </td>
+          </tr>
+
+          {% if params.is_pickup %}
+          <tr>
+            <td style="padding:14px 24px 0; font-size:14px; line-height:22px;">
+              <strong style="color:#3B2A60;">Pickup</strong> — customer will collect.
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td style="padding:14px 24px 0; font-size:14px; line-height:22px;">
+              <strong style="color:#3B2A60;">Deliver to</strong><br>{{ params.delivery_address }}
+            </td>
+          </tr>
+          {% endif %}
+
+          {% if params.notes %}
+          <tr>
+            <td style="padding:14px 24px 0;">
+              <div style="font-size:14px; line-height:21px; background-color:#FFF4D6; border-left:4px solid #E0A800; padding:10px 12px; border-radius:6px;">
+                <strong>Customer notes:</strong> {{ params.notes }}
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+
+          <tr>
+            <td style="padding:18px 24px 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:15px; border:1px solid #EDE7F8; border-radius:12px;">
+                {% for item in params.items %}
+                <tr>
+                  <td style="padding:10px 14px; border-bottom:1px solid #EDE7F8;">
+                    <strong style="color:#3B2A60;">{{ item.quantity }} ×</strong> {{ item.name }}
+                  </td>
+                  <td align="right" style="padding:10px 14px; border-bottom:1px solid #EDE7F8; white-space:nowrap; color:#5B5270;">
+                    {{ item.line_total }}
+                  </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td style="padding:10px 14px; color:#5B5270;">Subtotal / {{ params.fulfillment }}</td>
+                  <td align="right" style="padding:10px 14px; color:#5B5270; white-space:nowrap;">{{ params.subtotal }} / {{ params.delivery_fee }}</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 14px; font-weight:bold; color:#3B2A60;">Paid</td>
+                  <td align="right" style="padding:10px 14px; font-weight:bold; color:#3B2A60; white-space:nowrap;">{{ params.total }}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding:24px 24px 26px;">
+              <a href="{{ params.admin_url }}" style="display:inline-block; background-color:#3B2A60; color:#FFFFFF; font-size:15px; font-weight:bold; text-decoration:none; padding:13px 26px; border-radius:999px;">
+                Open dashboard
+              </a>
+              <div style="font-size:12px; color:#8A829C; padding-top:12px;">Paid {{ params.paid_at }}</div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

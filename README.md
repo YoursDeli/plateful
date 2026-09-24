@@ -35,3 +35,23 @@ Then visit `/admin/menu`.
 - `npm run dev` — dev server
 - `npm run build` — production build
 - `npm run lint` — ESLint
+
+## Deploying (Netlify)
+
+Netlify auto-detects Next.js (OpenNext adapter) — no `netlify.toml` needed;
+Node version comes from `.nvmrc`.
+
+1. Netlify → **Add new project → Import from Git → GitHub →** this repo.
+   Build command `npm run build`, publish directory `.next` (auto-filled).
+2. **Before the first deploy**, add every variable from `.env.local` under
+   *Environment variables* (mark keys as secret). `NEXT_PUBLIC_SUPABASE_URL`
+   must be present at **build** time — `next.config.ts` uses it to allow
+   Supabase Storage images.
+3. After the first deploy, set `SITE_URL=https://<your-site>.netlify.app`
+   and redeploy.
+4. Supabase → Auth → URL Configuration: Site URL = the Netlify URL; add
+   `https://<your-site>.netlify.app/**` to Redirect URLs.
+5. Paystack → Settings → API Keys & Webhooks (Test): Webhook URL =
+   `https://<your-site>.netlify.app/api/paystack/webhook`.
+6. Brevo → Security → Authorised IPs: Netlify has no fixed IPs — if IP
+   blocking is on, turn it off (or order emails will be rejected).

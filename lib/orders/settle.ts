@@ -1,6 +1,8 @@
 import "server-only";
+import { after } from "next/server";
 import { verifyTransaction } from "@/lib/paystack";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { notifyOrderPaid } from "./notify";
 
 export type SettleResult =
   | { outcome: "paid"; orderId: string; newlyPaid: boolean }
@@ -11,7 +13,8 @@ export type SettleResult =
 // check (docs/cart-checkout-payment-workflow.md §4). Never trusts the browser
 // or the webhook body: it asks Paystack directly, then marks the order paid
 // through the idempotent, service-role-only mark_order_paid().
-export async function settlePayment(reference: string): Promise<SettleResult> {
+// `siteUrl` is this deployment's origin, for absolute links in the emails.
+export async function settlePayment(reference: string, siteUrl: string): Promise<SettleResult> {
   const tx = await verifyTransaction(reference);
 
   if (tx.status !== "success" || tx.currency !== "NGN") {
@@ -31,7 +34,11 @@ export async function settlePayment(reference: string): Promise<SettleResult> {
   const row = data[0];
   if (!row) return { outcome: "unknown_order" };
 
-  // Step 7 hooks the confirmation + vendor emails here, only when newlyPaid,
-  // so a webhook + return-URL race can't send them twice.
+  // Emails only on the call that actually flipped the order to paid, so a
+  // webhook + return-URL race can't send them twice. after() runs them once
+  // the response is sent — email never delays or breaks the checkout.
+  if (row.newly_paid) {
+    after(() => notifyOrderPaid(row.order_id, siteUrl));
+  }
   return { outcome: "paid", orderId: row.order_id, newlyPaid: row.newly_paid };
 }

@@ -104,3 +104,30 @@ export async function saveDelivery(_prev: FormState, formData: FormData): Promis
   revalidatePath("/", "layout");
   return { ok: true };
 }
+
+// Where "New order" alert emails go. Blank = BREVO_SENDER_EMAIL.
+const notificationsSchema = z.object({
+  order_notification_email: z.email("Enter a valid email address").nullable(),
+});
+
+export async function saveNotifications(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireStaff("/admin/settings");
+
+  const parsed = notificationsSchema.safeParse({
+    order_notification_email: emptyToNull(formData.get("order_notification_email")),
+  });
+  if (!parsed.success) {
+    return {
+      fieldErrors: z.flattenError(parsed.error).fieldErrors,
+      values: formValues(formData, ["order_notification_email"]),
+    };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("site_settings").update(parsed.data).eq("id", 1);
+  if (error) {
+    console.error("saveNotifications failed:", error.code, error.message);
+    return { error: "Couldn't save notification settings.", values: formValues(formData, ["order_notification_email"]) };
+  }
+  return { ok: true };
+}

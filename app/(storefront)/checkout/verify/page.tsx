@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { formatNaira } from "@/lib/money";
 import { settlePayment, type SettleResult } from "@/lib/orders/settle";
 import { isPaystackConfigured } from "@/lib/paystack";
+import { requestOrigin } from "@/lib/request-origin";
 import { createClient } from "@/lib/supabase/server";
 import { retryPayment } from "../actions";
 import { ClearCartOnMount } from "./clear-cart";
@@ -37,7 +38,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
   // Only ask Paystack while the order is still unpaid (webhook may have won).
   if (order?.status === "pending_payment" && params.init !== "failed" && isPaystackConfigured()) {
     try {
-      settle = await settlePayment(reference);
+      settle = await settlePayment(reference, await requestOrigin());
       if (settle.outcome === "paid") order = await loadOrder();
     } catch (e) {
       console.error("verify-on-return failed:", reference, (e as Error).message);
