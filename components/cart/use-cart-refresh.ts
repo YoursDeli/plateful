@@ -9,7 +9,9 @@ import { createClient } from "@/lib/supabase/client";
 // and flags dishes whose price changed or that sold out / were removed
 // (docs/cart-checkout-payment-workflow.md §7). Checkout re-prices server-side
 // regardless — this only keeps what the customer sees honest.
-export function useCartRefresh(active: boolean) {
+// Pass a new `trigger` value to force a re-check (e.g. the checkout response
+// that reported a sold-out dish).
+export function useCartRefresh(active: boolean, trigger: unknown = null) {
   const hasHydrated = useCart((s) => s.hasHydrated);
 
   useEffect(() => {
@@ -36,5 +38,5 @@ export function useCartRefresh(active: boolean) {
     return () => {
       cancelled = true;
     };
-  }, [active, hasHydrated]);
+  }, [active, hasHydrated, trigger]);
 }

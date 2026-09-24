@@ -98,14 +98,19 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
         <p className="text-xs text-neutral-dark/60">
           Delivery fee and any rewards are applied at checkout.
         </p>
-        {/* Checkout (sign-in gate + Paystack) is Build Order step 6. */}
-        <button
-          type="button"
-          disabled
-          className="w-full rounded-full bg-secondary px-5 py-3 font-semibold text-white disabled:opacity-60"
-        >
-          Checkout — coming soon
-        </button>
+        {blocked ? (
+          <span className="w-full cursor-not-allowed rounded-full bg-secondary/50 px-5 py-3 text-center font-semibold text-white">
+            Checkout
+          </span>
+        ) : (
+          <Link
+            href="/checkout"
+            onClick={onNavigate}
+            className="w-full rounded-full bg-secondary px-5 py-3 text-center font-semibold text-white transition hover:brightness-110"
+          >
+            Checkout
+          </Link>
+        )}
         {blocked && (
           <p className="text-xs text-red-700">Remove sold-out items before checking out.</p>
         )}

@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { BrandingForm } from "./branding-form";
+import { DeliveryForm } from "./delivery-form";
 
 export const metadata: Metadata = { title: "Settings" };
 
-// Branding only for now. Referrals (step 9), Loyalty (step 10) and Pages
+// Branding + Delivery. Referrals (step 9), Loyalty (step 10) and Pages
 // (step 11) tabs are added to this page in their own build steps.
 export default async function AdminSettingsPage() {
   await requireStaff("/admin/settings");
@@ -24,6 +25,10 @@ export default async function AdminSettingsPage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/60">Branding</h2>
         <BrandingForm settings={settings} />
+      </section>
+      <section className="flex flex-col gap-3">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/60">Delivery</h2>
+        <DeliveryForm settings={settings} />
       </section>
     </div>
   );

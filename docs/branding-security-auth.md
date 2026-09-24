@@ -136,10 +136,11 @@ profiles
   needed.
 
 **Payments:**
-- `PAYSTACK_SECRET_KEY` and `PAYSTACK_WEBHOOK_SECRET` are server-only env
-  vars, never referenced in any `"use client"` file or exposed API response.
+- `PAYSTACK_SECRET_KEY` is a server-only env var, never referenced in any
+  `"use client"` file or exposed API response. Paystack signs webhooks with
+  this same key — there is no separate webhook secret.
 - Webhook handler verifies the `x-paystack-signature` header (HMAC SHA512 of
-  the raw body using `PAYSTACK_WEBHOOK_SECRET`) **before** parsing/trusting
+  the raw body using `PAYSTACK_SECRET_KEY`) **before** parsing/trusting
   the payload — reject with 401 on mismatch.
 - Order totals are always server-computed from `menu_items` at
   order-creation time (already specified in `cart-checkout-payment-workflow.md`

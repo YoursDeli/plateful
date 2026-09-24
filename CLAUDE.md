@@ -80,9 +80,7 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=        # server-only, never exposed to client
 
-PAYSTACK_PUBLIC_KEY=
-PAYSTACK_SECRET_KEY=              # server-only
-PAYSTACK_WEBHOOK_SECRET=          # used to verify webhook signatures
+PAYSTACK_SECRET_KEY=              # server-only; also verifies webhook signatures (sk_test_… in dev)
 
 BREVO_API_KEY=                    # server-only
 BREVO_SENDER_EMAIL=

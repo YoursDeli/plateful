@@ -60,7 +60,7 @@ Before touching Paystack:
 
 **Verify (do both, not just one):**
 1. **Webhook** (`/api/paystack/webhook`) — Paystack POSTs `charge.success`
-   events here. Verify the request signature using `PAYSTACK_WEBHOOK_SECRET`
+   events here. Verify the request signature using `PAYSTACK_SECRET_KEY`
    before trusting it. On success, mark the order `paid`, trigger the Brevo
    confirmation email, and this is your **source of truth**.
 2. **Return-URL fallback** — when the customer lands back on your

@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-24
-Current phase: **Build Order 0–5 done and verified. Starting step 6 (Checkout + Paystack).**
+Current phase: **Steps 0–5 verified. Step 6 built (config done, no test order yet). Starting step 7 (Brevo emails) — one test order will verify 6 + 7 together.**
 
 ---
 
@@ -58,15 +58,15 @@ Current phase: **Build Order 0–5 done and verified. Starting step 6 (Checkout 
 - [x] Admin route protection (role check) — *verified 2026-09-24: optimistic redirect in `proxy.ts`, role check in `/(admin)` layout + every page/server action + RLS*
 
 ### 6. Checkout + Paystack
-- [ ] Sign-in gate at checkout (account required — no guest checkout)
-- [ ] Checkout form
-- [ ] Server-side order creation with server-computed prices
-- [ ] Referral bonus / loyalty points redemption applied server-side (combined, capped at ₦0)
-- [ ] Paystack initialize + redirect/inline (skip entirely when total is ₦0 from rewards)
-- [ ] Webhook handler + signature verification
-- [ ] Return-URL verify fallback
-- [ ] Idempotent "mark paid" logic
-- [ ] `order_status_history` table + writes on each status transition
+- [ ] Sign-in gate at checkout (account required — no guest checkout) — *built 2026-09-27; migration + test key in place, awaiting a real test order* (inline `SignInPanel`, cart kept)
+- [ ] Checkout form — *built 2026-09-27; migration + test key in place, awaiting a real test order* (delivery/pickup, contact pre-fill from profile, notes, save-details, live fee/free-delivery hint)
+- [ ] Server-side order creation with server-computed prices — *built 2026-09-27; migration + test key in place, awaiting a real test order* (`create_order()` security-definer fn, one transaction)
+- [ ] Referral bonus / loyalty points redemption applied server-side (combined, capped at ₦0) — *deferred to steps 9/10: plugs into `create_order()`*
+- [ ] Paystack initialize + redirect/inline (skip entirely when total is ₦0 from rewards) — *built 2026-09-27; migration + test key in place, awaiting a real test order* (redirect / hosted checkout; ₦0 skip lands with rewards)
+- [ ] Webhook handler + signature verification — *built; forged/missing signature → 401 verified. Real events need a public URL (Netlify deploy or tunnel)*
+- [ ] Return-URL verify fallback — *built 2026-09-27; migration + test key in place, awaiting a real test order* (`/checkout/verify`, retry payment for unpaid orders)
+- [ ] Idempotent "mark paid" logic — *built 2026-09-27; migration + test key in place, awaiting a real test order* (`mark_order_paid()` service-role only, row lock, amount check)
+- [ ] `order_status_history` table + writes on each status transition — *built: written on create + paid; admin transitions write it in step 8*
 
 ### 7. Brevo transactional emails
 - [ ] Order confirmation (customer) — include loyalty points earned
@@ -331,10 +331,45 @@ Current phase: **Build Order 0–5 done and verified. Starting step 6 (Checkout 
   checkout (step 6) and for reviewer first names. Staff see a dashboard link.
   Order history (step 8) and referrals (step 9) join later.
 
+- **2026-09-27** — Fulfillment: **delivery and pickup** (checkout toggle;
+  address required only for delivery; pickup orders skip "Out for delivery"
+  in step 8's timeline).
+- **2026-09-27** — Delivery fee: **flat fee + free above a threshold**, both
+  admin-editable (`site_settings.delivery_fee` default ₦1,500,
+  `free_delivery_threshold` default ₦15,000, blank = no threshold) in the new
+  `/admin/settings` Delivery section. Closes the "delivery fee structure" open
+  item in `branding-security-auth.md` §4 (zones could come later).
+- **2026-09-27** — Paystack **redirect (hosted checkout)**, not Inline.
+  Paystack signs webhooks with the **secret key** — there is no separate
+  webhook secret, so `PAYSTACK_WEBHOOK_SECRET` and the unused
+  `PAYSTACK_PUBLIC_KEY` were dropped from env/docs.
+- **2026-09-27** — Order writes go only through **security-definer SQL
+  functions**; clients have no insert/update grants on orders.
+  `create_order()` (signed-in users) re-prices from `menu_items`, rejects
+  sold-out/missing dishes, applies the delivery rule, snapshots line
+  name/price into `order_items`, and logs history — all in one transaction.
+  `mark_order_paid()` is **service-role only**, locks the row, checks the
+  paid amount, and only does `pending_payment → paid` (repeat calls return
+  `newly_paid = false`, which step 7 uses to avoid double emails). Both the
+  webhook and `/checkout/verify` call it via `settlePayment()`, which always
+  re-verifies with Paystack's API rather than trusting the browser or webhook
+  body.
+- **2026-09-27** — `order_items.menu_item_id` is `on delete set null` with
+  name/price snapshots, so admins can still hard-delete dishes without
+  breaking order history (supersedes the earlier "switch to soft-delete" note).
+- **2026-09-27** — Orders get a friendly **`order_number`** (identity from
+  1001) for receipts. Each payment attempt uses a fresh single-use Paystack
+  reference (`renew_payment_reference()` for "Try payment again").
+- **2026-09-27** — Checkout's Terms/Privacy links point at `/terms` and
+  `/privacy`, which 404 until step 11.
+
 ---
 
 ## Open Blockers
 
+- **Webhook needs a public URL**: Paystack can't reach localhost. Locally the
+  return-URL verify settles payments; set the Paystack test webhook URL to
+  `https://<netlify-site>/api/paystack/webhook` once deployed (or use a tunnel).
 - Real Terms & Conditions and Privacy Policy copy needs client/legal
   sign-off before launch — dev can seed the admin editor with a generic
   draft in the meantime (see `docs/pages-referrals-footer.md` §3).
@@ -400,3 +435,13 @@ Current phase: **Build Order 0–5 done and verified. Starting step 6 (Checkout 
   account redirect, callback error path, open-redirect blocked).
 - **2026-09-26** — User configured Google OAuth (Google Cloud client +
   Supabase provider + redirect URLs) and verified steps 4 + 5 end-to-end.
+- **2026-09-27** — Committed/pushed step 5 (`c54785e`). Built step 6:
+  orders/order_items/order_status_history + `create_order` /
+  `renew_payment_reference` / `mark_order_paid` migration, Paystack helpers
+  (initialize, verify, timing-safe webhook signature), `/checkout` (inline
+  sign-in, delivery/pickup, fee rule), `/checkout/verify` (settle + confirm +
+  retry), webhook route, admin Delivery settings, cart Checkout button live.
+  Build/lint/tsc clean; forged-signature webhook → 401 verified.
+- **2026-09-27** — User applied checkout migration + Paystack test key; no test
+  order placed yet (orders table empty), so step 6 stays unverified.
+  Proceeding to step 7; a single test order will verify both.

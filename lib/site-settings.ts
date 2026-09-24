@@ -11,6 +11,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   logo_url: null,
   primary_color: "#D3C5F6",
   accent_color: "#3B2A60",
+  delivery_fee: 1500,
+  free_delivery_threshold: 15000,
   updated_at: new Date(0).toISOString(),
 };
 

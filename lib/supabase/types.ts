@@ -65,7 +65,59 @@ export type SiteSettings = {
   logo_url: string | null;
   primary_color: string;
   accent_color: string;
+  delivery_fee: number;
+  free_delivery_threshold: number | null;
   updated_at: string;
+};
+
+export type OrderStatus =
+  | "pending_payment"
+  | "paid"
+  | "preparing"
+  | "ready"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled"
+  | "failed";
+
+export type Fulfillment = "delivery" | "pickup";
+
+export type Order = {
+  id: string;
+  order_number: number;
+  user_id: string;
+  status: OrderStatus;
+  fulfillment: Fulfillment;
+  contact_name: string;
+  contact_phone: string;
+  contact_email: string;
+  delivery_address: string | null;
+  notes: string | null;
+  subtotal: number;
+  delivery_fee: number;
+  total: number;
+  paystack_reference: string | null;
+  paid_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type OrderItem = {
+  id: string;
+  order_id: string;
+  menu_item_id: string | null;
+  name: string;
+  unit_price: number;
+  quantity: number;
+  line_total: number;
+};
+
+export type OrderStatusHistory = {
+  id: number;
+  order_id: string;
+  status: OrderStatus;
+  changed_by: string | null;
+  changed_at: string;
 };
 
 export type Review = {
@@ -109,9 +161,21 @@ export type Database = {
         SiteSettings,
         never,
         Partial<
-          Pick<SiteSettings, "brand_name" | "logo_url" | "primary_color" | "accent_color">
+          Pick<
+            SiteSettings,
+            | "brand_name"
+            | "logo_url"
+            | "primary_color"
+            | "accent_color"
+            | "delivery_fee"
+            | "free_delivery_threshold"
+          >
         >
       >;
+      // Read-only for clients: written only by create_order / mark_order_paid.
+      orders: Table<Order, never, never>;
+      order_items: Table<OrderItem, never, never>;
+      order_status_history: Table<OrderStatusHistory, never, never>;
       favorites: Table<
         Favorite,
         Pick<Favorite, "user_id" | "menu_item_id">,
@@ -129,6 +193,31 @@ export type Database = {
       menu_item_reviews: {
         Args: { p_menu_item_id: string; p_limit?: number };
         Returns: PublicReview[];
+      };
+      create_order: {
+        Args: {
+          p_items: { menu_item_id: string; quantity: number }[];
+          p_fulfillment: Fulfillment;
+          p_contact_name: string;
+          p_contact_phone: string;
+          p_delivery_address: string | null;
+          p_notes: string | null;
+        };
+        Returns: {
+          order_id: string;
+          order_number: number;
+          total: number;
+          paystack_reference: string;
+          contact_email: string;
+        }[];
+      };
+      renew_payment_reference: {
+        Args: { p_order_id: string };
+        Returns: { paystack_reference: string; total: number; contact_email: string }[];
+      };
+      mark_order_paid: {
+        Args: { p_reference: string; p_amount_kobo: number };
+        Returns: { order_id: string; newly_paid: boolean }[];
       };
     };
     Enums: Record<string, never>;

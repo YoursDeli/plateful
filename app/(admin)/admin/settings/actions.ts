@@ -62,3 +62,45 @@ export async function saveBranding(_prev: FormState, formData: FormData): Promis
   revalidatePath("/", "layout");
   return { ok: true };
 }
+
+// Delivery pricing — read by create_order() at checkout (authoritative) and
+// by the checkout summary (display).
+const nairaField = z
+  .string()
+  .trim()
+  .regex(/^\d{1,8}(\.\d{1,2})?$/, "Enter an amount in naira, e.g. 1500");
+
+const deliverySchema = z.object({
+  delivery_fee: nairaField.transform(Number),
+  free_delivery_threshold: nairaField
+    .transform(Number)
+    .refine((n) => n > 0, "Must be more than 0")
+    .nullable(),
+});
+
+const DELIVERY_FIELDS = ["delivery_fee", "free_delivery_threshold"] as const;
+
+export async function saveDelivery(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireStaff("/admin/settings");
+
+  const parsed = deliverySchema.safeParse({
+    delivery_fee: String(formData.get("delivery_fee") ?? ""),
+    free_delivery_threshold: emptyToNull(formData.get("free_delivery_threshold")),
+  });
+  if (!parsed.success) {
+    return {
+      fieldErrors: z.flattenError(parsed.error).fieldErrors,
+      values: formValues(formData, DELIVERY_FIELDS),
+    };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("site_settings").update(parsed.data).eq("id", 1);
+  if (error) {
+    console.error("saveDelivery failed:", error.code, error.message);
+    return { error: "Couldn't save delivery pricing.", values: formValues(formData, DELIVERY_FIELDS) };
+  }
+
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
