@@ -58,6 +58,21 @@ readable typography and a "Last updated" date pulled from `pages.updated_at`.
   before launch. Don't ship placeholder Lorem Ipsum to production; a
   generic Nigerian-consumer-e-commerce template is fine to seed the admin
   editor with for development, clearly marked as a draft.
+- **Required clause — Cancellations & refunds** (business rule decided
+  2026-09-29, enforced in code by `cancel_my_order()` / `set_order_status()`;
+  must appear in the seeded Terms draft and the final approved copy):
+
+  > **Cancellations and refunds.** You may cancel a paid order within 30
+  > minutes of payment, as long as we have not started preparing it, using
+  > the "Cancel order" option on your order page. Eligible cancellations are
+  > refunded in full to your original payment method. After 30 minutes, or
+  > once preparation has begun, orders can no longer be cancelled and are
+  > non-refundable. If we are unable to fulfil your order, we will cancel it
+  > and refund you in full.
+
+  Don't advertise the window elsewhere (no countdowns / checkout banners) —
+  the client doesn't want to nudge customers toward cancelling; the button
+  simply appears on the order page while it's allowed.
 - Both pages link from the footer (§4) on every page, and from the checkout
   screen ("By placing this order you agree to our Terms and Privacy Policy",
   linking both) since that's the point of sale.

@@ -117,7 +117,7 @@ function CheckoutForm({
                 }`}
               >
                 <span className="block font-semibold text-secondary">
-                  {option === "delivery" ? "🛵 Delivery" : "🛍️ Pickup"}
+                  {option === "delivery" ? "Delivery" : "Pickup"}
                 </span>
                 <span className="text-xs text-neutral-dark/60">
                   {option === "delivery" ? "Brought to your door" : "Collect from us"}

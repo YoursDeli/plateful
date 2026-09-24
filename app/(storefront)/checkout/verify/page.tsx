@@ -74,7 +74,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
           </span>
           <h1 className="font-display text-4xl font-semibold text-secondary">Thank you!</h1>
           <p className="text-neutral-dark/70">
-            Order <strong>#{order.order_number}</strong> is confirmed — we&apos;re on it.
+            Order <strong>#{order.order_code}</strong> is confirmed — we&apos;re on it.
           </p>
         </div>
         <ul className="flex flex-col divide-y divide-secondary/10 rounded-2xl bg-neutral-light px-4">
@@ -100,13 +100,12 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
             ? "We'll let you know when it's ready to collect."
             : `Delivering to: ${order.delivery_address}`}
         </p>
-        {/* Order tracking timeline (/orders/[orderId]) is Build Order step 8. */}
         <div className="flex flex-wrap gap-3">
-          <Link href="/menu" className="rounded-full bg-primary px-5 py-2.5 font-semibold text-secondary">
-            Back to the menu
+          <Link href={`/orders/${order.id}`} className="rounded-full bg-primary px-5 py-2.5 font-semibold text-secondary">
+            Track your order
           </Link>
-          <Link href="/account" className="rounded-full border border-secondary/30 px-5 py-2.5 font-medium text-secondary">
-            Your account
+          <Link href="/menu" className="rounded-full border border-secondary/30 px-5 py-2.5 font-medium text-secondary">
+            Back to the menu
           </Link>
         </div>
       </Shell>
@@ -125,7 +124,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
     <Shell>
       <h1 className="font-display text-3xl font-semibold text-secondary">Payment not completed</h1>
       <p className="text-neutral-dark/70">
-        {why} Your order <strong>#{order.order_number}</strong> ({formatNaira(order.total)}) is saved — you
+        {why} Your order <strong>#{order.order_code}</strong> ({formatNaira(order.total)}) is saved — you
         haven&apos;t been charged for it yet.
       </p>
       <div className="flex flex-wrap gap-3">

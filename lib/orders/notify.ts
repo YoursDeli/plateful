@@ -28,7 +28,9 @@ export async function notifyOrderPaid(orderId: string, siteUrl: string) {
   // Shared template params. Money is pre-formatted: templates can't format ₦.
   const params = {
     brand_name: settings.brand_name,
-    order_number: order.order_number,
+    // Brevo templates use {{ params.order_number }} — it carries the
+    // customer-facing code (e.g. K7Q2M), so templates need no change.
+    order_number: order.order_code,
     customer_name: order.contact_name,
     customer_first_name: order.contact_name.split(" ")[0],
     customer_phone: order.contact_phone,
@@ -52,9 +54,8 @@ export async function notifyOrderPaid(orderId: string, siteUrl: string) {
     }),
     // Loyalty points earned on this order — filled in by step 10.
     points_earned: 0,
-    // Step 8 switches these to the order tracking / admin orders pages.
-    order_url: `${siteUrl}/account`,
-    admin_url: `${siteUrl}/admin`,
+    order_url: `${siteUrl}/orders/${order.id}`,
+    admin_url: `${siteUrl}/admin/orders`,
     site_url: siteUrl,
   };
 
@@ -69,7 +70,7 @@ export async function notifyOrderPaid(orderId: string, siteUrl: string) {
       });
       await admin.from("orders").update({ confirmation_emailed_at: new Date().toISOString() }).eq("id", orderId);
     } catch (e) {
-      console.error("order confirmation email failed:", order.order_number, (e as Error).message);
+      console.error("order confirmation email failed:", order.order_code, (e as Error).message);
     }
   } else {
     console.warn("order confirmation skipped: BREVO_TEMPLATE_ORDER_CONFIRMATION not set");
@@ -87,7 +88,7 @@ export async function notifyOrderPaid(orderId: string, siteUrl: string) {
       });
       await admin.from("orders").update({ vendor_emailed_at: new Date().toISOString() }).eq("id", orderId);
     } catch (e) {
-      console.error("new-order alert email failed:", order.order_number, (e as Error).message);
+      console.error("new-order alert email failed:", order.order_code, (e as Error).message);
     }
   } else {
     console.warn("new-order alert skipped: template id or recipient not set");

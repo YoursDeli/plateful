@@ -95,7 +95,7 @@ SITE_URL=                         # optional: absolute base URL for links in ema
 - `categories` — id, name, sort_order
 - `favorites` — user_id, menu_item_id
 - `reviews` — id, menu_item_id, user_id, rating (1-5), comment (nullable), created_at — see `docs/menu-and-product-page.md` §3
-- `orders` — id, user_id (**required** — account needed to checkout, see `docs/accounts-loyalty-and-images.md` §1), status, total, paystack_reference, delivery_address, created_at, referral_bonus_applied (default 0), loyalty_points_earned (default 0), loyalty_points_redeemed (default 0)
+- `orders` — id, order_code (customer-facing 5-char uppercase alphanumeric, e.g. `K7Q2M`; `order_number` is an internal sequence, never displayed), user_id (**required** — account needed to checkout, see `docs/accounts-loyalty-and-images.md` §1), status, total, paystack_reference, delivery_address, created_at, referral_bonus_applied (default 0), loyalty_points_earned (default 0), loyalty_points_redeemed (default 0)
 - `order_items` — order_id, menu_item_id, quantity, unit_price
 - `profiles` — id (= auth.uid()), full_name, phone, default_address, role (`customer` | `staff` | `admin`, default `customer`), referral_code (unique), referred_by (nullable, self-ref), referral_balance (cached, default 0), referral_earned_total (cached, default 0), loyalty_points_balance (cached, default 0), loyalty_points_earned_total (cached, default 0)
 - `site_settings` — singleton row (id = 1): brand_name (default `Plateful`), logo_url, primary_color, accent_color, referral_bonus_amount (default 200), loyalty_enabled (default true), loyalty_points_per_1000 (default 10), updated_at — powers editable branding, see `docs/branding-security-auth.md`

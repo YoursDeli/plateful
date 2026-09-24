@@ -112,7 +112,7 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
       amountKobo: nairaToKobo(order.total),
       reference: order.paystack_reference,
       callbackUrl: `${await requestOrigin()}/checkout/verify`,
-      metadata: { order_id: order.order_id, order_number: order.order_number },
+      metadata: { order_id: order.order_id },
     });
     authorizationUrl = tx.authorization_url;
   } catch (e) {

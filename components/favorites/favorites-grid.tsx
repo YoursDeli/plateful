@@ -18,7 +18,7 @@ export function FavoritesGrid({ items, categories }: { items: MenuItem[]; catego
       <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-secondary/20 px-6 py-14 text-center">
         <p className="font-display text-2xl text-secondary">No favourites yet</p>
         <p className="max-w-sm text-sm text-neutral-dark/60">
-          Tap the ♥ on any dish to save it here for quick reordering.
+          Tap the heart on any dish to save it here for quick reordering.
         </p>
         <Link href="/menu" className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-secondary">
           Browse the menu

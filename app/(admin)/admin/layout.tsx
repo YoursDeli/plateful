@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 const NAV = [
+  { href: "/admin/orders", label: "Orders" },
   { href: "/admin/menu", label: "Menu" },
   { href: "/admin/settings", label: "Settings" },
 ] as const;
@@ -25,7 +26,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
     <div className="flex min-h-full flex-1 flex-col">
       <header className="bg-secondary text-white">
         <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-          <Link href="/admin/menu" className="font-display text-lg font-semibold">
+          <Link href="/admin/orders" className="font-display text-lg font-semibold">
             {brand_name} <span className="font-sans text-sm font-normal text-primary">admin</span>
           </Link>
           <nav className="order-3 -mx-4 flex w-full gap-1 overflow-x-auto px-4 sm:order-none sm:mx-0 sm:w-auto sm:px-0">

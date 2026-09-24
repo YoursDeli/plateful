@@ -7,8 +7,8 @@ import { ProfileForm } from "./profile-form";
 
 export const metadata: Metadata = { title: "Your account", robots: { index: false } };
 
-// docs/site-sections-and-features.md §7. Order history (step 8) and
-// referrals (step 9) join this page in their own build steps.
+// docs/site-sections-and-features.md §7. Referrals (step 9) join this page
+// in their own build step.
 export default async function AccountPage() {
   const [profile, user] = await Promise.all([getCurrentProfile(), getCurrentUser()]);
   if (!profile) redirect("/login?next=/account");
@@ -29,9 +29,9 @@ export default async function AccountPage() {
         <Link href="/favorites" className={tile}>
           Your favourites <span aria-hidden="true">→</span>
         </Link>
-        <span className={`${tile} cursor-default text-neutral-dark/45 hover:bg-white`}>
-          Order history <span className="text-xs font-normal">coming soon</span>
-        </span>
+        <Link href="/account/orders" className={tile}>
+          Your orders <span aria-hidden="true">→</span>
+        </Link>
         {isStaffRole(profile) && (
           <Link href="/admin/menu" className={tile}>
             Staff dashboard <span aria-hidden="true">→</span>

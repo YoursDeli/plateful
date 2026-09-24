@@ -109,9 +109,7 @@ export function HeroSection({
               className="animate-rise-in rounded-full object-cover shadow-[0_30px_60px_-15px_rgba(0,0,0,0.55)] ring-8 ring-white/25"
             />
           ) : (
-            <div className="flex size-full items-center justify-center rounded-full bg-primary/40 text-7xl ring-8 ring-white/25">
-              🍽️
-            </div>
+            <div aria-hidden="true" className="size-full rounded-full bg-primary/40 ring-8 ring-white/25" />
           )}
         </div>
       </div>

@@ -32,7 +32,7 @@ export function MenuItemCard({
             className={`object-cover transition duration-500 group-hover:scale-105 motion-reduce:transition-none ${soldOut ? "grayscale" : ""}`}
           />
         ) : (
-          <span className="flex size-full items-center justify-center text-3xl">🍽️</span>
+          <span aria-hidden="true" className="block size-full bg-primary/40" />
         )}
         {item.badge && (
           <span className="absolute top-2 left-2 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-bold tracking-wide text-primary uppercase shadow">

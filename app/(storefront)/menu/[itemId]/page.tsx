@@ -66,7 +66,7 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
               className={`object-cover ${item.is_available ? "" : "grayscale"}`}
             />
           ) : (
-            <span className="flex size-full items-center justify-center text-7xl">🍽️</span>
+            <span aria-hidden="true" className="block size-full bg-primary/40" />
           )}
           {item.badge && (
             <span className="absolute top-4 left-4 rounded-full bg-secondary px-3 py-1.5 text-xs font-bold tracking-wide text-primary uppercase shadow">

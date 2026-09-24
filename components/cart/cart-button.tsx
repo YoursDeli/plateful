@@ -13,9 +13,11 @@ export function CartButton() {
       aria-label={count > 0 ? `Open cart, ${count} item${count === 1 ? "" : "s"}` : "Open cart"}
       className="relative flex size-11 items-center justify-center rounded-full bg-primary text-secondary transition hover:brightness-95"
     >
+      {/* Shopping cart: handle, basket, two wheels. */}
       <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 7h12l-1.2 11.1a2 2 0 0 1-2 1.9H9.2a2 2 0 0 1-2-1.9L6 7Z" />
-        <path d="M9 7V6a3 3 0 0 1 6 0v1" />
+        <path d="M2.5 3.5h2.2l2.5 11.1a1.6 1.6 0 0 0 1.6 1.3h8.6a1.6 1.6 0 0 0 1.6-1.2L21 7.5H5.6" />
+        <circle cx="9.5" cy="19.8" r="1.4" />
+        <circle cx="17.3" cy="19.8" r="1.4" />
       </svg>
       {count > 0 && (
         <span className="absolute -top-1 -right-1 flex min-w-5 items-center justify-center rounded-full bg-secondary px-1 text-xs font-bold text-white tabular-nums">

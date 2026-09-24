@@ -85,7 +85,8 @@ export type Fulfillment = "delivery" | "pickup";
 
 export type Order = {
   id: string;
-  order_number: number;
+  order_number: number; // internal sequence — not shown to anyone
+  order_code: string; // customer-facing, e.g. "K7Q2M"
   user_id: string;
   status: OrderStatus;
   fulfillment: Fulfillment;
@@ -101,6 +102,9 @@ export type Order = {
   paid_at: string | null;
   confirmation_emailed_at: string | null;
   vendor_emailed_at: string | null;
+  cancelled_at: string | null;
+  cancelled_by: "customer" | "restaurant" | null;
+  refunded_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -219,6 +223,18 @@ export type Database = {
       renew_payment_reference: {
         Args: { p_order_id: string };
         Returns: { paystack_reference: string; total: number; contact_email: string }[];
+      };
+      cancel_my_order: {
+        Args: { p_order_id: string };
+        Returns: { id: string; status: OrderStatus }[];
+      };
+      mark_order_refunded: {
+        Args: { p_order_id: string };
+        Returns: { id: string; refunded_at: string }[];
+      };
+      set_order_status: {
+        Args: { p_order_id: string; p_status: OrderStatus };
+        Returns: { id: string; status: OrderStatus }[];
       };
       mark_order_paid: {
         Args: { p_reference: string; p_amount_kobo: number };
