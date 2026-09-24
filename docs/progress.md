@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-28
-Current phase: **Steps 0–7 verified live. Step 8 (order tracking + admin orders + cancellation policy) built; awaiting migration + verification.**
+Current phase: **Steps 0–7 verified live. Step 8 deployed (migrations applied); awaiting user verification on the live site.**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -69,7 +69,7 @@ from `main`; Paystack in **test** mode).
 - [x] Webhook handler + signature verification — *verified live 2026-09-28 (order #1001): forged → 401; real `charge.success` confirmed in Netlify function logs by user*
 - [x] Return-URL verify fallback — *verified live 2026-09-28 (order #1001) (thank-you page, cart cleared)*
 - [x] Idempotent "mark paid" logic — *verified live 2026-09-28 (order #1001): single paid transition, one email pair*
-- [ ] `order_status_history` table + writes on each status transition — *create + paid verified live; staff/customer transitions built 2026-09-29, awaiting order-management migration + user verification*
+- [ ] `order_status_history` table + writes on each status transition — *create + paid verified live; staff/customer transitions built 2026-09-29, migrations applied, awaiting user verification on live*
 
 ### 7. Brevo transactional emails
 - [x] Order confirmation (customer) — include loyalty points earned — *verified live 2026-09-28 (order #1001)* (points block hidden until step 10)
@@ -77,8 +77,8 @@ from `main`; Paystack in **test** mode).
 - [ ] Status update emails (phase 2, optional for MVP) — *skipped for now (optional per docs)*
 
 ### 8. Order tracking + admin order management
-- [ ] `/orders/[orderId]` status timeline (per `docs/ui-components-and-styling.md` §1) — *built 2026-09-29, awaiting order-management migration + user verification* (live via Realtime, pickup wording, cancelled state, Buy again, quiet Cancel button)
-- [ ] Admin orders view (realtime subscription) — *built 2026-09-29, awaiting order-management migration + user verification* (Active/Completed/Cancelled/Unpaid tabs, next-step buttons, cancel, refund tracking, new-order + customer-cancel banners)
+- [ ] `/orders/[orderId]` status timeline (per `docs/ui-components-and-styling.md` §1) — *built 2026-09-29; migrations applied, awaiting user verification on live* (live via Realtime, pickup wording, cancelled state, Buy again, quiet Cancel button)
+- [ ] Admin orders view (realtime subscription) — *built 2026-09-29; migrations applied, awaiting user verification on live* (Active/Completed/Cancelled/Unpaid tabs, next-step buttons, cancel, refund tracking, new-order + customer-cancel banners)
 
 ### 8a. UI component library
 - [ ] `styled-components` added, scoped to `/components/ui/`
@@ -430,11 +430,6 @@ from `main`; Paystack in **test** mode).
 
 ## Open Blockers
 
-- **Run the order-codes migration** (user, after the order-management one):
-  `supabase/migrations/20260930000000_order_codes.sql`.
-- **Run the order-management migration** (user):
-  `supabase/migrations/20260929000000_order_management.sql` — until then
-  admin status buttons, customer cancel and live updates won't work.
 - Real Terms & Conditions and Privacy Policy copy needs client/legal
   sign-off before launch — dev can seed the admin editor with a generic
   draft in the meantime (see `docs/pages-referrals-footer.md` §3).
@@ -540,3 +535,5 @@ from `main`; Paystack in **test** mode).
 - **2026-09-29** — Client changes: order codes (5-char alphanumeric,
   migration `20260930000000_order_codes.sql`) replace visible order numbers;
   removed emoji/symbol decorations from the UI. Build/lint/tsc clean.
+- **2026-09-29** — Both step-8 migrations applied (order codes backfilled:
+  existing order → `68P3H`). Pushed step 8 to `main` → Netlify deploy.
