@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-23
-Current phase: **Build Order 0–1 code written; waiting on Supabase/Cloudinary credentials to verify end-to-end.**
+Current phase: **Build Order 0–1 code written; verifying against the live Supabase project. Image storage switching Cloudinary → Supabase Storage next session.**
 
 ---
 
@@ -216,6 +216,38 @@ Current phase: **Build Order 0–1 code written; waiting on Supabase/Cloudinary 
   `requireStaff()`. Menu items are **hard-deleted** for now; once `order_items`
   references `menu_items` (step 6), switch to "mark unavailable" / soft-delete.
 - **2026-09-23** — Hero `featured_order` column deferred to step 2 (hero build).
+- **2026-09-24** — Supabase project security: Data API **on**, "Automatically
+  expose new tables" **off**, "Enable automatic RLS" **on**. Because tables
+  aren't auto-exposed, **every migration must include explicit `grant`s** for
+  `anon`/`authenticated`/`service_role` (see the "Data API privileges" section
+  at the end of the core schema migration). `profiles` updates use a
+  column-level grant (`full_name, phone, default_address` only), so `role` and
+  future cached balances aren't updatable from a user session at all.
+- **2026-09-24** — **Reversed: Supabase Storage replaces Cloudinary** for all
+  images (menu photos, logo, chef photo). Reason: total media is small
+  (~50 MB, well inside Supabase's free 1 GB) and it removes a vendor/account.
+  Plan: public bucket(s) with storage RLS allowing upload/update/delete only
+  when `is_staff()`; server-side check that saved URLs point at our own bucket;
+  resizing/WebP via `next/image` (Supabase's own image transforms are paid-only).
+  To do in the switch: replace `/api/cloudinary/sign`, `lib/cloudinary/*`,
+  `CloudinaryImage`, and `ImageUploadField` internals; drop the
+  `CLOUDINARY_*` env vars; update CLAUDE.md §2/§3/§4/§7 step 12,
+  `docs/accounts-loyalty-and-images.md` §3, and `docs/branding-security-auth.md`
+  §3; rename checklist §12. The Cloudinary "no signable max size" decision
+  above becomes moot (Supabase buckets enforce `file_size_limit` and
+  `allowed_mime_types` server-side). **Videos** were mentioned but aren't
+  specced anywhere yet — spec placement/length before building anything.
+- **2026-09-24** — **Hosting: Netlify replaces Vercel** (hobby /
+  non-commercial build; user's choice to try Netlify). Checked against
+  Netlify's Next.js docs: Next 13.5+ supported via the auto-detected OpenNext
+  adapter (don't pin its version), server actions + on-demand revalidation
+  fully supported, `next/image` served via Netlify Image CDN. Constraints to
+  respect: `proxy.ts` runs as an Edge Function — **no `fs` / native addons in
+  proxy code**; Netlify evaluates headers/redirects *after* proxy. When
+  deploying: set the same env vars in Netlify's UI, set Supabase Auth
+  "Site URL" to the Netlify URL, and optionally
+  `NETLIFY_NEXT_SKEW_PROTECTION=true`. Any image domains (the Supabase Storage
+  URL) must be allowed in `next.config.ts` `images.remotePatterns`.
 
 ---
 
@@ -230,9 +262,10 @@ Current phase: **Build Order 0–1 code written; waiting on Supabase/Cloudinary 
   add `{{ .Token }}` to the "Confirm signup" + "Magic Link" email templates, sign in once at
   `/login`, then set own `profiles.role = 'admin'` (SQL in `README.md`). Every
   "built, awaiting verification" item in steps 0/1 is blocked on this.
-- **Cloudinary credentials** (user to provide): `CLOUDINARY_CLOUD_NAME`,
-  `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`
-  in `.env.local` — needed to verify menu photo + logo uploads.
+- **Next session, do first: switch image uploads from Cloudinary to Supabase
+  Storage** (decided 2026-09-24, see Decisions). Until then the menu photo /
+  logo upload buttons won't work — Cloudinary is not being set up, so no
+  Cloudinary credentials are coming.
 - **TS types are hand-written** (`lib/supabase/types.ts`) since the Supabase CLI
   isn't installed — regenerate with `npx supabase gen types` once a project exists.
 

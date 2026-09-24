@@ -301,3 +301,36 @@ $$;
 create trigger reviews_sync_menu_item_rating
   after insert or update or delete on public.reviews
   for each row execute function public.sync_menu_item_rating();
+
+-- ---------------------------------------------------------------------------
+-- Data API privileges
+-- ---------------------------------------------------------------------------
+-- The project is created with "Automatically expose new tables" OFF, so each
+-- table's API access is granted explicitly here (least privilege). RLS
+-- policies above still decide which rows each role can see or change —
+-- a grant without a matching policy allows nothing.
+
+grant usage on schema public to anon, authenticated, service_role;
+
+-- Public storefront reads.
+grant select on public.categories, public.menu_items, public.site_settings, public.reviews
+  to anon, authenticated;
+
+-- Staff writes (RLS limits these to is_staff()).
+grant insert, update, delete on public.categories, public.menu_items to authenticated;
+grant update (brand_name, logo_url, primary_color, accent_color) on public.site_settings
+  to authenticated;
+
+-- Customers read/update their own profile. Column-level grant: `role` (and,
+-- later, the cached reward balances) isn't even updatable from a user session;
+-- the protect_profile_privileged_columns trigger stays as a second guard.
+grant select on public.profiles to authenticated;
+grant update (full_name, phone, default_address) on public.profiles to authenticated;
+
+-- Used inside RLS policies, so the calling roles must be able to execute it.
+grant execute on function public.is_staff() to anon, authenticated;
+
+-- Trusted server contexts (webhook, admin bulk actions). Bypasses RLS.
+grant select, insert, update, delete
+  on public.profiles, public.categories, public.menu_items, public.site_settings, public.reviews
+  to service_role;

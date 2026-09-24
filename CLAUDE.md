@@ -21,7 +21,7 @@ need revisiting (menu → vendor-scoped, orders → vendor-scoped).
 | Database & Auth | Supabase (Postgres) | Row-level security for orders/favorites scoped to `auth.uid()` |
 | Payments | Paystack | Checkout via Paystack Inline or Standard redirect; verified server-side |
 | Transactional email | Brevo (formerly Sendinblue) | Order confirmations, receipts, status updates |
-| Hosting | Vercel (frontend) + Supabase (backend) | |
+| Hosting | Netlify (frontend) + Supabase (backend) | Netlify's OpenNext adapter is auto-detected (no `netlify.toml` needed); `proxy.ts` runs as an Edge Function, so it must not use `fs` or native addons. See `docs/progress.md` decision 2026-09-24 |
 | Image handling | Cloudinary | Menu item photos, chef photo, brand logo — signed uploads via a server route; see `docs/accounts-loyalty-and-images.md` §3 |
 
 ## 3. Folder Structure (proposed)

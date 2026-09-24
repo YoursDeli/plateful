@@ -160,7 +160,7 @@ profiles
 - Image uploads (menu items, logo, chef photo): restrict format and max file
   size at the Cloudinary signed-upload route, not just the `<input accept>`
   attribute — see `docs/accounts-loyalty-and-images.md` §3.
-- Standard Next.js/Vercel security headers (`Content-Security-Policy`,
+- Standard Next.js security headers (`Content-Security-Policy`,
   `X-Frame-Options`, `Referrer-Policy`) set via `next.config.js` headers or
   middleware.
 - Never log full request bodies for the Paystack webhook or auth routes
