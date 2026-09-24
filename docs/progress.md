@@ -457,8 +457,11 @@ from `main`; Paystack in **test** mode).
   (3) **user-requested next work (before step 9):** a side navigation menu
   for the admin dashboard AND the customer account area (/account,
   /account/orders, /favorites…), collapsing on mobile into a drawer that
-  slides in from the side via a menu button; (4) then Build Order step 9
-  (referral program).
+  slides in from the side via a menu button; (4) **reduce button corner
+  radius** — client finds the new 8a buttons too rounded (CtaButton and
+  WhatsAppButton are pill-shaped, 999px; the original snippets used 15px /
+  0.5em) — agree a radius and apply consistently; (5) then Build Order
+  step 9 (referral program).
 - **Set the WhatsApp number** (user): /admin/settings → Contact (migration
   applied 2026-09-29; button hidden until a number is saved).
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
@@ -585,3 +588,5 @@ from `main`; Paystack in **test** mode).
   testing.
 - **2026-09-29** — Session paused: step 8a pushed (`ed91516`), Netlify
   deploy slow/unconfirmed at shutdown. Working tree clean.
+- **2026-09-29** — Step 8a confirmed live by user (new buttons visible).
+  Feedback: buttons too rounded — adjust next session.
