@@ -454,7 +454,11 @@ from `main`; Paystack in **test** mode).
   Deploys shows it failed or "Unrecognized Git contributor", fix per the
   2026-09-29 Netlify decision; (2) user verifies 8a buttons + remaining step-8
   flows (new order code, customer cancel, refund tracking, pickup) on live;
-  (3) then Build Order step 9 (referral program).
+  (3) **user-requested next work (before step 9):** a side navigation menu
+  for the admin dashboard AND the customer account area (/account,
+  /account/orders, /favorites…), collapsing on mobile into a drawer that
+  slides in from the side via a menu button; (4) then Build Order step 9
+  (referral program).
 - **Set the WhatsApp number** (user): /admin/settings → Contact (migration
   applied 2026-09-29; button hidden until a number is saved).
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
