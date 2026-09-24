@@ -449,6 +449,12 @@ from `main`; Paystack in **test** mode).
 
 ## Open Blockers
 
+- **Next session, start here:** (1) confirm the step-8a Netlify deploy
+  (`ed91516`) finished — on 2026-09-29 it hadn't appeared after ~5 min; if
+  Deploys shows it failed or "Unrecognized Git contributor", fix per the
+  2026-09-29 Netlify decision; (2) user verifies 8a buttons + remaining step-8
+  flows (new order code, customer cancel, refund tracking, pickup) on live;
+  (3) then Build Order step 9 (referral program).
 - **Set the WhatsApp number** (user): /admin/settings → Contact (migration
   applied 2026-09-29; button hidden until a number is saved).
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
@@ -573,3 +579,5 @@ from `main`; Paystack in **test** mode).
   SSR styles + share targets verified locally.
 - **2026-09-29** — WhatsApp-number migration applied; pushed step 8a for live
   testing.
+- **2026-09-29** — Session paused: step 8a pushed (`ed91516`), Netlify
+  deploy slow/unconfirmed at shutdown. Working tree clean.
