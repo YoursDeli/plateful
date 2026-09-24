@@ -1,0 +1,112 @@
+<!--
+  Supabase Auth → Emails → Templates → "Confirm signup"  (first sign-in)
+  Subject: Welcome to Plateful — your sign-in code
+
+  Email-client safe: inline styles + tables only (Gmail strips <style>,
+  Outlook needs tables). Colors = site_settings defaults (Lavender #D3C5F6,
+  Velvet #3B2A60). Brand name is hardcoded here because Supabase templates
+  can't read site_settings — update this file + the dashboard if it changes.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light only">
+  <meta name="supported-color-schemes" content="light">
+  <title>Your Plateful sign-in code</title>
+</head>
+<body style="margin:0; padding:0; background-color:#FBF8F3;">
+  <!-- Inbox preview text -->
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">
+    Your code is {{ .Token }} — enter it to finish signing in to Plateful.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FBF8F3" style="background-color:#FBF8F3;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px; border-radius:20px; overflow:hidden; background-color:#FFFFFF; box-shadow:0 8px 30px rgba(59,42,96,0.12);">
+
+          <!-- Header band -->
+          <tr>
+            <td bgcolor="#3B2A60" align="center" style="background-color:#3B2A60; padding:36px 24px 30px;">
+              <div style="font-family:Georgia, 'Times New Roman', serif; font-size:30px; line-height:36px; font-weight:bold; color:#D3C5F6; letter-spacing:0.5px;">
+                Plateful
+              </div>
+              <div style="font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#D3C5F6; opacity:0.8; letter-spacing:3px; text-transform:uppercase; padding-top:6px;">
+                Good food, made with care
+              </div>
+            </td>
+          </tr>
+
+          <!-- Lavender accent strip -->
+          <tr>
+            <td bgcolor="#D3C5F6" style="background-color:#D3C5F6; height:6px; line-height:6px; font-size:6px;">&nbsp;</td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:36px 32px 8px; font-family:Arial, Helvetica, sans-serif; color:#1A1A1A;">
+              <h1 style="margin:0 0 12px; font-family:Georgia, 'Times New Roman', serif; font-size:24px; line-height:30px; font-weight:bold; color:#3B2A60;">
+                Welcome to the table 🍽️
+              </h1>
+              <p style="margin:0 0 24px; font-size:15px; line-height:24px; color:#1A1A1A;">
+                We're glad you're here. Enter this code to finish creating your account:
+              </p>
+            </td>
+          </tr>
+
+          <!-- Code -->
+          <tr>
+            <td align="center" style="padding:0 32px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td align="center" bgcolor="#F3EEFD" style="background-color:#F3EEFD; border:2px dashed #D3C5F6; border-radius:14px; padding:20px 12px;">
+                    <div style="font-family:'Courier New', Courier, monospace; font-size:34px; line-height:40px; font-weight:bold; color:#3B2A60; letter-spacing:10px;">
+                      {{ .Token }}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px 32px 32px; font-family:Arial, Helvetica, sans-serif;">
+              <p style="margin:0 0 8px; font-size:13px; line-height:20px; color:#5B5270; text-align:center;">
+                This code expires in 1 hour and can only be used once.
+              </p>
+              <p style="margin:0; font-size:13px; line-height:20px; color:#5B5270; text-align:center;">
+                Never share it — we'll never ask you for it.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 32px;">
+              <div style="border-top:1px solid #EDE7F8; height:1px; line-height:1px; font-size:1px;">&nbsp;</div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding:20px 32px 28px; font-family:Arial, Helvetica, sans-serif;">
+              <p style="margin:0 0 6px; font-size:12px; line-height:18px; color:#8A829C;">
+                Didn't try to sign in? You can safely ignore this email.
+              </p>
+              <p style="margin:0; font-size:12px; line-height:18px; color:#8A829C;">
+                <a href="{{ .SiteURL }}" style="color:#3B2A60; font-weight:bold; text-decoration:none;">Plateful</a>
+                &nbsp;·&nbsp; Sent to {{ .Email }}
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

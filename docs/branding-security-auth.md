@@ -157,9 +157,10 @@ profiles
 **General app security:**
 - Validate all form input (checkout, menu CRUD, settings) server-side with
   `zod` schemas, not just client-side — client validation is UX only.
-- Image uploads (menu items, logo, chef photo): restrict format and max file
-  size at the Cloudinary signed-upload route, not just the `<input accept>`
-  attribute — see `docs/accounts-loyalty-and-images.md` §3.
+- Image uploads (menu items, logo, chef photo): format and max file size are
+  enforced by the Supabase Storage bucket itself (`allowed_mime_types`,
+  `file_size_limit`), not just the `<input accept>` attribute — see
+  `docs/accounts-loyalty-and-images.md` §3.
 - Standard Next.js security headers (`Content-Security-Policy`,
   `X-Frame-Options`, `Referrer-Policy`) set via `next.config.js` headers or
   middleware.
@@ -168,9 +169,8 @@ profiles
 - `SUPABASE_SERVICE_ROLE_KEY` used only in trusted server contexts (webhook
   handler, admin bulk actions) — never in any client bundle or edge function
   exposed to the browser.
-- Image upload validation (menu photos, logo, chef photo) now goes through
-  Cloudinary's signed-upload route — see `docs/accounts-loyalty-and-images.md`
-  §3 for the allow-list/size constraints enforced there.
+- Image uploads are staff-only via Storage RLS on the `images` bucket — see
+  `docs/accounts-loyalty-and-images.md` §3.
 
 ## 4. Open Items (still need client/business input, not blocking build start)
 

@@ -4,8 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireStaff } from "@/lib/auth";
-import { isOwnCloudinaryUrl } from "@/lib/cloudinary/sign";
 import { emptyToNull, formValues, type FormState } from "@/lib/form-state";
+import { storagePathFromUrl } from "@/lib/storage/images";
+import { removeStoredImage } from "@/lib/storage/remove";
 import { createClient } from "@/lib/supabase/server";
 
 // Every action re-checks staff access (server actions are public endpoints)
@@ -38,7 +39,10 @@ const menuItemSchema = z
     image_url: z
       .string()
       .nullable()
-      .refine((url) => url === null || isOwnCloudinaryUrl(url, "menu-items"), "Invalid image"),
+      .refine(
+        (url) => url === null || storagePathFromUrl(url, "menu-items") !== null,
+        "Invalid image",
+      ),
   })
   .refine((v) => v.compare_at_price === null || v.compare_at_price > v.price, {
     path: ["compare_at_price"],
@@ -85,6 +89,17 @@ export async function saveMenuItem(_prev: FormState, formData: FormData): Promis
 
   const { id, ...values } = parsed.data;
   const supabase = await createClient();
+
+  let previousImageUrl: string | null = null;
+  if (id) {
+    const { data: existing } = await supabase
+      .from("menu_items")
+      .select("image_url")
+      .eq("id", id)
+      .maybeSingle();
+    previousImageUrl = existing?.image_url ?? null;
+  }
+
   const { error } = id
     ? await supabase.from("menu_items").update(values).eq("id", id)
     : await supabase.from("menu_items").insert(values);
@@ -95,6 +110,10 @@ export async function saveMenuItem(_prev: FormState, formData: FormData): Promis
       error: "Couldn't save this item. Please try again.",
       values: formValues(formData, MENU_ITEM_FIELDS),
     };
+  }
+
+  if (previousImageUrl !== values.image_url) {
+    await removeStoredImage(supabase, previousImageUrl, "menu-items");
   }
 
   revalidateMenu();
@@ -108,9 +127,15 @@ export async function deleteMenuItem(formData: FormData) {
   const id = idSchema.parse(formData.get("id"));
 
   const supabase = await createClient();
-  const { error } = await supabase.from("menu_items").delete().eq("id", id);
+  const { data: deleted, error } = await supabase
+    .from("menu_items")
+    .delete()
+    .eq("id", id)
+    .select("image_url")
+    .maybeSingle();
   if (error) throw new Error("Couldn't delete this item.");
 
+  await removeStoredImage(supabase, deleted?.image_url, "menu-items");
   revalidateMenu();
 }
 

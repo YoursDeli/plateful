@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
-import { CloudinaryImage } from "@/components/cloudinary-image";
 import { requireStaff } from "@/lib/auth";
 import { formatNaira } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
@@ -77,7 +77,7 @@ function MenuItemRow({ item }: { item: MenuItem }) {
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-neutral-light">
           {item.image_url && (
-            <CloudinaryImage src={item.image_url} alt="" fill sizes="64px" className="object-cover" />
+            <Image src={item.image_url} alt="" fill sizes="64px" className="object-cover" />
           )}
         </div>
         <div className="min-w-0">

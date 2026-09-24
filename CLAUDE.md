@@ -22,7 +22,7 @@ need revisiting (menu → vendor-scoped, orders → vendor-scoped).
 | Payments | Paystack | Checkout via Paystack Inline or Standard redirect; verified server-side |
 | Transactional email | Brevo (formerly Sendinblue) | Order confirmations, receipts, status updates |
 | Hosting | Netlify (frontend) + Supabase (backend) | Netlify's OpenNext adapter is auto-detected (no `netlify.toml` needed); `proxy.ts` runs as an Edge Function, so it must not use `fs` or native addons. See `docs/progress.md` decision 2026-09-24 |
-| Image handling | Cloudinary | Menu item photos, chef photo, brand logo — signed uploads via a server route; see `docs/accounts-loyalty-and-images.md` §3 |
+| Image handling | Supabase Storage (public `images` bucket) | Menu item photos, chef photo, brand logo — staff-only uploads enforced by Storage RLS; resized by `next/image` (Netlify Image CDN); see `docs/accounts-loyalty-and-images.md` §3 |
 
 ## 3. Folder Structure (proposed)
 
@@ -49,7 +49,6 @@ need revisiting (menu → vendor-scoped, orders → vendor-scoped).
   /api
     /paystack/webhook          → Paystack payment verification webhook
     /brevo/send                → transactional email trigger (or call Brevo API directly from server actions)
-    /cloudinary/sign            → signed upload params for menu/branding/page images (see docs/accounts-loyalty-and-images.md §3)
 /components
   /hero                        → HeroCard, FlavorSelector, etc. (see hero-section-design.md)
   /menu
@@ -61,7 +60,7 @@ need revisiting (menu → vendor-scoped, orders → vendor-scoped).
   /supabase                    → client + server helpers
   /paystack                    → init + verify helpers
   /brevo                       → email template senders
-  /cloudinary                   → signed-upload helpers (see docs/accounts-loyalty-and-images.md §3)
+  /storage                      → image bucket helpers: public URLs, own-bucket URL check, cleanup (see docs/accounts-loyalty-and-images.md §3)
 /docs
   hero-section-design.md
   site-sections-and-features.md
@@ -87,11 +86,6 @@ PAYSTACK_WEBHOOK_SECRET=          # used to verify webhook signatures
 
 BREVO_API_KEY=                    # server-only
 BREVO_SENDER_EMAIL=
-
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=            # server-only, used to sign uploads
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=  # safe to expose, used for delivery URLs
 ```
 
 ## 5. Core Data Model (starting point)
@@ -138,7 +132,7 @@ Summary:
 - Money handled in the smallest currency unit (kobo) internally where Paystack is involved; format to Naira only at render time.
 - **Every page is mobile-first and mobile-responsive** — admin pages included. Base Tailwind classes target the smallest breakpoint; add complexity at `sm:`/`md:`/`lg:`, not the reverse. Card grids need an explicit stacked mobile layout, not just a shrunk desktop grid. See `docs/pages-referrals-footer.md` §6.
 - Referral balance and loyalty point changes (`profiles.referral_balance`, `profiles.loyalty_points_balance`) always go through a `referral_ledger`/`loyalty_ledger` insert in the same transaction — never update either cached balance alone. See `docs/pages-referrals-footer.md` §5 and `docs/accounts-loyalty-and-images.md` §2.
-- Image uploads (menu photos, logo, chef photo) always go through the Cloudinary signed-upload route — never an unsigned client-side upload. See `docs/accounts-loyalty-and-images.md` §3.
+- Image uploads (menu photos, logo, chef photo) always go to the Supabase Storage `images` bucket as the signed-in staff user (Storage RLS + bucket size/type limits enforce it), and server actions only save URLs that point at our own bucket/folder. See `docs/accounts-loyalty-and-images.md` §3.
 
 ## 7. Build Order (suggested)
 
@@ -153,7 +147,7 @@ Summary:
 9. Referral program (data model, signup capture, checkout redemption, `/account/referrals`)
 10. Loyalty points program (data model, earn/redeem, admin toggle, checkout UI)
 11. Static pages: About/Chef, Terms, Privacy + site-wide Footer
-12. Cloudinary image uploads (menu photos, logo, chef photo) — can be built alongside step 1/11 once the signed-upload route exists
+12. Image uploads via Supabase Storage (menu photos, logo, chef photo) — built alongside step 1; chef photo lands with step 11
 13. Polish: animations, empty states, error states, mobile-responsiveness pass on every page
 
 ## 8. Related Docs
@@ -165,7 +159,7 @@ Summary:
 - `docs/ui-components-and-styling.md` — order status page design, color pairing, and reusable button components
 - `docs/menu-and-product-page.md` — food menu card design and single product page layout
 - `docs/pages-referrals-footer.md` — full page list, About/Terms/Privacy pages, site-wide footer, referral program
-- `docs/accounts-loyalty-and-images.md` — account-required checkout, loyalty points program, Cloudinary image storage
+- `docs/accounts-loyalty-and-images.md` — account-required checkout, loyalty points program, image storage (Supabase Storage)
 - `docs/progress.md` — current build status, checklist, session log (**read this first, every session**)
 
 ## 9. Session Workflow (required, every session and every feature)

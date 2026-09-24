@@ -6,14 +6,15 @@ and [`docs/`](docs/) — start with [`docs/progress.md`](docs/progress.md).
 ## Local setup
 
 1. `npm install`
-2. Copy `.env.example` → `.env.local` and fill in the Supabase and Cloudinary
-   values (Paystack/Brevo aren't used yet). `.env.local` is gitignored.
+2. Copy `.env.example` → `.env.local` and fill in the Supabase values
+   (Paystack/Brevo aren't used yet). `.env.local` is gitignored.
 3. **Database:** in the Supabase dashboard → SQL Editor, run each file in
    `supabase/migrations/` in filename order.
-4. **Email OTP codes:** Supabase → Authentication → Emails → Templates: in
-   both **"Confirm signup"** (first sign-in) and **"Magic Link"** (returning
-   users), include `{{ .Token }}` in the body so the email contains a code
-   (the app uses code entry, not a clicked link).
+4. **Email OTP codes:** Supabase → Authentication → Emails → Templates: paste
+   `supabase/templates/confirm-signup.html` into **"Confirm signup"** (first
+   sign-in) and `supabase/templates/magic-link.html` into **"Magic Link"**
+   (returning users), using the subject line from each file's top comment.
+   Both send a code (`{{ .Token }}`), not a clicked link.
 5. `npm run dev` → http://localhost:3000
 
 ## Making yourself an admin

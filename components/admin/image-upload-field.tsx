@@ -1,18 +1,25 @@
 "use client";
 
+import Image from "next/image";
 import { useRef, useState } from "react";
-import { CloudinaryImage } from "@/components/cloudinary-image";
+import { createClient } from "@/lib/supabase/client";
 import {
-  ALLOWED_MIME_TYPES,
-  MAX_UPLOAD_BYTES,
-  type UploadFolder,
-} from "@/lib/cloudinary/constants";
+  ALLOWED_IMAGE_TYPES,
+  IMAGES_BUCKET,
+  MAX_IMAGE_BYTES,
+  publicImageUrl,
+  type ImageFolder,
+} from "@/lib/storage/images";
 
 type Status = "idle" | "uploading" | "done" | "error";
 
-// Plain signed-upload control. The animated UploadButton from
-// docs/ui-components-and-styling.md §3 replaces the button in step 8a and
-// should hook into this same idle → uploading → done lifecycle.
+// Uploads straight from the browser to Supabase Storage as the signed-in
+// user; the bucket's RLS policies only accept staff uploads into allowed
+// folders, and the bucket itself enforces size/type. Uses XHR instead of
+// supabase.storage.upload() because only XHR reports upload progress.
+// The animated UploadButton (docs/ui-components-and-styling.md §3) replaces
+// the plain button in step 8a and should hook into this same
+// idle → uploading → done lifecycle.
 export function ImageUploadField({
   name,
   folder,
@@ -20,7 +27,7 @@ export function ImageUploadField({
   defaultValue,
 }: {
   name: string;
-  folder: UploadFolder;
+  folder: ImageFolder;
   label: string;
   defaultValue?: string | null;
 }) {
@@ -32,49 +39,59 @@ export function ImageUploadField({
 
   async function upload(file: File) {
     setError(null);
-    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+    const ext = ALLOWED_IMAGE_TYPES[file.type];
+    if (!ext) {
       setError("Use a JPG, PNG, WebP, or AVIF image.");
       return;
     }
-    if (file.size > MAX_UPLOAD_BYTES) {
-      setError(`Image must be under ${MAX_UPLOAD_BYTES / 1024 / 1024} MB.`);
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError(`Image must be under ${MAX_IMAGE_BYTES / 1024 / 1024} MB.`);
+      return;
+    }
+
+    const {
+      data: { session },
+    } = await createClient().auth.getSession();
+    if (!session) {
+      setStatus("error");
+      setError("Your session expired — please sign in again.");
       return;
     }
 
     setStatus("uploading");
     setProgress(0);
 
-    const signRes = await fetch("/api/cloudinary/sign", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ folder }),
-    });
-    if (!signRes.ok) {
-      const body = await signRes.json().catch(() => ({}));
-      setStatus("error");
-      setError(body.error ?? "Could not start upload.");
-      return;
-    }
-    const { cloud_name, ...signed } = (await signRes.json()) as Record<string, string>;
-
+    // Random name: never overwrites an existing file, and avoids stale CDN
+    // caches when an image is replaced.
+    const path = `${folder}/${crypto.randomUUID()}.${ext}`;
     const form = new FormData();
-    form.append("file", file);
-    for (const [key, value] of Object.entries(signed)) form.append(key, value);
+    form.append("cacheControl", "31536000");
+    form.append("", file);
 
+    const base = process.env.NEXT_PUBLIC_SUPABASE_URL!.replace(/\/$/, "");
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`);
+    xhr.open("POST", `${base}/storage/v1/object/${IMAGES_BUCKET}/${path}`);
+    xhr.setRequestHeader("Authorization", `Bearer ${session.access_token}`);
+    xhr.setRequestHeader("apikey", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+    xhr.setRequestHeader("x-upsert", "false");
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) setProgress(Math.round((e.loaded / e.total) * 100));
     };
     xhr.onload = () => {
-      const body = JSON.parse(xhr.responseText || "{}");
-      if (xhr.status >= 200 && xhr.status < 300 && body.secure_url) {
-        setUrl(body.secure_url);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        setUrl(publicImageUrl(path));
         setStatus("done");
-      } else {
-        setStatus("error");
-        setError(body.error?.message ?? "Upload failed.");
+        return;
       }
+      let message = "Upload failed.";
+      try {
+        const body = JSON.parse(xhr.responseText);
+        message = body.message ?? body.error ?? message;
+      } catch {
+        // Non-JSON error body; keep the generic message.
+      }
+      setStatus("error");
+      setError(message);
     };
     xhr.onerror = () => {
       setStatus("error");
@@ -90,7 +107,7 @@ export function ImageUploadField({
       <div className="flex items-center gap-3">
         <div className="relative size-20 shrink-0 overflow-hidden rounded-lg border border-neutral-dark/10 bg-white">
           {url ? (
-            <CloudinaryImage src={url} alt="" fill sizes="80px" className="object-cover" />
+            <Image src={url} alt="" fill sizes="80px" className="object-cover" />
           ) : (
             <span className="flex size-full items-center justify-center text-xs text-neutral-dark/40">
               No image
@@ -101,7 +118,7 @@ export function ImageUploadField({
           <input
             ref={inputRef}
             type="file"
-            accept={ALLOWED_MIME_TYPES.join(",")}
+            accept={Object.keys(ALLOWED_IMAGE_TYPES).join(",")}
             className="sr-only"
             aria-label={label}
             onChange={(e) => {

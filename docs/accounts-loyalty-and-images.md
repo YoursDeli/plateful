@@ -1,4 +1,4 @@
-# Account-Required Checkout, Loyalty Points & Cloudinary
+# Account-Required Checkout, Loyalty Points & Image Storage
 
 ## 1. Account Required to Checkout (supersedes earlier guest-checkout decision)
 
@@ -120,59 +120,58 @@ orders  (add)
   earned on that order, not just the amount charged — the reward should be
   visible on the receipt.
 
-## 3. Cloudinary for Image Storage
+## 3. Image Storage — Supabase Storage
 
-Replaces the earlier "Supabase Storage or Cloudinary" open choice in
-`CLAUDE.md` §2 — settled on **Cloudinary** for all image handling: menu item
-photos, chef photo (`pages.chef_photo_url`), and the brand logo
-(`site_settings.logo_url`).
+> **Changed 2026-09-24:** Cloudinary was the earlier choice; replaced by
+> Supabase Storage because total media is small (~50 MB, inside the free
+> 1 GB) and it removes a separate vendor/account. See `docs/progress.md`.
 
-**Upload pattern:** signed uploads via a server route, not the client-side
-unsigned-upload-preset approach — keeps the Cloudinary API secret server-only
-and lets you enforce folder/size/format rules centrally rather than trusting
-client-set upload parameters.
-
-```
-/api/cloudinary/sign   -- POST, server-only: given a target folder
-                            ('menu-items' | 'branding' | 'pages'), returns a
-                            signed timestamp + signature using
-                            CLOUDINARY_API_SECRET, scoped to that folder and
-                            an allowed-format/max-size constraint.
-```
-
-- Client (admin dashboard) requests a signature from that route, then
-  uploads directly to Cloudinary's API using the signed params — the file
-  itself never passes through your own server, only the signature does.
-- On successful upload, Cloudinary returns a `secure_url` — store that in
-  `menu_items.image_url`, `site_settings.logo_url`, or `pages.chef_photo_url`
-  as appropriate.
-- Use Cloudinary's on-the-fly transformations for responsive delivery
-  (`w_auto,q_auto,f_auto` style URL params, or the Next.js `<CldImage>`
-  component from `next-cloudinary`) instead of storing multiple
-  pre-resized copies — one uploaded original per image, transformed at
-  request time.
-- The `UploadButton` component from `docs/ui-components-and-styling.md` §3
-  wires its progress-border/checkmark animation to this signed-upload flow's
-  actual request lifecycle (`idle → uploading → done`), as already noted
-  there.
-
-**Env vars** (add to `CLAUDE.md` §4):
+All images — menu item photos, the brand logo (`site_settings.logo_url`),
+and the chef photo (`pages.chef_photo_url`) — live in one **public** Supabase
+Storage bucket, `images`, created by
+`supabase/migrations/20260924000000_storage_images.sql`:
 
 ```
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=        # server-only, used to sign uploads
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=   # safe to expose, used for delivery URLs
+images/                    public bucket, 5 MB max, jpeg/png/webp/avif only
+  menu-items/<uuid>.<ext>   → menu_items.image_url
+  branding/<uuid>.<ext>     → site_settings.logo_url
+  pages/<uuid>.<ext>        → pages.chef_photo_url (step 11)
 ```
 
-**Validation** (folds into the existing image-upload security note in
-`docs/branding-security-auth.md` §3): enforce allowed formats and max file
-size in the `/api/cloudinary/sign` route's signed parameters (Cloudinary
-rejects uploads that don't match a signed constraint), not just in the
-`<input accept>` attribute client-side.
+**Upload pattern:** the admin's browser uploads directly to Storage as the
+signed-in user (no server route in between). Security is enforced by
+Supabase, not by the client:
 
-**Logo upload:** admin uploads the brand logo from the `/admin/settings`
-Branding tab (already specced in `docs/branding-security-auth.md` §1) via
-this same signed-upload flow, targeting the `branding` folder;
-`site_settings.logo_url` is updated with the returned `secure_url` on
-success.
+- **Storage RLS** on `storage.objects`: insert/update/delete only when
+  `is_staff()`, and only into the three folders above. Reads are public (it's
+  a public bucket), so the storefront needs no auth to show images.
+- **Bucket limits** (`file_size_limit`, `allowed_mime_types`) are enforced by
+  Storage on every upload — the file picker's `accept` / 5 MB check is UX only.
+- **Random file names** (`crypto.randomUUID()`), never overwriting
+  (`x-upsert: false`) — replacing an image uploads a new file, so CDN caches
+  never serve a stale photo.
+- **Server actions only save URLs in our own bucket + expected folder**
+  (`storagePathFromUrl` in `lib/storage/images.ts`), so a tampered form can't
+  point `image_url` at an arbitrary external image.
+- **Cleanup:** when an image is replaced/removed or its menu item deleted,
+  the old file is deleted best-effort (`lib/storage/remove.ts`). Files
+  uploaded on a form that's then cancelled are left behind — harmless at this
+  scale.
+
+`ImageUploadField` (`components/admin/`) uses XHR rather than
+`supabase.storage.upload()` because only XHR reports upload progress — the
+`UploadButton` component from `docs/ui-components-and-styling.md` §3 wires its
+progress-border/checkmark animation to that same `idle → uploading → done`
+lifecycle.
+
+**Delivery:** store the public URL; render with `next/image`, which resizes
+and converts formats (via Netlify Image CDN in production). Supabase's own
+image transformations are a paid feature and aren't used. The bucket's public
+path is allow-listed in `next.config.ts` `images.remotePatterns`.
+
+**Env vars:** none beyond the existing `NEXT_PUBLIC_SUPABASE_URL` /
+`NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+
+**Videos:** not specced yet. Decide placement (hero background? About page?)
+and length before building — the bucket's `allowed_mime_types` and size limit
+would need to change, and longer video may justify a video-specific service.

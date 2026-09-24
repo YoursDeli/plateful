@@ -5,8 +5,8 @@
 > session, and update it at the end of every session or completed feature —
 > see `CLAUDE.md` §9 for the exact workflow.
 
-Last updated: 2026-09-23
-Current phase: **Build Order 0–1 code written; verifying against the live Supabase project. Image storage switching Cloudinary → Supabase Storage next session.**
+Last updated: 2026-09-24
+Current phase: **Build Order 0–1 done and verified. Starting step 2 (storefront).**
 
 ---
 
@@ -28,16 +28,16 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
 
 ### 0. Project setup
 - [x] Next.js 14+ App Router project scaffolded (Next 16.3 — builds, lints, serves; see Decisions)
-- [ ] Tailwind configured with `site_settings`-sourced theme tokens — *built; fallback defaults verified rendering, DB-sourced path unverified*
-- [ ] Supabase project created, env vars set locally (`.env.local`, not committed) — *`.env.example` + gitignored `.env.local` template done; keys pending (see Open Blockers)*
-- [ ] Supabase client/server helpers (`/lib/supabase`) — *built 2026-09-23, awaiting verification against a live Supabase project*
+- [x] Tailwind configured with `site_settings`-sourced theme tokens — *verified 2026-09-24: admin color change re-themes the site*
+- [x] Supabase project created, env vars set locally (`.env.local`, not committed) — *verified 2026-09-24: keys set, core migration applied, live REST reads work*
+- [x] Supabase client/server helpers (`/lib/supabase`) — *verified 2026-09-24*
 
 ### 1. Menu data model + admin CRUD
-- [ ] `menu_items`, `categories`, `site_settings`, `profiles`, `reviews` tables + RLS policies — *built 2026-09-23, awaiting verification against a live Supabase project* (`supabase/migrations/20260923000000_core_schema.sql`)
-- [ ] `handle_new_user` trigger (creates `profiles` row on signup) — *built 2026-09-23, awaiting verification against a live Supabase project*
-- [ ] Review-aggregate trigger (keeps `menu_items.avg_rating`/`review_count` in sync) — *built 2026-09-23, awaiting verification against a live Supabase project*
-- [ ] Admin menu CRUD UI (`/admin/menu`) — including `compare_at_price`, `badge`, Cloudinary photo upload — *built 2026-09-23, awaiting verification (needs Supabase + Cloudinary keys)* (items + categories add/rename/reorder/delete, availability toggle)
-- [ ] Admin branding settings page (edit `site_settings`, Cloudinary logo upload) — *built 2026-09-23, awaiting verification (needs Supabase + Cloudinary keys)*
+- [x] `menu_items`, `categories`, `site_settings`, `profiles`, `reviews` tables + RLS policies — *verified 2026-09-24: anon probes + staff CRUD* (`supabase/migrations/20260923000000_core_schema.sql`)
+- [x] `handle_new_user` trigger (creates `profiles` row on signup) — *verified 2026-09-24*
+- [ ] Review-aggregate trigger (keeps `menu_items.avg_rating`/`review_count` in sync) — *built; untestable until a review insert flow exists (policy decision still open)*
+- [x] Admin menu CRUD UI (`/admin/menu`) — including `compare_at_price`, `badge`, photo upload (Supabase Storage) — *verified 2026-09-24* (items + categories add/rename/reorder/delete, availability toggle, validation keeps typed values)
+- [x] Admin branding settings page (edit `site_settings`, logo upload via Supabase Storage) — *verified 2026-09-24*
 
 ### 2. Storefront: hero + menu browse + item detail
 - [ ] Hero section (flavor-swap pattern, `docs/hero-section-design.md`)
@@ -52,10 +52,10 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
 - [ ] Auth required — heart icon on cards, `/favorites` page
 
 ### 5. Auth
-- [ ] Email OTP flow (request + verify) — *minimal version pulled forward 2026-09-23 (`/login`), unverified; Google + cart merge + polish still step 5*
+- [x] Email OTP flow (request + verify) — *verified 2026-09-24 (minimal `/login`, 6-digit code via Brevo SMTP); Google, cart merge, styling polish still step 5*
 - [ ] Google OAuth flow
-- [ ] Session middleware (`@supabase/ssr`) — *built as `proxy.ts` (Next 16 rename), unverified*
-- [ ] Admin route protection (role check in middleware) — *built: optimistic redirect in `proxy.ts`, real role check in `/(admin)` layout + every page/server action + RLS. Signed-out redirect verified; role check unverified*
+- [x] Session middleware (`@supabase/ssr`) — *`proxy.ts` (Next 16 rename), verified 2026-09-24*
+- [x] Admin route protection (role check) — *verified 2026-09-24: optimistic redirect in `proxy.ts`, role check in `/(admin)` layout + every page/server action + RLS*
 
 ### 6. Checkout + Paystack
 - [ ] Sign-in gate at checkout (account required — no guest checkout)
@@ -82,7 +82,7 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
 - [ ] `WhatsAppButton` (order support contact)
 - [ ] `ShareButtonCluster` (trimmed to relevant platforms)
 - [ ] `LiquidButton` (primary CTA — Pay/Add to Cart)
-- [ ] `UploadButton` (admin image uploads via Cloudinary signed uploads, wired to real upload state)
+- [ ] `UploadButton` (admin image uploads via Supabase Storage, wired to `ImageUploadField`'s real upload state)
 
 ### 9. Referral program
 - [ ] `referrals`, `referral_ledger` tables + RLS
@@ -110,11 +110,11 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
 - [ ] Site-wide `Footer` component in root layout
 - [ ] Real Terms/Privacy copy approved by client (not shipped as placeholder text)
 
-### 12. Cloudinary image uploads
-- [ ] `/api/cloudinary/sign` signed-upload route (folder/format/size constraints) — *built; 401 when signed out verified; signing unverified (no Cloudinary creds). Size can't be signed — see Decisions*
-- [ ] Menu item photo upload wired to Cloudinary — *built 2026-09-23, awaiting verification (needs Supabase + Cloudinary keys)*
-- [ ] Logo upload (admin branding settings) wired to Cloudinary — *built 2026-09-23, awaiting verification (needs Supabase + Cloudinary keys)*
-- [ ] Chef photo upload (`/admin/settings` Pages tab) wired to Cloudinary
+### 12. Image uploads (Supabase Storage)
+- [x] `images` bucket + Storage RLS (`supabase/migrations/20260924000000_storage_images.sql`) — *verified 2026-09-24*
+- [x] Menu item photo upload — *verified 2026-09-24*
+- [x] Logo upload (admin branding settings) — *verified 2026-09-24*
+- [ ] Chef photo upload (`/admin/settings` Pages tab) — lands with step 11
 
 ### 13. Polish
 - [ ] Animations / transitions (reduced-motion respected)
@@ -168,7 +168,7 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
   referral bonus (capped so total never goes below ₦0). Rate and on/off
   state both admin-editable via `site_settings`. New `loyalty_ledger` table
   mirrors `referral_ledger`. See `docs/accounts-loyalty-and-images.md` §2.
-- **2026-09-23** — Cloudinary chosen for all image storage (menu photos,
+- **2026-09-23** — *(Superseded 2026-09-24 → Supabase Storage.)* Cloudinary chosen for all image storage (menu photos,
   logo, chef photo), via a signed-upload server route rather than unsigned
   client uploads. See `docs/accounts-loyalty-and-images.md` §3.
 
@@ -203,7 +203,7 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
 - **2026-09-23** — `reviews` ships with public read and **no write policies**
   until the open "purchaser-only vs any signed-in user" decision is made. No
   unique (user, item) constraint yet either; decide both together.
-- **2026-09-23** — Cloudinary has **no signable max-file-size parameter**
+- **2026-09-23** — *(Moot since 2026-09-24 — Cloudinary removed.)* Cloudinary has **no signable max-file-size parameter**
   (contrary to `docs/accounts-loyalty-and-images.md` §3). Enforced instead:
   signed `allowed_formats` (jpg/jpeg/png/webp/avif) + a signed incoming
   `c_limit,w_2000,h_2000` transformation (caps stored size), a 5 MB client-side
@@ -229,11 +229,13 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
   Plan: public bucket(s) with storage RLS allowing upload/update/delete only
   when `is_staff()`; server-side check that saved URLs point at our own bucket;
   resizing/WebP via `next/image` (Supabase's own image transforms are paid-only).
-  To do in the switch: replace `/api/cloudinary/sign`, `lib/cloudinary/*`,
-  `CloudinaryImage`, and `ImageUploadField` internals; drop the
-  `CLOUDINARY_*` env vars; update CLAUDE.md §2/§3/§4/§7 step 12,
-  `docs/accounts-loyalty-and-images.md` §3, and `docs/branding-security-auth.md`
-  §3; rename checklist §12. The Cloudinary "no signable max size" decision
+  **Done 2026-09-24:** Cloudinary route/helpers/wrapper and `CLOUDINARY_*`
+  env vars removed; `ImageUploadField` uploads via XHR (for progress) to
+  `images/<folder>/<uuid>.<ext>` as the signed-in user; server actions accept
+  only our own bucket URLs (`lib/storage/images.ts`) and best-effort delete
+  replaced/removed images (`lib/storage/remove.ts`); `next.config.ts`
+  allow-lists the bucket's public path. Docs updated (CLAUDE.md,
+  `accounts-loyalty-and-images.md` §3, `branding-security-auth.md`, README). The Cloudinary "no signable max size" decision
   above becomes moot (Supabase buckets enforce `file_size_limit` and
   `allowed_mime_types` server-side). **Videos** were mentioned but aren't
   specced anywhere yet — spec placement/length before building anything.
@@ -249,6 +251,19 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
   `NETLIFY_NEXT_SKEW_PROTECTION=true`. Any image domains (the Supabase Storage
   URL) must be allowed in `next.config.ts` `images.remotePatterns`.
 
+- **2026-09-24** — **Auth emails go through Brevo SMTP** (Supabase → Auth →
+  SMTP Settings, `smtp-relay.brevo.com:587`, Brevo SMTP key — never stored in
+  the repo or `.env.local`). This lifts Supabase's built-in "team members
+  only, few per hour" limit. Branded code-only templates are versioned in
+  `supabase/templates/` (`confirm-signup.html` = first sign-in,
+  `magic-link.html` = returning users) and pasted into the dashboard; brand
+  name is hardcoded there (templates can't read `site_settings`). Code is
+  deliberately **not** in the subject line (lock-screen exposure). Email OTP
+  length set to **6** (Supabase minimum; project default was 8).
+  `BREVO_API_KEY` / `BREVO_SENDER_EMAIL` in `.env.local` are for step 7
+  order emails; Brevo's "Authorised IPs" block will likely need disabling for
+  that key since Netlify functions have no fixed IPs.
+
 ---
 
 ## Open Blockers
@@ -256,16 +271,6 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
 - Real Terms & Conditions and Privacy Policy copy needs client/legal
   sign-off before launch — dev can seed the admin editor with a generic
   draft in the meantime (see `docs/pages-referrals-footer.md` §3).
-- **Supabase project + keys** (user to provide): fill `NEXT_PUBLIC_SUPABASE_URL`,
-  `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`,
-  run `supabase/migrations/20260923000000_core_schema.sql` in the SQL Editor,
-  add `{{ .Token }}` to the "Confirm signup" + "Magic Link" email templates, sign in once at
-  `/login`, then set own `profiles.role = 'admin'` (SQL in `README.md`). Every
-  "built, awaiting verification" item in steps 0/1 is blocked on this.
-- **Next session, do first: switch image uploads from Cloudinary to Supabase
-  Storage** (decided 2026-09-24, see Decisions). Until then the menu photo /
-  logo upload buttons won't work — Cloudinary is not being set up, so no
-  Cloudinary credentials are coming.
 - **TS types are hand-written** (`lib/supabase/types.ts`) since the Supabase CLI
   isn't installed — regenerate with `npx supabase gen types` once a project exists.
 
@@ -296,3 +301,15 @@ Current phase: **Build Order 0–1 code written; verifying against the live Supa
   gate, minimal OTP `/login`, `/admin/menu` CRUD, `/admin/settings` branding,
   Cloudinary sign route. Build + lint clean; DB-dependent items unverified
   pending Supabase/Cloudinary keys (see Open Blockers).
+- **2026-09-24** — Supabase project set up by user (Data API on, auto-expose
+  off, auto-RLS on); added explicit grants to the core migration. Hosting →
+  Netlify. Image storage switched Cloudinary → Supabase Storage (new bucket
+  migration, upload field, URL checks, cleanup, docs). Verified live: core
+  migration applied, anon RLS behaves correctly; storage migration not yet run.
+  Build + lint + tsc clean.
+- **2026-09-24** — Brevo account + custom SMTP configured for Supabase Auth;
+  branded OTP email templates added (`supabase/templates/`) and confirmed
+  sending a code (not a link).
+- **2026-09-24** — User verified Build Order 0–1 end-to-end (admin sign-in,
+  menu + category CRUD, photo/logo uploads, branding colors, validation).
+  Storage migration applied. Steps 0, 1, 12 (bar chef photo) ticked.
