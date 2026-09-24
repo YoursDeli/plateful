@@ -5,8 +5,11 @@
 > session, and update it at the end of every session or completed feature —
 > see `CLAUDE.md` §9 for the exact workflow.
 
-Last updated: 2026-09-24
+Last updated: 2026-09-28
 Current phase: **Steps 0–5 verified. Steps 6 + 7 built; one test order (after Brevo template setup) verifies both.**
+
+Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
+from `main`; Paystack in **test** mode).
 
 ---
 
@@ -477,3 +480,12 @@ Current phase: **Steps 0–5 verified. Steps 6 + 7 built; one test order (after 
 - **2026-09-28** — User finished Brevo template setup (IDs set, email
   migration applied; no orders yet). Pinned Node 22, added Netlify deploy
   guide to README; committing step 7 ahead of first Netlify deploy.
+- **2026-09-28** — First Netlify deploy succeeded. New projects defaulted to
+  restricted visitor access ("This site is private"); user set Visitor access
+  to public. README deploy steps updated.
+- **2026-09-28** — Live URL confirmed: https://deliciously-yours.netlify.app.
+  Live smoke test passed: pages + dish page 200, Supabase Storage images via
+  Netlify Image CDN 200, signed-out /admin /favorites /account
+  /checkout/verify → /login, open-redirect blocked, webhook forged signature
+  → 401 (GET → 405). Dashboards to point at the live URL: Netlify `SITE_URL`,
+  Supabase Site URL + Redirect URLs, Paystack test webhook/callback (user).

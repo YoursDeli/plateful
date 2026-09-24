@@ -1,5 +1,7 @@
 # Plateful
 
+**Live (test mode):** https://deliciously-yours.netlify.app — Netlify, auto-deploys from `main`.
+
 Single-restaurant food ordering site. Project docs live in [`CLAUDE.md`](CLAUDE.md)
 and [`docs/`](docs/) — start with [`docs/progress.md`](docs/progress.md).
 
@@ -48,7 +50,8 @@ Node version comes from `.nvmrc`.
    must be present at **build** time — `next.config.ts` uses it to allow
    Supabase Storage images.
 3. After the first deploy, set `SITE_URL=https://<your-site>.netlify.app`
-   and redeploy.
+   and redeploy. If visitors see "This site is private", set Project
+   configuration → Access & security → **Visitor access** to public.
 4. Supabase → Auth → URL Configuration: Site URL = the Netlify URL; add
    `https://<your-site>.netlify.app/**` to Redirect URLs.
 5. Paystack → Settings → API Keys & Webhooks (Test): Webhook URL =
