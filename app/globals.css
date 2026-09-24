@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/*
+ * Brand tokens. --brand-primary / --brand-secondary are overridden at runtime
+ * by the root layout from site_settings (primary_color / accent_color), so an
+ * admin color change never needs a code edit. Values here are the fallbacks.
+ */
+:root {
+  --brand-primary: #d3c5f6; /* Lavender */
+  --brand-secondary: #3b2a60; /* Velvet */
+  --neutral-dark: #1a1a1a;
+  --neutral-light: #fbf8f3;
+}
+
+@theme inline {
+  --color-primary: var(--brand-primary);
+  --color-secondary: var(--brand-secondary);
+  --color-accent: var(--brand-secondary);
+  --color-neutral-dark: var(--neutral-dark);
+  --color-neutral-light: var(--neutral-light);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+}
+
+body {
+  background: var(--neutral-light);
+  color: var(--neutral-dark);
+}
