@@ -426,10 +426,21 @@ from `main`; Paystack in **test** mode).
   from the spec: timeline ✓ circles, ★ ratings, "× qty", cart-panel close ×.
   Email templates still contain a few emoji — pending client decision.
 
+- **2026-09-29** — Netlify free plan blocked push-triggered builds
+  ("Unrecognized Git contributor": commit author `writehenschel@gmail.com`
+  isn't a verified member of the Netlify team; free plan only builds private
+  repos from team members, and never org-owned private repos). **Repo made
+  public for the build phase** (full history scanned 2026-09-29: no secrets
+  ever committed). ⚠️ **Making it private again will block auto-deploys** —
+  then either align the Netlify owner with the commit author (personal-owned
+  repo only), upgrade to Pro, or deploy manually via Netlify CLI.
+
 ---
 
 ## Open Blockers
 
+- **Before re-privatising the GitHub repo**: pick a deploy path (see
+  2026-09-29 Netlify decision) or deploys silently stop.
 - Real Terms & Conditions and Privacy Policy copy needs client/legal
   sign-off before launch — dev can seed the admin editor with a generic
   draft in the meantime (see `docs/pages-referrals-footer.md` §3).
@@ -537,3 +548,6 @@ from `main`; Paystack in **test** mode).
   removed emoji/symbol decorations from the UI. Build/lint/tsc clean.
 - **2026-09-29** — Both step-8 migrations applied (order codes backfilled:
   existing order → `68P3H`). Pushed step 8 to `main` → Netlify deploy.
+- **2026-09-29** — Found Netlify blocking push builds (unrecognized Git
+  contributor); user made the repo public. Pushing to trigger the step-8
+  deploy.
