@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useState } from "react";
 import { SignInPanel } from "@/components/auth/sign-in-panel";
+import { CtaButton } from "@/components/ui/cta-button";
 import { useCartRefresh } from "@/components/cart/use-cart-refresh";
 import { cartSubtotal, useCart } from "@/lib/cart/store";
 import { amountToFreeDelivery, deliveryFeeFor } from "@/lib/delivery";
@@ -194,14 +195,9 @@ function CheckoutForm({
             Some dishes are sold out — <Link href="/cart" className="underline">edit your cart</Link> to continue.
           </p>
         )}
-        {/* LiquidButton styling lands in step 8a. */}
-        <button
-          type="submit"
-          disabled={pending || blocked}
-          className="w-full rounded-full bg-primary px-6 py-4 text-lg font-semibold text-secondary shadow-sm transition hover:brightness-95 disabled:opacity-60"
-        >
+        <CtaButton type="submit" size="lg" fullWidth disabled={pending || blocked}>
           {pending ? "Taking you to Paystack…" : `Pay ${formatNaira(total)}`}
-        </button>
+        </CtaButton>
         <p className="text-center text-xs text-neutral-dark/55">
           Secure payment by Paystack. By placing this order you agree to our{" "}
           <Link href="/terms" className="underline">Terms</Link> and{" "}

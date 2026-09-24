@@ -5,9 +5,11 @@ import { z } from "zod";
 import { BuyAgainButton } from "@/components/orders/buy-again-button";
 import { OrderLiveRefresh } from "@/components/orders/live-refresh";
 import { OrderTimeline } from "@/components/orders/order-timeline";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { getCurrentUser } from "@/lib/auth";
 import { formatNaira } from "@/lib/money";
 import { buildTimeline, openCancelDeadline, statusLabel } from "@/lib/orders/status";
+import { getSiteSettings } from "@/lib/site-settings";
 import { createClient } from "@/lib/supabase/server";
 import { CancelOrderButton } from "./cancel-order-button";
 
@@ -26,10 +28,11 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
   if (!user) redirect(`/login?next=${encodeURIComponent(`/orders/${orderId}`)}`);
 
   const supabase = await createClient();
-  const [{ data: order }, { data: items }, { data: history }] = await Promise.all([
+  const [{ data: order }, { data: items }, { data: history }, settings] = await Promise.all([
     supabase.from("orders").select("*").eq("id", orderId).maybeSingle(),
     supabase.from("order_items").select("*").eq("order_id", orderId),
     supabase.from("order_status_history").select("status, changed_at").eq("order_id", orderId).order("changed_at"),
+    getSiteSettings(),
   ]);
   if (!order) notFound();
 
@@ -111,6 +114,17 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
           {order.fulfillment === "pickup" ? "Pickup order" : `Delivering to: ${order.delivery_address}`}
         </p>
       </section>
+
+      {settings.whatsapp_number && (
+        <section className="flex flex-col items-start gap-3 rounded-3xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <p className="text-sm text-neutral-dark/70">Questions about this order?</p>
+          <WhatsAppButton
+            phone={settings.whatsapp_number}
+            label="Message us"
+            message={`Hi, I have a question about my order #${order.order_code}.`}
+          />
+        </section>
+      )}
 
       {/* Footer bar: back · order meta · Buy again (secondary button). */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl bg-white px-5 py-4 shadow-sm">

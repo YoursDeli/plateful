@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { getSiteSettings, themeCssVars } from "@/lib/site-settings";
+import StyledComponentsRegistry from "@/lib/styled-registry";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
@@ -22,7 +23,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <style>{themeCssVars(settings)}</style>
       </head>
-      <body className="flex min-h-full flex-col font-sans">{children}</body>
+      <body className="flex min-h-full flex-col font-sans">
+        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+      </body>
     </html>
   );
 }

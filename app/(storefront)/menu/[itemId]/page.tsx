@@ -5,8 +5,9 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { HeartButton } from "@/components/favorites/heart-button";
 import { PriceRow } from "@/components/menu/price-row";
-import { ProductPurchase, ShareDishButton } from "@/components/menu/product-purchase";
+import { ProductPurchase } from "@/components/menu/product-purchase";
 import { RatingRow } from "@/components/menu/rating-row";
+import { ShareButtonCluster } from "@/components/ui/share-button-cluster";
 import { getCategories, getMenuItem, getReviews } from "@/lib/menu";
 
 // All dish pages render on first visit, then stay cached until an admin edit
@@ -94,9 +95,9 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
             </p>
           )}
           <ProductPurchase item={item} />
-          <div className="flex flex-wrap gap-2 border-t border-secondary/10 pt-5">
+          <div className="flex flex-wrap items-center gap-3 border-t border-secondary/10 pt-5">
             <HeartButton menuItemId={item.id} name={item.name} variant="inline" />
-            <ShareDishButton name={item.name} />
+            <ShareButtonCluster text={item.name} label={`Share ${item.name}`} />
           </div>
         </div>
       </div>

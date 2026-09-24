@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireStaff } from "@/lib/auth";
 import { emptyToNull, formValues, type FormState } from "@/lib/form-state";
+import { toWhatsAppNumber } from "@/lib/phone";
 import { storagePathFromUrl } from "@/lib/storage/images";
 import { removeStoredImage } from "@/lib/storage/remove";
 import { createClient } from "@/lib/supabase/server";
@@ -129,5 +130,28 @@ export async function saveNotifications(_prev: FormState, formData: FormData): P
     console.error("saveNotifications failed:", error.code, error.message);
     return { error: "Couldn't save notification settings.", values: formValues(formData, ["order_notification_email"]) };
   }
+  return { ok: true };
+}
+
+// Restaurant WhatsApp number for "Message us on WhatsApp". Blank = hidden.
+export async function saveContact(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireStaff("/admin/settings");
+
+  const raw = emptyToNull(formData.get("whatsapp_number"));
+  const whatsapp_number = raw === null ? null : toWhatsAppNumber(raw);
+  if (raw !== null && whatsapp_number === null) {
+    return {
+      fieldErrors: { whatsapp_number: ["Enter a valid number, e.g. 0803 123 4567 or +234 803 123 4567"] },
+      values: formValues(formData, ["whatsapp_number"]),
+    };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("site_settings").update({ whatsapp_number }).eq("id", 1);
+  if (error) {
+    console.error("saveContact failed:", error.code, error.message);
+    return { error: "Couldn't save contact settings.", values: formValues(formData, ["whatsapp_number"]) };
+  }
+  revalidatePath("/", "layout");
   return { ok: true };
 }

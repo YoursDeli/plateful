@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { UploadButton } from "@/components/ui/upload-button";
 import { createClient } from "@/lib/supabase/client";
 import {
   ALLOWED_IMAGE_TYPES,
@@ -16,10 +17,8 @@ type Status = "idle" | "uploading" | "done" | "error";
 // Uploads straight from the browser to Supabase Storage as the signed-in
 // user; the bucket's RLS policies only accept staff uploads into allowed
 // folders, and the bucket itself enforces size/type. Uses XHR instead of
-// supabase.storage.upload() because only XHR reports upload progress.
-// The animated UploadButton (docs/ui-components-and-styling.md §3) replaces
-// the plain button in step 8a and should hook into this same
-// idle → uploading → done lifecycle.
+// supabase.storage.upload() because only XHR reports upload progress, which
+// drives the animated UploadButton's border (idle → uploading → done).
 export function ImageUploadField({
   name,
   folder,
@@ -81,6 +80,8 @@ export function ImageUploadField({
       if (xhr.status >= 200 && xhr.status < 300) {
         setUrl(publicImageUrl(path));
         setStatus("done");
+        // Show the checkmark briefly, then settle back to "Replace …".
+        setTimeout(() => setStatus((s) => (s === "done" ? "idle" : s)), 2500);
         return;
       }
       let message = "Upload failed.";
@@ -127,14 +128,13 @@ export function ImageUploadField({
               e.target.value = "";
             }}
           />
-          <button
-            type="button"
-            disabled={status === "uploading"}
+          <UploadButton
+            status={status}
+            progress={progress}
+            hasFile={Boolean(url)}
+            noun={label.toLowerCase()}
             onClick={() => inputRef.current?.click()}
-            className="rounded-full border border-secondary px-4 py-1.5 text-sm font-medium text-secondary disabled:opacity-60"
-          >
-            {status === "uploading" ? `Uploading… ${progress}%` : url ? "Replace" : "Upload"}
-          </button>
+          />
           {url && status !== "uploading" && (
             <button
               type="button"

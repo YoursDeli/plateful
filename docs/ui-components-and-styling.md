@@ -109,6 +109,20 @@ currently hardcodes an unrelated color.
 | **`LiquidButton`** ("Button 1") | Liquid-blur press effect, currently labeled "Liquid" | Primary checkout CTA ("Pay with Paystack") or "Add to Cart" — the animated press feedback fits a single, high-emphasis action | Relabel the text per instance; recolor `loader-bg`/drop fills to Velvet (dark) with Lavender text, or keep black/white and reserve Lavender/Velvet for simpler buttons — designer's call, but don't ship it still saying "Liquid" |
 | **`UploadButton`** ("Button 4") | SVG stroke-progress border + checkmark completion animation, labeled "Upload" | Admin: menu-item photo upload, branding logo upload (`site_settings.logo_url`) — the progress-border + done-checkmark sequence maps well onto an actual file upload's pending → success states | Wire `:focus`-triggered CSS animation to real upload state (`useState` for `idle | uploading | done`) instead of relying on the `:focus` pseudo-class, so it reflects the actual network request rather than just click focus |
 
+**As built (2026-09-29, step 8a)** — originals saved verbatim in
+`docs/ui-snippets/`. Only three snippets existed; the mapping was agreed with
+the client:
+
+| Component (`/components/ui/`) | From | Where it's used | Adaptations |
+|---|---|---|---|
+| `WhatsAppButton` | `button-1.jsx` (neumorphic, teal liquid rise) | Order tracking page — "Message us" (hidden until `site_settings.whatsapp_number` is set in /admin/settings → Contact) | WhatsApp icon + label, rendered as a `wa.me` link with a pre-filled message quoting the order code; teal kept |
+| `CtaButton` (the doc's "LiquidButton" role) | `button-2.jsx` (centre fill, press-in) | Add to cart (cards, hero "Order now", dish page), Pay at checkout | Lavender face / Velvet fill via CSS vars (admin colours apply), press scale 80% → 94%, disabled + focus styles |
+| `ShareButtonCluster` | `share-cluster.jsx` (csozi) | Dish page ("Share {dish}") | Trimmed to WhatsApp, X, Facebook, Copy link; half-circle fan to the right; no padding growth; tap/keyboard/Esc support |
+| `UploadButton` | *No snippet* — built from the description | Admin photo/logo uploads | Border drawn by real XHR upload progress, checkmark on success, "Try again" on error |
+
+The order page doesn't get a share cluster: order pages are private (RLS),
+so a shared link would 404 for anyone else.
+
 **General note on all four:** they were supplied as generic/example
 components (unrelated placeholder colors, hardcoded English text). Before
 using "anywhere needed" site-wide, each instance should get: (a) its label

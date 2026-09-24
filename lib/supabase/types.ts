@@ -68,6 +68,7 @@ export type SiteSettings = {
   delivery_fee: number;
   free_delivery_threshold: number | null;
   order_notification_email: string | null;
+  whatsapp_number: string | null;
   updated_at: string;
 };
 
@@ -177,6 +178,7 @@ export type Database = {
             | "delivery_fee"
             | "free_delivery_threshold"
             | "order_notification_email"
+            | "whatsapp_number"
           >
         >
       >;

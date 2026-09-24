@@ -1,5 +1,6 @@
 "use client";
 
+import { CtaButton } from "@/components/ui/cta-button";
 import { useCart } from "@/lib/cart/store";
 import type { MenuItem } from "@/lib/supabase/types";
 import { QuantityStepper } from "./quantity-stepper";
@@ -16,8 +17,7 @@ function toCartItem(item: CartableItem) {
 }
 
 // "Add to cart" that becomes a quantity stepper once the dish is in the cart
-// (docs/site-sections-and-features.md §2). Plain button for now — the
-// LiquidButton styling lands in step 8a.
+// (docs/site-sections-and-features.md §2). Uses the animated CtaButton.
 export function AddToCartControl({
   item,
   size = "md",
@@ -53,15 +53,9 @@ export function AddToCartControl({
   }
 
   return (
-    <button
-      type="button"
-      onClick={() => add(toCartItem(item))}
-      className={`rounded-full bg-primary font-semibold text-secondary transition hover:brightness-95 active:scale-[0.97] motion-reduce:transition-none ${
-        size === "sm" ? "px-4 py-2 text-sm" : "px-6 py-2.5 text-base"
-      }`}
-    >
+    <CtaButton size={size} onClick={() => add(toCartItem(item))}>
       {label}
-    </button>
+    </CtaButton>
   );
 }
 
@@ -70,16 +64,18 @@ export function AddQuantityButton({ item, quantity }: { item: CartableItem; quan
   const add = useCart((s) => s.add);
   const open = useCart((s) => s.open);
   return (
-    <button
-      type="button"
-      disabled={!item.is_available}
-      onClick={() => {
-        add(toCartItem(item), quantity);
-        open();
-      }}
-      className="flex-1 rounded-full bg-primary px-6 py-3 text-base font-semibold text-secondary transition hover:brightness-95 active:scale-[0.98] disabled:opacity-50 motion-reduce:transition-none"
-    >
-      {item.is_available ? "Add to cart" : "Sold out today"}
-    </button>
+    <div className="flex-1">
+      <CtaButton
+        size="lg"
+        fullWidth
+        disabled={!item.is_available}
+        onClick={() => {
+          add(toCartItem(item), quantity);
+          open();
+        }}
+      >
+        {item.is_available ? "Add to cart" : "Sold out today"}
+      </CtaButton>
+    </div>
   );
 }

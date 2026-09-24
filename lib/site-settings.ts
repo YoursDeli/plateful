@@ -14,6 +14,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   delivery_fee: 1500,
   free_delivery_threshold: 15000,
   order_notification_email: null,
+  whatsapp_number: null,
   updated_at: new Date(0).toISOString(),
 };
 

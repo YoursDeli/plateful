@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   // A stray package-lock.json in the user's home dir otherwise makes Turbopack
   // infer the wrong workspace root.
   turbopack: { root: __dirname },
+  // SSR-safe class names for the styled-components buttons in /components/ui.
+  compiler: { styledComponents: true },
   images: {
     remotePatterns: supabaseHost
       ? [

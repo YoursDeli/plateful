@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-28
-Current phase: **Steps 0–7 verified live. Step 8 deployed (migrations applied); awaiting user verification on the live site.**
+Current phase: **Steps 0–7 verified live; step 8 live + partly verified; step 8a (animated buttons) built, awaiting verification.**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -77,15 +77,15 @@ from `main`; Paystack in **test** mode).
 - [ ] Status update emails (phase 2, optional for MVP) — *skipped for now (optional per docs)*
 
 ### 8. Order tracking + admin order management
-- [ ] `/orders/[orderId]` status timeline (per `docs/ui-components-and-styling.md` §1) — *built 2026-09-29; migrations applied, awaiting user verification on live* (live via Realtime, pickup wording, cancelled state, Buy again, quiet Cancel button)
-- [ ] Admin orders view (realtime subscription) — *built 2026-09-29; migrations applied, awaiting user verification on live* (Active/Completed/Cancelled/Unpaid tabs, next-step buttons, cancel, refund tracking, new-order + customer-cancel banners)
+- [ ] `/orders/[orderId]` status timeline (per `docs/ui-components-and-styling.md` §1) — *live; delivery path verified 2026-09-29 (#68P3H → delivered). Pickup wording, customer cancel, Buy again not yet exercised*
+- [ ] Admin orders view (realtime subscription) — *live; staff transitions verified 2026-09-29 (#68P3H paid → … → delivered). New-order banner, customer-cancel banner, refund tracking not yet exercised (needs a new order)*
 
 ### 8a. UI component library
-- [ ] `styled-components` added, scoped to `/components/ui/`
-- [ ] `WhatsAppButton` (order support contact)
-- [ ] `ShareButtonCluster` (trimmed to relevant platforms)
-- [ ] `LiquidButton` (primary CTA — Pay/Add to Cart)
-- [ ] `UploadButton` (admin image uploads via Supabase Storage, wired to `ImageUploadField`'s real upload state)
+- [ ] `styled-components` added, scoped to `/components/ui/` — *built 2026-09-29, awaiting user verification* (v6 + SSR registry `lib/styled-registry.tsx`, `compiler.styledComponents`; server-rendered styles verified)
+- [ ] `WhatsAppButton` (order support contact) — *built 2026-09-29, awaiting user verification* (from button-1; needs whatsapp_number migration + number in admin)
+- [ ] `ShareButtonCluster` (trimmed to relevant platforms) — *built 2026-09-29, awaiting user verification* (WhatsApp, X, Facebook, Copy link on dish pages)
+- [ ] `LiquidButton` (primary CTA — Pay/Add to Cart) — *built 2026-09-29, awaiting user verification* (implemented as `CtaButton` from button-2)
+- [ ] `UploadButton` (admin image uploads via Supabase Storage, wired to real upload state) — *built 2026-09-29, awaiting user verification* (no snippet supplied; built from description)
 
 ### 9. Referral program
 - [ ] `referrals`, `referral_ledger` tables + RLS
@@ -435,10 +435,22 @@ from `main`; Paystack in **test** mode).
   then either align the Netlify owner with the commit author (personal-owned
   repo only), upgrade to Pro, or deploy manually via Netlify CLI.
 
+- **2026-09-29** — Step 8a: client supplied three snippets (saved verbatim
+  in `docs/ui-snippets/`). Agreed mapping: button-1 → `WhatsAppButton`,
+  button-2 → `CtaButton` (the "LiquidButton" CTA role), share-cluster →
+  `ShareButtonCluster` (WhatsApp, X, Facebook, Copy link); `UploadButton`
+  built from the description (no snippet). WhatsApp number is an admin
+  setting (`site_settings.whatsapp_number`, digits only; local 0803… input
+  normalised to 234…); button hidden until set. Dish page uses the share
+  cluster; order pages don't (private — links would 404 for others).
+  styled-components stays confined to `/components/ui/`.
+
 ---
 
 ## Open Blockers
 
+- **Set the WhatsApp number** (user): /admin/settings → Contact (migration
+  applied 2026-09-29; button hidden until a number is saved).
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
   2026-09-29 Netlify decision) or deploys silently stop.
 - Real Terms & Conditions and Privacy Policy copy needs client/legal
@@ -551,3 +563,13 @@ from `main`; Paystack in **test** mode).
 - **2026-09-29** — Found Netlify blocking push builds (unrecognized Git
   contributor); user made the repo public. Pushing to trigger the step-8
   deploy.
+- **2026-09-29** — Step 8 deployed; #68P3H walked through to delivered on
+  live (staff transitions + timeline OK). Step 8a started: original button
+  snippets missing from repo, user to paste them.
+- **2026-09-29** — Built step 8a: styled-components + SSR registry,
+  `CtaButton` (Add to cart / Order now / Pay), `WhatsAppButton` (order page,
+  admin-set number), `ShareButtonCluster` (dish page), `UploadButton` (admin
+  uploads, real progress), Contact settings + migration. Build/lint/tsc clean;
+  SSR styles + share targets verified locally.
+- **2026-09-29** — WhatsApp-number migration applied; pushed step 8a for live
+  testing.
