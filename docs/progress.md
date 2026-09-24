@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-28
-Current phase: **Steps 0–5 verified. Steps 6 + 7 built; one test order (after Brevo template setup) verifies both.**
+Current phase: **Build Order 0–7 done and verified live. Starting step 8 (order tracking + admin orders).**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -61,19 +61,19 @@ from `main`; Paystack in **test** mode).
 - [x] Admin route protection (role check) — *verified 2026-09-24: optimistic redirect in `proxy.ts`, role check in `/(admin)` layout + every page/server action + RLS*
 
 ### 6. Checkout + Paystack
-- [ ] Sign-in gate at checkout (account required — no guest checkout) — *built 2026-09-27; migration + test key in place, awaiting a real test order* (inline `SignInPanel`, cart kept)
-- [ ] Checkout form — *built 2026-09-27; migration + test key in place, awaiting a real test order* (delivery/pickup, contact pre-fill from profile, notes, save-details, live fee/free-delivery hint)
-- [ ] Server-side order creation with server-computed prices — *built 2026-09-27; migration + test key in place, awaiting a real test order* (`create_order()` security-definer fn, one transaction)
+- [x] Sign-in gate at checkout (account required — no guest checkout) — *verified live 2026-09-28 (order #1001)*
+- [x] Checkout form — *verified live 2026-09-28 (order #1001); pickup / free-delivery / retry paths not yet exercised*
+- [x] Server-side order creation with server-computed prices — *verified live 2026-09-28 (order #1001): subtotal = Σ line totals, ₦1,500 fee applied under threshold*
 - [ ] Referral bonus / loyalty points redemption applied server-side (combined, capped at ₦0) — *deferred to steps 9/10: plugs into `create_order()`*
-- [ ] Paystack initialize + redirect/inline (skip entirely when total is ₦0 from rewards) — *built 2026-09-27; migration + test key in place, awaiting a real test order* (redirect / hosted checkout; ₦0 skip lands with rewards)
-- [ ] Webhook handler + signature verification — *built; forged/missing signature → 401 verified. Real events need a public URL (Netlify deploy or tunnel)*
-- [ ] Return-URL verify fallback — *built 2026-09-27; migration + test key in place, awaiting a real test order* (`/checkout/verify`, retry payment for unpaid orders)
-- [ ] Idempotent "mark paid" logic — *built 2026-09-27; migration + test key in place, awaiting a real test order* (`mark_order_paid()` service-role only, row lock, amount check)
-- [ ] `order_status_history` table + writes on each status transition — *built: written on create + paid; admin transitions write it in step 8*
+- [x] Paystack initialize + redirect/inline — *verified live 2026-09-28 (order #1001) (hosted redirect, test card); ₦0 skip lands with rewards in steps 9/10*
+- [x] Webhook handler + signature verification — *verified live 2026-09-28 (order #1001): forged → 401; real `charge.success` confirmed in Netlify function logs by user*
+- [x] Return-URL verify fallback — *verified live 2026-09-28 (order #1001) (thank-you page, cart cleared)*
+- [x] Idempotent "mark paid" logic — *verified live 2026-09-28 (order #1001): single paid transition, one email pair*
+- [ ] `order_status_history` table + writes on each status transition — *create + paid verified live; admin transitions come with step 8*
 
 ### 7. Brevo transactional emails
-- [ ] Order confirmation (customer) — include loyalty points earned — *built 2026-09-28, awaiting email migration + Brevo template IDs + a test order* (points block hidden until step 10)
-- [ ] New order notification (vendor) — *built 2026-09-28, awaiting email migration + Brevo template IDs + a test order* (recipient: `/admin/settings` → Notifications, fallback `BREVO_SENDER_EMAIL`)
+- [x] Order confirmation (customer) — include loyalty points earned — *verified live 2026-09-28 (order #1001)* (points block hidden until step 10)
+- [x] New order notification (vendor) — *verified live 2026-09-28 (order #1001)*
 - [ ] Status update emails (phase 2, optional for MVP) — *skipped for now (optional per docs)*
 
 ### 8. Order tracking + admin order management
@@ -391,12 +391,6 @@ from `main`; Paystack in **test** mode).
 
 ## Open Blockers
 
-- **Test order not yet placed**: email migration + Brevo templates + IDs are
-  done (verified 2026-09-28), but the orders table is still empty. First test
-  order will be on the Netlify deploy (verifies steps 6 + 7 + webhook).
-- **Webhook needs a public URL**: Paystack can't reach localhost. Locally the
-  return-URL verify settles payments; set the Paystack test webhook URL to
-  `https://<netlify-site>/api/paystack/webhook` once deployed (or use a tunnel).
 - Real Terms & Conditions and Privacy Policy copy needs client/legal
   sign-off before launch — dev can seed the admin editor with a generic
   draft in the meantime (see `docs/pages-referrals-footer.md` §3).
@@ -489,3 +483,8 @@ from `main`; Paystack in **test** mode).
   /checkout/verify → /login, open-redirect blocked, webhook forged signature
   → 401 (GET → 405). Dashboards to point at the live URL: Netlify `SITE_URL`,
   Supabase Site URL + Redirect URLs, Paystack test webhook/callback (user).
+- **2026-09-28** — User pointed Netlify `SITE_URL`, Supabase URLs, Paystack
+  test webhook/callback at the live site and placed live order #1001: paid,
+  server-priced (₦3,400 + ₦1,500 delivery = ₦4,900), history
+  pending_payment → paid, receipt + restaurant alert both sent. Steps 6 + 7
+  ticked.
