@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-24
-Current phase: **Build Order 0–3 verified, step 4 built (migration applied). Starting step 5 (Auth).**
+Current phase: **Build Order 0–5 done and verified. Starting step 6 (Checkout + Paystack).**
 
 ---
 
@@ -49,11 +49,11 @@ Current phase: **Build Order 0–3 verified, step 4 built (migration applied). S
 - [x] Cart slide-over panel — *verified 2026-09-25 by user* (plus `/cart` fallback; Checkout disabled until step 6)
 
 ### 4. Favorites
-- [ ] Auth required — heart icon on cards, `/favorites` page — *built 2026-09-26; migration applied + anon access denied (verified). Signed-in UI checklist not yet explicitly confirmed by user* (hearts on cards + dish page, guest → sign-in → auto-save, home "Your favourites" row, header ♥ link)
+- [x] Auth required — heart icon on cards, `/favorites` page — *verified 2026-09-26 by user* (hearts on cards + dish page, guest → sign-in → auto-save, home "Your favourites" row, header ♥ link)
 
 ### 5. Auth
-- [x] Email OTP flow (request + verify) — *verified 2026-09-24 (minimal `/login`, 6-digit code via Brevo SMTP); Google, cart merge, styling polish still step 5*
-- [ ] Google OAuth flow
+- [x] Email OTP flow (request + verify) — *reusable `SignInPanel` (auto-submit at 6 digits), verified 2026-09-26 by user*
+- [x] Google OAuth flow — *verified 2026-09-26 by user* (`SignInPanel` + `/auth/callback` PKCE exchange, sanitised `next`; same-email accounts link automatically)
 - [x] Session middleware (`@supabase/ssr`) — *`proxy.ts` (Next 16 rename), verified 2026-09-24*
 - [x] Admin route protection (role check) — *verified 2026-09-24: optimistic redirect in `proxy.ts`, role check in `/(admin)` layout + every page/server action + RLS*
 
@@ -309,6 +309,28 @@ Current phase: **Build Order 0–3 verified, step 4 built (migration applied). S
   client-side so cached pages stay static. Header shows a ♥ link when signed
   in; long brand names truncate on narrow screens.
 
+- **2026-09-26** — Sign-in UI is a **reusable `SignInPanel`**
+  (`components/auth/`): Google button + email-code flow, `onSignedIn` callback
+  so step 6's checkout can embed it inline without navigating away. Code
+  input auto-submits at **6 digits** (assumes Supabase "Email OTP Length" = 6;
+  longer codes still work via the button). `/login` skips straight to `next`
+  when already signed in.
+- **2026-09-26** — Google OAuth uses Supabase's PKCE flow with a server
+  `/auth/callback` route; `next` goes through `safeNextPath` (open-redirect
+  attempt `//evil.com` verified collapsing to `/`). Every app origin used for
+  sign-in (localhost, LAN IP, later Netlify URL) must be in Supabase Auth →
+  URL Configuration → Redirect URLs.
+- **2026-09-26** — **Cart "merge on login" is a no-op by design**: the cart
+  lives in `localStorage` and survives sign-in unchanged; there's no
+  server-side cart in the data model to merge into.
+- **2026-09-26** — **Sign-out is this-device-only** (`scope: "local"`) and
+  runs in the browser so client state (header, hearts) updates instantly.
+  Header shows ♥ + account icon when signed in; Sign out moved to `/account`.
+- **2026-09-26** — **Minimal `/account` pulled into step 5**: edit name,
+  phone (lenient NG format check), default address — used to pre-fill
+  checkout (step 6) and for reviewer first names. Staff see a dashboard link.
+  Order history (step 8) and referrals (step 9) join later.
+
 ---
 
 ## Open Blockers
@@ -371,3 +393,10 @@ Current phase: **Build Order 0–3 verified, step 4 built (migration applied). S
   Favorites: migration, store + sync, HeartButton (cards, dish page),
   `/favorites`, home favourites row, header link. Build/lint/tsc clean;
   signed-out smoke test OK (redirect, hearts render). Migration not yet run.
+- **2026-09-26** — Committed/pushed step 4 (`f66f541`). Built step 5 Auth:
+  reusable `SignInPanel` (Google + email code), `/auth/callback`, redesigned
+  `/login`, minimal `/account` profile page, header account icon, local
+  client-side sign-out. Build/lint/tsc clean; smoke-tested (login render,
+  account redirect, callback error path, open-redirect blocked).
+- **2026-09-26** — User configured Google OAuth (Google Cloud client +
+  Supabase provider + redirect URLs) and verified steps 4 + 5 end-to-end.

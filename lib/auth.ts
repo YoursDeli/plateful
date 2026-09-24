@@ -5,14 +5,21 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/supabase/types";
 
 // Verified against the Supabase Auth server (getUser), not just the cookie.
-export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
+// Cached per request, so pages and layouts can both call it for free.
+export const getCurrentUser = cache(async () => {
   // Fail closed (treated as signed out) until .env.local has Supabase keys.
   if (!isSupabaseConfigured()) return null;
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  return user;
+});
+
+export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
+  const user = await getCurrentUser();
   if (!user) return null;
+  const supabase = await createClient();
 
   const { data: profile } = await supabase
     .from("profiles")
