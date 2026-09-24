@@ -34,6 +34,12 @@ const menuItemSchema = z
     price: money,
     compare_at_price: money.nullable(),
     badge: z.enum(["New", "Bestseller"]).nullable(),
+    featured_order: z
+      .string()
+      .regex(/^\d{1,2}$/, "Use a whole number from 1 to 99")
+      .transform(Number)
+      .pipe(z.number().int().min(1, "Use a whole number from 1 to 99").max(99))
+      .nullable(),
     category_id: z.uuid().nullable(),
     is_available: z.boolean(),
     image_url: z
@@ -55,6 +61,7 @@ const MENU_ITEM_FIELDS = [
   "price",
   "compare_at_price",
   "badge",
+  "featured_order",
   "category_id",
   "is_available",
   "image_url",
@@ -76,6 +83,7 @@ export async function saveMenuItem(_prev: FormState, formData: FormData): Promis
     price: String(formData.get("price") ?? ""),
     compare_at_price: emptyToNull(formData.get("compare_at_price")),
     badge: emptyToNull(formData.get("badge")),
+    featured_order: emptyToNull(formData.get("featured_order")),
     category_id: emptyToNull(formData.get("category_id")),
     is_available: formData.get("is_available") === "on",
     image_url: emptyToNull(formData.get("image_url")),

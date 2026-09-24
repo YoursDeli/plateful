@@ -90,7 +90,7 @@ BREVO_SENDER_EMAIL=
 
 ## 5. Core Data Model (starting point)
 
-- `menu_items` — id, name, description, price, category, image_url, is_available, created_at, compare_at_price (nullable, for discount display), badge (nullable, admin-set), avg_rating (cached), review_count (cached, default 0)
+- `menu_items` — id, name, description, price, category, image_url, is_available, created_at, compare_at_price (nullable, for discount display), badge (nullable, admin-set), avg_rating (cached), review_count (cached, default 0), featured_order (nullable; hero position, see `docs/hero-section-design.md` §3)
 - `categories` — id, name, sort_order
 - `favorites` — user_id, menu_item_id
 - `reviews` — id, menu_item_id, user_id, rating (1-5), comment (nullable), created_at — see `docs/menu-and-product-page.md` §3

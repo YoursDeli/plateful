@@ -40,8 +40,17 @@ export type MenuItem = {
   badge: Badge | null;
   avg_rating: number | null;
   review_count: number;
+  featured_order: number | null;
   created_at: string;
   updated_at: string;
+};
+
+export type PublicReview = {
+  id: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  reviewer_name: string;
 };
 
 export type SiteSettings = {
@@ -86,6 +95,7 @@ export type Database = {
               | "is_available"
               | "compare_at_price"
               | "badge"
+              | "featured_order"
             >
           >
       >;
@@ -105,6 +115,10 @@ export type Database = {
     Views: Record<string, never>;
     Functions: {
       is_staff: { Args: Record<string, never>; Returns: boolean };
+      menu_item_reviews: {
+        Args: { p_menu_item_id: string; p_limit?: number };
+        Returns: PublicReview[];
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

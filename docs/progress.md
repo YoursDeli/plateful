@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-24
-Current phase: **Build Order 0–1 done and verified. Starting step 2 (storefront).**
+Current phase: **Build Order 0–3 done and verified. Starting step 4 (Favorites).**
 
 ---
 
@@ -40,13 +40,13 @@ Current phase: **Build Order 0–1 done and verified. Starting step 2 (storefron
 - [x] Admin branding settings page (edit `site_settings`, logo upload via Supabase Storage) — *verified 2026-09-24*
 
 ### 2. Storefront: hero + menu browse + item detail
-- [ ] Hero section (flavor-swap pattern, `docs/hero-section-design.md`)
-- [ ] Menu page — rich cards with badge/rating/discount (`docs/menu-and-product-page.md` §1)
-- [ ] Item detail page — gallery, quantity, share, reviews (`docs/menu-and-product-page.md` §2)
+- [x] Hero section (flavor-swap pattern, `docs/hero-section-design.md`) — *verified 2026-09-25 by user* (admin "Hero position"; brand intro when none featured)
+- [x] Menu page — rich cards with badge/rating/discount (`docs/menu-and-product-page.md` §1) — *verified 2026-09-25 by user* (category chips + search, `?category=` deep links)
+- [x] Item detail page — gallery, quantity, share, reviews (`docs/menu-and-product-page.md` §2) — *verified 2026-09-25 by user* (reviews list renders once reviews exist)
 
 ### 3. Cart
-- [ ] Client-side cart (Zustand/Context) + `localStorage` persistence
-- [ ] Cart slide-over panel
+- [x] Client-side cart (Zustand/Context) + `localStorage` persistence — *verified 2026-09-25 by user* (cross-tab sync, live price/availability refresh)
+- [x] Cart slide-over panel — *verified 2026-09-25 by user* (plus `/cart` fallback; Checkout disabled until step 6)
 
 ### 4. Favorites
 - [ ] Auth required — heart icon on cards, `/favorites` page
@@ -264,6 +264,41 @@ Current phase: **Build Order 0–1 done and verified. Starting step 2 (storefron
   order emails; Brevo's "Authorised IPs" block will likely need disabling for
   that key since Netlify functions have no fixed IPs.
 
+- **2026-09-25** — **Steps 2 and 3 built together** (user's choice): the
+  storefront's Add-to-cart buttons need a real cart to be testable.
+- **2026-09-25** — Hero curation via **`menu_items.featured_order`**
+  (nullable 1–99, "Hero position" field in `/admin/menu`). Hero shows
+  available featured dishes in that order; home falls back to a brand intro
+  when none are featured. Home "Popular" row = available `Bestseller`-badged
+  dishes, else the first available dishes.
+- **2026-09-25** — **Menu cards on mobile are single-column horizontal cards**
+  (photo left, details right); 2/3/4-column grid from `sm`/`lg`/`xl`.
+  `menu-and-product-page.md` §1 said "2 cols mobile", but CLAUDE.md §6 +
+  `pages-referrals-footer.md` §6 (stacked mobile) take precedence.
+- **2026-09-25** — Public reviews are read through the
+  **`menu_item_reviews()` security-definer function**, exposing only the
+  reviewer's first name (profiles stay private under RLS).
+- **2026-09-25** — Storefront pages are **statically cached** (cookie-less
+  public client, `revalidate = 3600` safety net) and refreshed immediately by
+  admin edits (`revalidatePath("/", "layout")`). Dish pages render on first
+  visit (empty `generateStaticParams`). Header sign-in state is a client
+  component so pages stay static.
+- **2026-09-25** — Cart: **Zustand + `persist`** (`localStorage` key
+  `plateful-cart`, `skipHydration` + `<CartHydrator />` to avoid hydration
+  mismatch, cross-tab `storage` sync). Opening the cart re-checks live
+  prices/availability and flags changed / sold-out / removed dishes
+  (display only — checkout re-prices server-side). Max 50 per line. Delivery
+  fee shown as "applied at checkout" (fee structure still an open business
+  item). Slide-over uses native `<dialog>` for focus-trap/Esc.
+- **2026-09-25** — Left out on purpose for now: dietary tags and item
+  customizations (no data model; add only if the client needs them), multi-
+  photo gallery, favorites heart (step 4). WhatsApp share and all buttons are
+  plain Tailwind until the styled components land in step 8a.
+
+- **2026-09-25** — Brand name is now **"Deliciously Yours"** (set in
+  `site_settings` by the user). Auth email templates in `supabase/templates/`
+  synced to that name to match the Supabase dashboard.
+
 ---
 
 ## Open Blockers
@@ -313,3 +348,12 @@ Current phase: **Build Order 0–1 done and verified. Starting step 2 (storefron
 - **2026-09-24** — User verified Build Order 0–1 end-to-end (admin sign-in,
   menu + category CRUD, photo/logo uploads, branding colors, validation).
   Storage migration applied. Steps 0, 1, 12 (bar chef photo) ticked.
+- **2026-09-25** — Built steps 2 + 3: storefront layout/header, hero,
+  home categories + popular row, menu browser (filter/search), dish page
+  (quantity, WhatsApp share, reviews), Zustand cart + slide-over + `/cart`;
+  `featured_order` + `menu_item_reviews()` migration; admin Hero position
+  field. Build/lint/tsc clean; smoke-tested pages against live DB (menu
+  currently has no dishes, so cards/hero/cart await user verification).
+- **2026-09-25** — User ran the storefront migration and verified steps 2 + 3
+  (hero, menu, dish page, cart incl. price/availability refresh). Updated
+  Supabase email templates to "Deliciously Yours"; repo copies synced.

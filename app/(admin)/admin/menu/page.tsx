@@ -88,6 +88,11 @@ function MenuItemRow({ item }: { item: MenuItem }) {
                 {item.badge}
               </span>
             )}
+            {item.featured_order !== null && (
+              <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-white">
+                Hero #{item.featured_order}
+              </span>
+            )}
             {!item.is_available && (
               <span className="rounded-full bg-neutral-dark/10 px-2 py-0.5 text-xs">Unavailable</span>
             )}

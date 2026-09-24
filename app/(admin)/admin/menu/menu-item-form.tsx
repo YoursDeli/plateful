@@ -92,6 +92,23 @@ export function MenuItemForm({
         </Field>
       </div>
 
+      <Field
+        label="Hero position"
+        error={errors.featured_order}
+        hint="Optional. 1 = first dish in the home page hero. Leave blank to keep it out of the hero."
+      >
+        <input
+          name="featured_order"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={99}
+          step={1}
+          defaultValue={initial("featured_order", item?.featured_order)}
+          className={`${inputClass} sm:max-w-40`}
+        />
+      </Field>
+
       <ImageUploadField
         name="image_url"
         folder="menu-items"

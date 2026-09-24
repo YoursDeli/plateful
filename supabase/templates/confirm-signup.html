@@ -1,6 +1,6 @@
 <!--
   Supabase Auth → Emails → Templates → "Confirm signup"  (first sign-in)
-  Subject: Welcome to Plateful — your sign-in code
+  Subject: Welcome to Deliciously Yours — your sign-in code
 
   Email-client safe: inline styles + tables only (Gmail strips <style>,
   Outlook needs tables). Colors = site_settings defaults (Lavender #D3C5F6,
@@ -14,12 +14,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light only">
   <meta name="supported-color-schemes" content="light">
-  <title>Your Plateful sign-in code</title>
+  <title>Your Deliciously Yours sign-in code</title>
 </head>
 <body style="margin:0; padding:0; background-color:#FBF8F3;">
   <!-- Inbox preview text -->
   <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">
-    Your code is {{ .Token }} — enter it to finish signing in to Plateful.
+    Your code is {{ .Token }} — enter it to finish signing in to Deliciously Yours.
   </div>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FBF8F3" style="background-color:#FBF8F3;">
@@ -32,7 +32,7 @@
           <tr>
             <td bgcolor="#3B2A60" align="center" style="background-color:#3B2A60; padding:36px 24px 30px;">
               <div style="font-family:Georgia, 'Times New Roman', serif; font-size:30px; line-height:36px; font-weight:bold; color:#D3C5F6; letter-spacing:0.5px;">
-                Plateful
+                Deliciously Yours
               </div>
               <div style="font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#D3C5F6; opacity:0.8; letter-spacing:3px; text-transform:uppercase; padding-top:6px;">
                 Good food, made with care
@@ -97,7 +97,7 @@
                 Didn't try to sign in? You can safely ignore this email.
               </p>
               <p style="margin:0; font-size:12px; line-height:18px; color:#8A829C;">
-                <a href="{{ .SiteURL }}" style="color:#3B2A60; font-weight:bold; text-decoration:none;">Plateful</a>
+                <a href="{{ .SiteURL }}" style="color:#3B2A60; font-weight:bold; text-decoration:none;">Deliciously Yours</a>
                 &nbsp;·&nbsp; Sent to {{ .Email }}
               </p>
             </td>
