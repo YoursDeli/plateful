@@ -53,6 +53,12 @@ export type PublicReview = {
   reviewer_name: string;
 };
 
+export type Favorite = {
+  user_id: string;
+  menu_item_id: string;
+  created_at: string;
+};
+
 export type SiteSettings = {
   id: number;
   brand_name: string;
@@ -105,6 +111,11 @@ export type Database = {
         Partial<
           Pick<SiteSettings, "brand_name" | "logo_url" | "primary_color" | "accent_color">
         >
+      >;
+      favorites: Table<
+        Favorite,
+        Pick<Favorite, "user_id" | "menu_item_id">,
+        never
       >;
       reviews: Table<
         Review,

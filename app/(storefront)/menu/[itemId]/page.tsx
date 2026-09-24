@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
+import { HeartButton } from "@/components/favorites/heart-button";
 import { PriceRow } from "@/components/menu/price-row";
 import { ProductPurchase, ShareDishButton } from "@/components/menu/product-purchase";
 import { RatingRow } from "@/components/menu/rating-row";
@@ -93,7 +94,8 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
             </p>
           )}
           <ProductPurchase item={item} />
-          <div className="border-t border-secondary/10 pt-5">
+          <div className="flex flex-wrap gap-2 border-t border-secondary/10 pt-5">
+            <HeartButton menuItemId={item.id} name={item.name} variant="inline" />
             <ShareDishButton name={item.name} />
           </div>
         </div>

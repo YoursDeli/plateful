@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AddToCartControl } from "@/components/cart/add-to-cart-control";
+import { HeartButton } from "@/components/favorites/heart-button";
 import type { MenuItem } from "@/lib/supabase/types";
 import { PriceRow } from "./price-row";
 import { RatingRow } from "./rating-row";
@@ -38,6 +39,10 @@ export function MenuItemCard({
             {item.badge}
           </span>
         )}
+        {/* z-10 lifts it above the card's stretched link. */}
+        <div className="absolute top-2 right-2 z-10">
+          <HeartButton menuItemId={item.id} name={item.name} />
+        </div>
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5 sm:p-4">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HomeFavoritesRow } from "@/components/favorites/favorites-grid";
 import { HeroSection } from "@/components/hero/hero-section";
 import { MenuItemCard } from "@/components/menu/menu-item-card";
 import { getCategories, getFeaturedItems, getMenuItems, getPopularItems } from "@/lib/menu";
@@ -82,6 +83,9 @@ export default async function HomePage() {
             </ul>
           </section>
         )}
+
+        {/* Signed-in visitors with saved dishes only (filled client-side). */}
+        <HomeFavoritesRow items={allItems} categories={categories} />
       </div>
     </main>
   );

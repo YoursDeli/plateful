@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-24
-Current phase: **Build Order 0–3 done and verified. Starting step 4 (Favorites).**
+Current phase: **Build Order 0–3 verified, step 4 built (migration applied). Starting step 5 (Auth).**
 
 ---
 
@@ -49,7 +49,7 @@ Current phase: **Build Order 0–3 done and verified. Starting step 4 (Favorites
 - [x] Cart slide-over panel — *verified 2026-09-25 by user* (plus `/cart` fallback; Checkout disabled until step 6)
 
 ### 4. Favorites
-- [ ] Auth required — heart icon on cards, `/favorites` page
+- [ ] Auth required — heart icon on cards, `/favorites` page — *built 2026-09-26; migration applied + anon access denied (verified). Signed-in UI checklist not yet explicitly confirmed by user* (hearts on cards + dish page, guest → sign-in → auto-save, home "Your favourites" row, header ♥ link)
 
 ### 5. Auth
 - [x] Email OTP flow (request + verify) — *verified 2026-09-24 (minimal `/login`, 6-digit code via Brevo SMTP); Google, cart merge, styling polish still step 5*
@@ -299,6 +299,16 @@ Current phase: **Build Order 0–3 done and verified. Starting step 4 (Favorites
   `site_settings` by the user). Auth email templates in `supabase/templates/`
   synced to that name to match the Supabase dashboard.
 
+- **2026-09-26** — Favorites: `favorites` table (PK `user_id, menu_item_id`,
+  cascades on user/dish delete), RLS own-rows-only select/insert/delete, no
+  update grant. Client Zustand store (not persisted) synced to auth via
+  `onAuthStateChange`; optimistic toggle with rollback. **A guest tapping ♥ is
+  sent to `/login?next=<page>` and the dish is auto-saved after sign-in**
+  (pending id in `sessionStorage`). `/favorites` is server-rendered per
+  request (session + RLS); the home "Your favourites" row and all hearts are
+  client-side so cached pages stay static. Header shows a ♥ link when signed
+  in; long brand names truncate on narrow screens.
+
 ---
 
 ## Open Blockers
@@ -357,3 +367,7 @@ Current phase: **Build Order 0–3 done and verified. Starting step 4 (Favorites
 - **2026-09-25** — User ran the storefront migration and verified steps 2 + 3
   (hero, menu, dish page, cart incl. price/availability refresh). Updated
   Supabase email templates to "Deliciously Yours"; repo copies synced.
+- **2026-09-26** — Committed/pushed steps 2–3 (`b969329`). Built step 4
+  Favorites: migration, store + sync, HeartButton (cards, dish page),
+  `/favorites`, home favourites row, header link. Build/lint/tsc clean;
+  signed-out smoke test OK (redirect, hearts render). Migration not yet run.
