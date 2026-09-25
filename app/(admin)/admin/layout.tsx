@@ -17,6 +17,7 @@ const NAV: NavItem[] = [
   { href: "/admin", label: "Overview", icon: "staff", exact: true },
   { href: "/admin/orders", label: "Orders", icon: "orders" },
   { href: "/admin/menu", label: "Food Menu", icon: "menu" },
+  { href: "/admin/reviews", label: "Reviews", icon: "reviews" },
   { href: "/admin/pages", label: "Pages", icon: "pages" },
   { href: "/admin/settings", label: "Settings", icon: "settings" },
 ];

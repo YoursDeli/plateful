@@ -38,7 +38,8 @@ from `main`; Paystack in **test** mode).
 ### 1. Menu data model + admin CRUD
 - [x] `menu_items`, `categories`, `site_settings`, `profiles`, `reviews` tables + RLS policies — *verified 2026-09-24: anon probes + staff CRUD* (`supabase/migrations/20260923000000_core_schema.sql`)
 - [x] `handle_new_user` trigger (creates `profiles` row on signup) — *verified 2026-09-24*
-- [ ] Review-aggregate trigger (keeps `menu_items.avg_rating`/`review_count` in sync) — *built; untestable until a review insert flow exists (policy decision still open)*
+- [ ] Review-aggregate trigger (keeps `menu_items.avg_rating`/`review_count` in sync) — *rewritten 2026-09-25 (visible reviews only, recomputes on edits/hide) in `20261005000000_reviews.sql` — awaiting migration + live check*
+- [ ] Review writing (buyers only) + admin Reviews (hide/show) — *built 2026-09-25 — awaiting migration + live check*
 - [x] Admin menu CRUD UI (`/admin/menu`) — including `compare_at_price`, `badge`, photo upload (Supabase Storage) — *verified 2026-09-24* (items + categories add/rename/reorder/delete, availability toggle, validation keeps typed values)
 - [x] Admin branding settings page (edit `site_settings`, logo upload via Supabase Storage) — *verified 2026-09-24*
 
@@ -530,6 +531,17 @@ from `main`; Paystack in **test** mode).
   `text-neutral-dark/65` (≈5:1 on cream); lighter greys only for decorative
   or disabled content. Public `reviews` table read stays open by design
   (only ids/ratings/comments; names come via `menu_item_reviews()`).
+- **2026-09-25** — **Reviews (open decision closed, client):** only real
+  buyers review — the customer must have an order containing the dish that
+  reached `delivered`. Reviews show immediately; staff can hide any in
+  **Admin → Reviews** (hidden = off the site and out of the star average).
+  One review per customer per dish; re-submitting edits it. All writes via
+  `submit_review()` / `set_review_hidden()` (security definer); customers
+  still have no direct write rights on `reviews`. Dish page always shows a
+  Reviews section ("No reviews yet" when empty); menu cards still show
+  stars only once a dish has reviews. Delivered order pages show a "How was
+  your food?" card linking to each dish's review form. Dish page:
+  description moved below the cart/save/share buttons (client).
 
 ---
 
@@ -543,6 +555,7 @@ from `main`; Paystack in **test** mode).
   today's radius + side-nav changes.
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
   2026-09-29 Netlify decision) or deploys silently stop.
+- **Run migration `20261005000000_reviews.sql`** (user) — reviews are not pushed until it's applied.
 - Terms & Conditions and Privacy Policy are seeded as **drafts** — need
   client/legal sign-off, then untick "Draft" in Admin → Pages.
 - **TS types are hand-written** (`lib/supabase/types.ts`) since the Supabase CLI
@@ -693,3 +706,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — About title split: small "Meet Chef" line over the chef's name in large type (client). Pushed live.
 - **2026-09-25** — Menu cards: photo on top, details below on mobile too (client; was photo-left). Pushed live.
 - **2026-09-25** — Step 13 polish: 404/error/loading screens, page fade-in, focus ring + skip links, contrast raise, security headers/CSP, RLS probe (all refused). Build/lint/tsc clean; pushed live.
+- **2026-09-25** — Built reviews (buyers only, instant, staff hide) + dish page description moved below buttons. Build/lint/tsc clean. Not pushed until migration runs.

@@ -195,6 +195,26 @@ export type Review = {
   user_id: string;
   rating: number;
   comment: string | null;
+  is_hidden: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MyReviewStatus = {
+  can_review: boolean;
+  rating: number | null;
+  comment: string | null;
+  is_hidden: boolean | null;
+};
+
+export type AdminReview = {
+  id: string;
+  menu_item_id: string;
+  dish_name: string;
+  reviewer_name: string;
+  rating: number;
+  comment: string | null;
+  is_hidden: boolean;
   created_at: string;
 };
 
@@ -282,6 +302,13 @@ export type Database = {
         Args: { p_menu_item_id: string; p_limit?: number };
         Returns: PublicReview[];
       };
+      my_review_status: { Args: { p_menu_item_id: string }; Returns: MyReviewStatus[] };
+      submit_review: {
+        Args: { p_menu_item_id: string; p_rating: number; p_comment?: string | null };
+        Returns: undefined;
+      };
+      admin_reviews: { Args: { p_limit?: number }; Returns: AdminReview[] };
+      set_review_hidden: { Args: { p_review_id: string; p_hidden: boolean }; Returns: string | null };
       create_order: {
         Args: {
           p_items: { menu_item_id: string; quantity: number }[];

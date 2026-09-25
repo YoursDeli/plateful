@@ -7,6 +7,7 @@ import { HeartButton } from "@/components/favorites/heart-button";
 import { PriceRow } from "@/components/menu/price-row";
 import { ProductPurchase } from "@/components/menu/product-purchase";
 import { RatingRow } from "@/components/menu/rating-row";
+import { ReviewPrompt } from "@/components/reviews/review-prompt";
 import { ShareButtonCluster } from "@/components/ui/share-button-cluster";
 import { getCategories, getMenuItem, getReviews } from "@/lib/menu";
 
@@ -84,11 +85,6 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
             <RatingRow rating={item.avg_rating} count={item.review_count} />
           </div>
           <PriceRow item={item} size="lg" />
-          {item.description && (
-            <p className="text-base leading-relaxed whitespace-pre-line text-neutral-dark/80">
-              {item.description}
-            </p>
-          )}
           {!item.is_available && (
             <p className="rounded-xl bg-neutral-dark/5 px-4 py-3 text-sm text-neutral-dark/70">
               This dish is sold out for today — check back soon.
@@ -99,14 +95,30 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
             <HeartButton menuItemId={item.id} name={item.name} variant="inline" />
             <ShareButtonCluster text={item.name} label={`Share ${item.name}`} />
           </div>
+          {/* Description last, after the buttons (client). */}
+          {item.description && (
+            <div className="flex flex-col gap-2">
+              <h2 className="text-sm font-semibold tracking-wider text-secondary uppercase">About this dish</h2>
+              <p className="text-base leading-relaxed whitespace-pre-line text-neutral-dark/80">{item.description}</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {reviews.length > 0 && (
-        <section aria-labelledby="reviews-heading" className="flex flex-col gap-4">
+      {/* Always shown (client): "No reviews yet" until the first one lands. */}
+      <section id="reviews" aria-labelledby="reviews-heading" className="flex scroll-mt-24 flex-col gap-4">
+        <div className="flex flex-col gap-1">
           <h2 id="reviews-heading" className="font-display text-2xl font-semibold text-secondary">
-            What people are saying
+            Reviews
           </h2>
+          {reviews.length > 0 ? (
+            <RatingRow rating={item.avg_rating} count={item.review_count} />
+          ) : (
+            <p className="text-sm text-neutral-dark/70">No reviews yet.</p>
+          )}
+        </div>
+        <ReviewPrompt menuItemId={item.id} dishName={item.name} />
+        {reviews.length > 0 && (
           <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {reviews.map((r) => (
               <li key={r.id} className="flex flex-col gap-2 rounded-2xl bg-white card-accent p-4 shadow-sm">
@@ -125,12 +137,12 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
                     <span aria-hidden="true" className="text-neutral-dark/20">{"★".repeat(5 - r.rating)}</span>
                   </span>
                 </div>
-                {r.comment && <p className="text-sm text-neutral-dark/80">{r.comment}</p>}
+                {r.comment && <p className="text-sm whitespace-pre-line text-neutral-dark/80">{r.comment}</p>}
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        )}
+      </section>
     </main>
   );
 }

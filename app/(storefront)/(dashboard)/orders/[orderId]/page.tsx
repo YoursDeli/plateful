@@ -45,6 +45,12 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
   const cancelled = order.status === "cancelled" || order.status === "failed";
   const steps = buildTimeline(order.status, order.fulfillment, history ?? []);
   const deadline = order.status === "paid" ? openCancelDeadline(order.paid_at) : null;
+  // Dishes still on the menu, once each, for the "How was your food?" card.
+  const reviewable = [
+    ...new Map(
+      (items ?? []).flatMap((i) => (i.menu_item_id ? [[i.menu_item_id, { id: i.menu_item_id, name: i.name }] as const] : [])),
+    ).values(),
+  ];
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-8 sm:py-12">
@@ -132,6 +138,26 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
           </p>
         )}
       </section>
+
+      {order.status === "delivered" && reviewable.length > 0 && (
+        <section className="flex flex-col gap-3 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-6">
+          <h2 className="font-display text-xl font-semibold text-secondary">How was your food?</h2>
+          <p className="text-sm text-neutral-dark/70">Your review helps other customers choose.</p>
+          <ul className="flex flex-col divide-y divide-secondary/10">
+            {reviewable.map((dish) => (
+              <li key={dish.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
+                <span className="min-w-0">{dish.name}</span>
+                <Link
+                  href={`/menu/${dish.id}#reviews`}
+                  className="shrink-0 rounded-btn border border-secondary/25 px-3 py-1.5 font-medium text-secondary hover:bg-primary/30"
+                >
+                  Rate this dish
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {settings.whatsapp_number && (
         <section className="flex flex-col items-start gap-3 rounded-3xl bg-white card-accent p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
