@@ -5,6 +5,9 @@ import { requireStaff } from "@/lib/auth";
 import { getSiteSettings } from "@/lib/site-settings";
 import { signOut } from "./actions";
 
+const skipLink =
+  "sr-only rounded-btn bg-secondary px-4 py-2 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100]";
+
 export const metadata: Metadata = {
   title: { default: "Admin", template: "%s · Admin" },
   robots: { index: false, follow: false },
@@ -33,6 +36,9 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 
   return (
     <div className="flex min-h-full flex-1 flex-col lg:flex-row">
+      <a href="#main" className={skipLink}>
+        Skip to content
+      </a>
       <SideNav
         variant="admin"
         heading={brand}
@@ -52,7 +58,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           </form>
         }
       />
-      <main className="w-full min-w-0 flex-1 px-4 py-6 sm:py-8 lg:px-8">
+      <main id="main" tabIndex={-1} className="w-full min-w-0 flex-1 px-4 py-6 outline-none sm:py-8 lg:px-8">
         <div className="mx-auto w-full max-w-5xl">{children}</div>
       </main>
     </div>

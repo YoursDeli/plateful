@@ -73,7 +73,7 @@ export default async function OrderHistoryPage() {
                 >
                   <div className="flex min-w-0 flex-col gap-1">
                     <span className="font-semibold">Order #{o.order_code}</span>
-                    <span className="text-xs text-neutral-dark/55">
+                    <span className="text-xs text-neutral-dark/65">
                       {new Date(o.created_at).toLocaleDateString("en-NG", {
                         timeZone: "Africa/Lagos",
                         day: "numeric",

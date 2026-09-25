@@ -32,7 +32,7 @@ export function DeliveryForm({
           {errors.delivery_fee ? (
             <span className="text-xs font-normal text-red-700">{errors.delivery_fee[0]}</span>
           ) : (
-            <span className="text-xs font-normal text-neutral-dark/60">Charged on delivery orders. 0 = always free.</span>
+            <span className="text-xs font-normal text-neutral-dark/65">Charged on delivery orders. 0 = always free.</span>
           )}
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium">
@@ -47,7 +47,7 @@ export function DeliveryForm({
           {errors.free_delivery_threshold ? (
             <span className="text-xs font-normal text-red-700">{errors.free_delivery_threshold[0]}</span>
           ) : (
-            <span className="text-xs font-normal text-neutral-dark/60">
+            <span className="text-xs font-normal text-neutral-dark/65">
               Orders at or above this subtotal deliver free. Leave blank to always charge.
             </span>
           )}

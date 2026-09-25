@@ -61,30 +61,30 @@ export default async function ReferralsPage() {
 
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <li className={card}>
-          <span className="text-sm text-neutral-dark/60">Referrals</span>
+          <span className="text-sm text-neutral-dark/65">Referrals</span>
           <span className="font-display text-4xl font-semibold text-secondary tabular-nums">{monthly.count ?? 0}</span>
-          <span className="text-xs text-neutral-dark/55">
+          <span className="text-xs text-neutral-dark/65">
             this month · {allTime.count ?? 0} all time
             {pending.count ? ` · ${pending.count} waiting for a first delivery` : ""}
           </span>
         </li>
         <li className={card}>
-          <span className="text-sm text-neutral-dark/60">Available bonus</span>
+          <span className="text-sm text-neutral-dark/65">Available bonus</span>
           <span className="font-display text-4xl font-semibold text-secondary tabular-nums">
             {formatNaira(profile.referral_balance)}
           </span>
-          <span className="text-xs text-neutral-dark/55">Usable at checkout</span>
+          <span className="text-xs text-neutral-dark/65">Usable at checkout</span>
         </li>
         <li className={card}>
-          <span className="text-sm text-neutral-dark/60">Total earned</span>
+          <span className="text-sm text-neutral-dark/65">Total earned</span>
           <span className="font-display text-4xl font-semibold text-secondary tabular-nums">
             {formatNaira(profile.referral_earned_total)}
           </span>
-          <span className="text-xs text-neutral-dark/55">All time</span>
+          <span className="text-xs text-neutral-dark/65">All time</span>
         </li>
       </ul>
 
-      <p className="text-xs text-neutral-dark/55">
+      <p className="text-xs text-neutral-dark/65">
         Bonuses can only be used towards food at checkout — they can&apos;t be withdrawn. Only new accounts created
         with your link count, and you can&apos;t refer yourself.
       </p>

@@ -17,7 +17,7 @@ export function PriceRow({
       </strong>
       {discounted && (
         <>
-          <s className="text-sm text-neutral-dark/45 tabular-nums">
+          <s className="text-sm text-neutral-dark/60 tabular-nums">
             <span className="sr-only">Was </span>
             {formatNaira(item.compare_at_price!)}
           </s>

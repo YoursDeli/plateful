@@ -35,7 +35,7 @@ export function CancelOrderButton({ orderId, deadline }: { orderId: string; dead
           <button
             type="submit"
             disabled={pending}
-            className="text-sm text-neutral-dark/60 underline-offset-4 hover:text-red-700 hover:underline disabled:opacity-60"
+            className="text-sm text-neutral-dark/65 underline-offset-4 hover:text-red-700 hover:underline disabled:opacity-60"
           >
             {pending ? "Cancelling…" : "Cancel order"}
           </button>

@@ -139,7 +139,7 @@ export function SignInPanel({
             {pending === "google" ? "Opening Google…" : "Continue with Google"}
           </button>
 
-          <div className="flex items-center gap-3 text-xs font-medium tracking-wider text-neutral-dark/45 uppercase">
+          <div className="flex items-center gap-3 text-xs font-medium tracking-wider text-neutral-dark/60 uppercase">
             <span className="h-px flex-1 bg-secondary/15" />
             or use your email
             <span className="h-px flex-1 bg-secondary/15" />
@@ -168,7 +168,7 @@ export function SignInPanel({
             <button type="submit" disabled={pending !== null} className={primaryBtn}>
               {pending === "email" ? "Sending code…" : "Email me a code"}
             </button>
-            <p className="text-center text-xs text-neutral-dark/55">
+            <p className="text-center text-xs text-neutral-dark/65">
               No password needed — we&apos;ll email you a {CODE_LENGTH}-digit code.
             </p>
           </form>

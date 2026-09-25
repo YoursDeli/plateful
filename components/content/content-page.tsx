@@ -44,7 +44,7 @@ export async function ContentPage({ slug }: { slug: PageSlug }) {
         ) : (
           <h1 className="font-display text-4xl font-semibold text-secondary sm:text-5xl">{title}</h1>
         )}
-        {legal && <p className="text-sm text-neutral-dark/55">Last updated {updated(page.updated_at)}</p>}
+        {legal && <p className="text-sm text-neutral-dark/65">Last updated {updated(page.updated_at)}</p>}
       </header>
 
       <article className={legal ? "rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-8" : ""}>

@@ -163,7 +163,7 @@ function Field({
     <label className="flex flex-col gap-1.5 text-sm font-medium">
       {label}
       {children}
-      {hint && !error && <span className="text-xs font-normal text-neutral-dark/60">{hint}</span>}
+      {hint && !error && <span className="text-xs font-normal text-neutral-dark/65">{hint}</span>}
       {error && <span className="text-xs font-normal text-red-700">{error[0]}</span>}
     </label>
   );

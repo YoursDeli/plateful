@@ -32,7 +32,7 @@ const SOCIALS = [
 
 function Hint({ error, children }: { error?: string; children?: React.ReactNode }) {
   if (error) return <span className="text-xs font-normal text-red-700">{error}</span>;
-  return children ? <span className="text-xs font-normal text-neutral-dark/60">{children}</span> : null;
+  return children ? <span className="text-xs font-normal text-neutral-dark/65">{children}</span> : null;
 }
 
 // Contact details + social links shown in the site-wide footer. Blank = hidden.
@@ -115,7 +115,7 @@ export function ContactForm({ settings }: { settings: ContactSettings }) {
       <fieldset className="flex flex-col gap-4 border-t border-neutral-dark/10 pt-5">
         <legend className="sr-only">Social links</legend>
         <p className="text-sm font-medium">
-          Social links <span className="font-normal text-neutral-dark/60">— only the ones you fill in are shown</span>
+          Social links <span className="font-normal text-neutral-dark/65">— only the ones you fill in are shown</span>
         </p>
         {SOCIALS.map((s) => (
           <label key={s.name} className="flex flex-col gap-1.5 text-sm font-medium">

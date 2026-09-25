@@ -45,18 +45,18 @@ export default async function AdminMenuPage() {
       <CategoriesPanel categories={categories} />
 
       {items.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-neutral-dark/20 p-6 text-center text-sm text-neutral-dark/60">
+        <p className="rounded-xl border border-dashed border-neutral-dark/20 p-6 text-center text-sm text-neutral-dark/65">
           No menu items yet. Add your first dish to get started.
         </p>
       ) : (
         groups.map(({ category, items: groupItems }) => (
           <section key={category?.id ?? "uncategorised"} className="flex flex-col gap-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/60">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/65">
               {category?.name ?? "Uncategorised"}{" "}
               <span className="font-normal">({groupItems.length})</span>
             </h2>
             {groupItems.length === 0 ? (
-              <p className="text-sm text-neutral-dark/50">No items in this category.</p>
+              <p className="text-sm text-neutral-dark/65">No items in this category.</p>
             ) : (
               <ul className="flex flex-col gap-3">
                 {groupItems.map((item) => (
@@ -100,7 +100,7 @@ function MenuItemRow({ item }: { item: MenuItem }) {
           <p className="text-sm">
             <strong>{formatNaira(item.price)}</strong>
             {item.compare_at_price !== null && (
-              <s className="ml-2 text-neutral-dark/50">{formatNaira(item.compare_at_price)}</s>
+              <s className="ml-2 text-neutral-dark/65">{formatNaira(item.compare_at_price)}</s>
             )}
           </p>
         </div>

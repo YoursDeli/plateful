@@ -38,7 +38,7 @@ export function CheckoutView({
   const hasHydrated = useCart((s) => s.hasHydrated);
 
   if (!hasHydrated) {
-    return <p className="py-16 text-center text-neutral-dark/50">Loading your cart…</p>;
+    return <p className="py-16 text-center text-neutral-dark/65">Loading your cart…</p>;
   }
 
   if (items.length === 0) {
@@ -138,7 +138,7 @@ function CheckoutForm({
                 <span className="block font-semibold text-secondary">
                   {option === "delivery" ? "Delivery" : "Pickup"}
                 </span>
-                <span className="text-xs text-neutral-dark/60">
+                <span className="text-xs text-neutral-dark/65">
                   {option === "delivery" ? "Brought to your door" : "Collect from us"}
                 </span>
               </button>
@@ -170,7 +170,7 @@ function CheckoutForm({
               className={input}
             />
           </Field>
-          {email && <p className="text-sm text-neutral-dark/60">Receipt goes to <strong>{email}</strong>.</p>}
+          {email && <p className="text-sm text-neutral-dark/65">Receipt goes to <strong>{email}</strong>.</p>}
           {fulfillment === "delivery" && (
             <Field label="Delivery address" error={errors.delivery_address}>
               <textarea
@@ -214,7 +214,7 @@ function CheckoutForm({
           >
             <span>
               <span className="block font-medium">Apply referral bonus</span>
-              <span className="text-xs text-neutral-dark/60">{formatNaira(referralBalance)} available</span>
+              <span className="text-xs text-neutral-dark/65">{formatNaira(referralBalance)} available</span>
             </span>
             <input
               type="checkbox"
@@ -232,7 +232,7 @@ function CheckoutForm({
             >
               <span>
                 <span className="block font-medium">Apply loyalty points</span>
-                <span className="text-xs text-neutral-dark/60">
+                <span className="text-xs text-neutral-dark/65">
                   {formatPoints(pointsBalance)} available (₦1 each)
                 </span>
               </span>
@@ -270,7 +270,7 @@ function CheckoutForm({
               ? "Place order"
               : `Pay ${formatNaira(total)}`}
         </CtaButton>
-        <p className="text-center text-xs text-neutral-dark/55">
+        <p className="text-center text-xs text-neutral-dark/65">
           {total === 0 ? "Covered by your rewards." : "Secure payment by Paystack."} By placing this order you agree to our{" "}
           <Link href="/terms" className="underline">Terms</Link> and{" "}
           <Link href="/privacy" className="underline">Privacy Policy</Link>.
@@ -311,7 +311,7 @@ function OrderSummary({
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{item.name}</p>
-              <p className="text-xs text-neutral-dark/55">× {item.quantity}</p>
+              <p className="text-xs text-neutral-dark/65">× {item.quantity}</p>
               {notices[item.menuItemId] === "price_changed" && (
                 <p className="text-xs text-amber-700">Price updated</p>
               )}
@@ -374,7 +374,7 @@ function Field({
       {error ? (
         <span className="text-xs font-normal text-red-700">{error[0]}</span>
       ) : (
-        hint && <span className="text-xs font-normal text-neutral-dark/55">{hint}</span>
+        hint && <span className="text-xs font-normal text-neutral-dark/65">{hint}</span>
       )}
     </label>
   );

@@ -44,7 +44,7 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-6 sm:py-10">
-      <nav aria-label="Breadcrumb" className="text-sm text-neutral-dark/60">
+      <nav aria-label="Breadcrumb" className="text-sm text-neutral-dark/65">
         <Link href="/menu" className="hover:underline">Food Menu</Link>
         {category && (
           <>
@@ -116,7 +116,7 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
                   </span>
                   <div className="flex flex-col">
                     <span className="text-sm font-semibold">{r.reviewer_name}</span>
-                    <time dateTime={r.created_at} className="text-xs text-neutral-dark/50">
+                    <time dateTime={r.created_at} className="text-xs text-neutral-dark/65">
                       {new Date(r.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                     </time>
                   </div>

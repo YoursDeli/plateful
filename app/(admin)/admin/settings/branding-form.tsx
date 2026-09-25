@@ -109,7 +109,7 @@ function ColorField({
       {error ? (
         <span className="text-xs font-normal text-red-700">{error[0]}</span>
       ) : (
-        <span className="text-xs font-normal text-neutral-dark/60">{hint}</span>
+        <span className="text-xs font-normal text-neutral-dark/65">{hint}</span>
       )}
     </div>
   );

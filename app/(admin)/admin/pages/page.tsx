@@ -32,7 +32,7 @@ export default async function AdminPagesPage() {
             >
               <span className="flex flex-col gap-0.5">
                 <span className="font-medium text-secondary">{page.title.replaceAll("{brand}", "").trim() || page.slug}</span>
-                <span className="text-xs text-neutral-dark/60">
+                <span className="text-xs text-neutral-dark/65">
                   /{page.slug} · Updated {updated(page.updated_at)}
                 </span>
               </span>

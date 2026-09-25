@@ -27,7 +27,7 @@ export function NotificationsForm({ email }: { email: string | null }) {
         {errors.order_notification_email ? (
           <span className="text-xs font-normal text-red-700">{errors.order_notification_email[0]}</span>
         ) : (
-          <span className="text-xs font-normal text-neutral-dark/60">
+          <span className="text-xs font-normal text-neutral-dark/65">
             Gets an email for every paid order. Leave blank to use the Brevo sender address.
           </span>
         )}

@@ -16,7 +16,7 @@ export default async function AccountPage() {
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-8 sm:py-12">
       <header className="flex flex-col gap-1">
         <h1 className="font-display text-4xl font-semibold text-secondary">Account</h1>
-        <p className="text-sm text-neutral-dark/60">Signed in as {user?.email}</p>
+        <p className="text-sm text-neutral-dark/65">Signed in as {user?.email}</p>
       </header>
 
       <ProfileForm profile={profile} />

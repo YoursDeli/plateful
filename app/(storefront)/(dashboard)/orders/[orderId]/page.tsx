@@ -91,7 +91,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
           {items?.map((item) => (
             <li key={item.id} className="flex justify-between gap-3 py-2.5 text-sm">
               <span>
-                {item.name} <span className="text-neutral-dark/55">× {item.quantity}</span>
+                {item.name} <span className="text-neutral-dark/65">× {item.quantity}</span>
               </span>
               <span className="tabular-nums">{formatNaira(item.line_total)}</span>
             </li>
@@ -156,7 +156,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
           </Link>
           <div className="text-sm">
             <p className="font-semibold">Order #{order.order_code}</p>
-            <p className="text-neutral-dark/55">Placed {date(order.created_at)}</p>
+            <p className="text-neutral-dark/65">Placed {date(order.created_at)}</p>
             {/* Only rendered while the customer may still cancel — no countdown. */}
             {deadline && <CancelOrderButton orderId={order.id} deadline={deadline} />}
           </div>

@@ -112,7 +112,7 @@ export function MenuBrowser({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-secondary/20 p-10 text-center text-neutral-dark/60">
+        <p className="rounded-2xl border border-dashed border-secondary/20 p-10 text-center text-neutral-dark/65">
           {items.length === 0
             ? "The menu is being prepared — check back soon."
             : "No dishes match that. Try another search or category."}

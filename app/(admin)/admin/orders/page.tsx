@@ -111,7 +111,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
       )}
 
       {orders.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-neutral-dark/20 p-8 text-center text-sm text-neutral-dark/60">
+        <p className="rounded-xl border border-dashed border-neutral-dark/20 p-8 text-center text-sm text-neutral-dark/65">
           {tab === "active" ? "No active orders right now. New paid orders will pop up here." : "Nothing here yet."}
         </p>
       ) : (
@@ -134,7 +134,7 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
       <header className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="font-display text-xl font-semibold text-secondary">#{order.order_code}</p>
-          <p className="text-xs text-neutral-dark/55">{when(order.paid_at ?? order.created_at)}</p>
+          <p className="text-xs text-neutral-dark/65">{when(order.paid_at ?? order.created_at)}</p>
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="rounded-full bg-neutral-dark/5 px-2.5 py-1 text-xs font-medium">
@@ -152,7 +152,7 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
           <a href={`tel:${order.contact_phone.replace(/\s/g, "")}`} className="text-secondary underline">
             {order.contact_phone}
           </a>
-          <a href={`mailto:${order.contact_email}`} className="truncate text-neutral-dark/60 underline">
+          <a href={`mailto:${order.contact_email}`} className="truncate text-neutral-dark/65 underline">
             {order.contact_email}
           </a>
         </p>
@@ -194,17 +194,17 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
             <span>
               <strong className="text-secondary">{item.quantity}×</strong> {item.name}
             </span>
-            <span className="tabular-nums text-neutral-dark/60">{formatNaira(item.line_total)}</span>
+            <span className="tabular-nums text-neutral-dark/65">{formatNaira(item.line_total)}</span>
           </li>
         ))}
       </ul>
 
       <footer className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
         <p className="text-sm">
-          <span className="text-neutral-dark/60">Total </span>
+          <span className="text-neutral-dark/65">Total </span>
           <strong className="tabular-nums">{formatNaira(order.total)}</strong>
           {order.delivery_fee > 0 && (
-            <span className="text-xs text-neutral-dark/50"> (incl. {formatNaira(order.delivery_fee)} delivery)</span>
+            <span className="text-xs text-neutral-dark/65"> (incl. {formatNaira(order.delivery_fee)} delivery)</span>
           )}
           {order.referral_bonus_applied > 0 && (
             <span className="block text-xs text-secondary">

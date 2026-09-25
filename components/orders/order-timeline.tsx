@@ -43,17 +43,17 @@ export function OrderTimeline({ steps }: { steps: TimelineStep[] }) {
               <span className="relative">✓</span>
             </span>
             <div className="flex min-w-0 flex-1 flex-col pt-1">
-              <p className={`font-semibold ${step.state === "future" ? "text-neutral-dark/40" : "text-neutral-dark"}`}>
+              <p className={`font-semibold ${step.state === "future" ? "text-neutral-dark/60" : "text-neutral-dark"}`}>
                 {step.title}
                 <span className="sr-only">
                   {step.state === "completed" ? " (done)" : step.state === "current" ? " (current step)" : " (upcoming)"}
                 </span>
               </p>
-              <p className={`text-sm ${step.state === "future" ? "text-neutral-dark/35" : "text-neutral-dark/60"}`}>
+              <p className={`text-sm ${step.state === "future" ? "text-neutral-dark/55" : "text-neutral-dark/65"}`}>
                 {step.description}
               </p>
               {step.timestamp && (
-                <time dateTime={step.timestamp} className="mt-0.5 text-xs text-neutral-dark/50">
+                <time dateTime={step.timestamp} className="mt-0.5 text-xs text-neutral-dark/65">
                   {time(step.timestamp)}
                 </time>
               )}

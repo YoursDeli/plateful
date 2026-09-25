@@ -55,7 +55,7 @@ export function BuyAgainButton({
       <button type="button" onClick={() => void buyAgain()} disabled={pending} className={className}>
         {pending ? "Adding…" : "Buy again"}
       </button>
-      {message && <p role="status" className="text-right text-xs text-neutral-dark/60">{message}</p>}
+      {message && <p role="status" className="text-right text-xs text-neutral-dark/65">{message}</p>}
     </div>
   );
 }

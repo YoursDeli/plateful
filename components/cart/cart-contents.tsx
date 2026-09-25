@@ -21,14 +21,14 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
   const remove = useCart((s) => s.remove);
 
   if (!hasHydrated) {
-    return <p className="py-10 text-center text-sm text-neutral-dark/50">Loading your cart…</p>;
+    return <p className="py-10 text-center text-sm text-neutral-dark/65">Loading your cart…</p>;
   }
 
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <p className="font-display text-xl text-secondary">Your cart is empty</p>
-        <p className="text-sm text-neutral-dark/60">Find something delicious on the menu.</p>
+        <p className="text-sm text-neutral-dark/65">Find something delicious on the menu.</p>
         <Link
           href="/menu"
           onClick={onNavigate}
@@ -80,7 +80,7 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
                 <button
                   type="button"
                   onClick={() => remove(item.menuItemId)}
-                  className="text-xs text-neutral-dark/60 underline hover:text-red-700"
+                  className="text-xs text-neutral-dark/65 underline hover:text-red-700"
                 >
                   Remove
                 </button>
@@ -95,7 +95,7 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
           <span className="text-sm text-neutral-dark/70">Subtotal</span>
           <span className="text-lg font-semibold tabular-nums">{formatNaira(cartSubtotal(items))}</span>
         </div>
-        <p className="text-xs text-neutral-dark/60">
+        <p className="text-xs text-neutral-dark/65">
           Delivery fee and any rewards are applied at checkout.
         </p>
         {blocked ? (

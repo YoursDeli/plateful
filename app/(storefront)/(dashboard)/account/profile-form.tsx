@@ -46,7 +46,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
       <section aria-labelledby="address-heading" className={card}>
         <div>
           <h2 id="address-heading" className={heading}>Delivery address</h2>
-          <p className="mt-1 text-sm text-neutral-dark/60">
+          <p className="mt-1 text-sm text-neutral-dark/65">
             Where we deliver by default — it&apos;s pre-filled at checkout, and you can still change it per order.
           </p>
         </div>
@@ -95,7 +95,7 @@ function Field({
       {error ? (
         <span className="text-xs font-normal text-red-700">{error[0]}</span>
       ) : (
-        hint && <span className="text-xs font-normal text-neutral-dark/55">{hint}</span>
+        hint && <span className="text-xs font-normal text-neutral-dark/65">{hint}</span>
       )}
     </label>
   );

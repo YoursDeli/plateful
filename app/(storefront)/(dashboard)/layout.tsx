@@ -23,7 +23,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <SideNav
           variant="account"
           heading="Your account"
-          mobileTitle={<span className="text-sm text-neutral-dark/60">Your account</span>}
+          mobileTitle={<span className="text-sm text-neutral-dark/65">Your account</span>}
           items={items}
           footer={
             <SignOutButton className="w-full rounded-btn border border-secondary/25 px-4 py-2 text-sm font-medium text-secondary hover:bg-primary/30 disabled:opacity-60" />

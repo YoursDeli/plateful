@@ -23,7 +23,7 @@ export function LoyaltyForm({ enabled, rate }: { enabled: boolean; rate: number 
         />
         <span>
           <span className="block font-medium">Loyalty program on</span>
-          <span className="text-xs text-neutral-dark/60">
+          <span className="text-xs text-neutral-dark/65">
             When off, customers stop earning and can&apos;t spend points at checkout — but everyone keeps their
             balance, so switching it back on loses nothing.
           </span>
@@ -42,7 +42,7 @@ export function LoyaltyForm({ enabled, rate }: { enabled: boolean; rate: number 
         {errors.loyalty_points_per_1000 ? (
           <span className="text-xs font-normal text-red-700">{errors.loyalty_points_per_1000[0]}</span>
         ) : (
-          <span className="text-xs font-normal text-neutral-dark/60">
+          <span className="text-xs font-normal text-neutral-dark/65">
             1 point = ₦1 off at checkout. Points are credited when an order is delivered, on the amount actually paid.
           </span>
         )}

@@ -26,7 +26,7 @@ export function ReferralsForm({ amount }: { amount: number }) {
         {errors.referral_bonus_amount ? (
           <span className="text-xs font-normal text-red-700">{errors.referral_bonus_amount[0]}</span>
         ) : (
-          <span className="text-xs font-normal text-neutral-dark/60">
+          <span className="text-xs font-normal text-neutral-dark/65">
             Credited to the referrer when their friend&apos;s first order is delivered. Spendable only at checkout.
             0 pauses rewards. Changes don&apos;t affect bonuses already earned.
           </span>

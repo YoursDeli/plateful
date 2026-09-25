@@ -142,7 +142,7 @@ export function ImageUploadField({
                 setUrl("");
                 setStatus("idle");
               }}
-              className="text-xs text-neutral-dark/60 underline"
+              className="text-xs text-neutral-dark/65 underline"
             >
               Remove image
             </button>

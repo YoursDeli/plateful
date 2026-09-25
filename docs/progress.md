@@ -120,11 +120,11 @@ from `main`; Paystack in **test** mode).
 - [ ] Chef photo upload (`/admin/pages/about`) — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 13. Polish
-- [ ] Animations / transitions (reduced-motion respected)
-- [ ] Empty states, error states
-- [ ] Accessibility pass (labels, contrast, keyboard nav)
-- [ ] Security headers, RLS audit pass before launch
-- [ ] Mobile-responsiveness pass across every page, admin included
+- [ ] Animations / transitions (reduced-motion respected) — page fade-in on every storefront page (`template.tsx`) — *done 2026-09-25, live — awaiting user verification*
+- [ ] Empty states, error states — empty states already covered; added branded 404s, storefront error screen, root error fallback, loading skeletons (dashboard, checkout, admin) — *done 2026-09-25, live — awaiting user verification*
+- [ ] Accessibility pass (labels, contrast, keyboard nav) — visible focus ring site-wide, skip-to-content links, grey text raised to AA contrast; icon buttons already labelled — *done 2026-09-25, live — awaiting user verification*
+- [x] Security headers, RLS audit pass before launch — headers + CSP in `next.config.ts`; RLS on all 13 tables; signed-out probe: private tables/writes/RPCs all refused — *verified 2026-09-25 (DB probe + local prod server)*
+- [ ] Mobile-responsiveness pass across every page, admin included — code scan: all grids mobile-first; menu cards now vertical on phones — *done 2026-09-25, live — awaiting user verification* (visual check on phone)
 
 ---
 
@@ -519,6 +519,18 @@ from `main`; Paystack in **test** mode).
   (with the WhatsApp number); blank fields are hidden. Pages are ISR (1h),
   revalidated on save. Migration `20261004000000_pages_footer.sql`.
 
+- **2026-09-25** — **Security headers + CSP** (step 13) in `next.config.ts`,
+  production only. CSP allows self + the Supabase origin (https/wss/img);
+  Paystack/Google are top-level redirects so need no entry (form-action
+  also allows checkout.paystack.com as a precaution). Uses
+  `'unsafe-inline'` for scripts/styles — a nonce CSP would make every page
+  dynamic and drop static caching. **If you add any third-party script,
+  font, image host or API, add it to the CSP or it will be blocked.**
+- **2026-09-25** — Text contrast floor: body grey text is at least
+  `text-neutral-dark/65` (≈5:1 on cream); lighter greys only for decorative
+  or disabled content. Public `reviews` table read stays open by design
+  (only ids/ratings/comments; names come via `menu_item_reviews()`).
+
 ---
 
 ## Open Blockers
@@ -529,8 +541,6 @@ from `main`; Paystack in **test** mode).
 - **Still to verify on live** (user): 8a buttons; step-8 flows not yet
   exercised (new order code, customer cancel, refund tracking, pickup);
   today's radius + side-nav changes.
-- **Set the WhatsApp number** (user): /admin/settings → Contact (migration
-  applied 2026-09-29; button hidden until a number is saved).
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
   2026-09-29 Netlify decision) or deploys silently stop.
 - Terms & Conditions and Privacy Policy are seeded as **drafts** — need
@@ -682,3 +692,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Pages/footer migration applied (verified: 3 pages seeded, footer settings set); pushed step 11 live.
 - **2026-09-25** — About title split: small "Meet Chef" line over the chef's name in large type (client). Pushed live.
 - **2026-09-25** — Menu cards: photo on top, details below on mobile too (client; was photo-left). Pushed live.
+- **2026-09-25** — Step 13 polish: 404/error/loading screens, page fade-in, focus ring + skip links, contrast raise, security headers/CSP, RLS probe (all refused). Build/lint/tsc clean; pushed live.

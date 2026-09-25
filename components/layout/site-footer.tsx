@@ -107,7 +107,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <p className="mx-auto w-full max-w-6xl px-4 py-4 text-xs text-white/55">
+        <p className="mx-auto w-full max-w-6xl px-4 py-4 text-xs text-white/65">
           © {new Date().getFullYear()} {settings.brand_name}. All rights reserved.
         </p>
       </div>

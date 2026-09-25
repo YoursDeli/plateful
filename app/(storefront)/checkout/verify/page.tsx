@@ -88,7 +88,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
           {items?.map((item) => (
             <li key={item.id} className="flex justify-between gap-3 py-3 text-sm">
               <span>
-                {item.name} <span className="text-neutral-dark/55">× {item.quantity}</span>
+                {item.name} <span className="text-neutral-dark/65">× {item.quantity}</span>
               </span>
               <span className="tabular-nums">{formatNaira(item.line_total)}</span>
             </li>
@@ -151,7 +151,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
           Back to cart
         </Link>
       </div>
-      <p className="text-xs text-neutral-dark/55">
+      <p className="text-xs text-neutral-dark/65">
         If you completed payment and still see this, refresh in a minute — confirmations can take a moment.
       </p>
     </Shell>

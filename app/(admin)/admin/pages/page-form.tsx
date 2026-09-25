@@ -12,7 +12,7 @@ const inputClass =
 
 function Hint({ error, children }: { error?: string; children?: React.ReactNode }) {
   if (error) return <span className="text-xs font-normal text-red-700">{error}</span>;
-  return children ? <span className="text-xs font-normal text-neutral-dark/60">{children}</span> : null;
+  return children ? <span className="text-xs font-normal text-neutral-dark/65">{children}</span> : null;
 }
 
 export function PageForm({ page }: { page: SitePage }) {
@@ -65,7 +65,7 @@ export function PageForm({ page }: { page: SitePage }) {
         />
         <span className="flex flex-col gap-0.5">
           <span className="font-medium">Draft</span>
-          <span className="text-xs text-neutral-dark/60">
+          <span className="text-xs text-neutral-dark/65">
             Shows a &quot;this page is being reviewed&quot; notice at the top. Untick once the text is final.
           </span>
         </span>

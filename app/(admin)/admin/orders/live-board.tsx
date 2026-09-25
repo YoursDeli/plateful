@@ -47,7 +47,7 @@ export function LiveBoard() {
           </button>
         </div>
       )}
-      <p className="flex items-center gap-2 text-xs text-neutral-dark/50">
+      <p className="flex items-center gap-2 text-xs text-neutral-dark/65">
         <span className="size-2 animate-pulse rounded-full bg-green-500 motion-reduce:animate-none" aria-hidden="true" />
         Live — new orders appear automatically
       </p>

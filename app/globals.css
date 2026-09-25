@@ -29,6 +29,9 @@
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 
   --animate-fade-in: fade-in 450ms ease-out both;
+  /* Page-to-page transition (storefront template.tsx): opacity only, so it
+     never affects sticky/fixed children or layout. */
+  --animate-page-in: fade-in 220ms ease-out both;
   --animate-rise-in: rise-in 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-slide-in: slide-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-slide-in-left: slide-in-left 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -80,4 +83,14 @@
 body {
   background: var(--neutral-light);
   color: var(--neutral-dark);
+}
+
+/* Visible keyboard focus everywhere (mouse clicks don't trigger it).
+   currentColor keeps the ring visible on both light and dark (Velvet)
+   surfaces. Zero specificity via :where(), so components can override. */
+@layer base {
+  :where(a, button, summary, select, [role="button"], [tabindex], input[type="checkbox"], input[type="radio"]):focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
 }

@@ -21,7 +21,7 @@ export function RatingRow({
         <span className="text-neutral-dark/20">{"★".repeat(5 - rounded)}</span>
       </span>
       <span aria-hidden="true" className="font-semibold">{rating.toFixed(1)}</span>
-      <span aria-hidden="true" className="text-neutral-dark/50">({count})</span>
+      <span aria-hidden="true" className="text-neutral-dark/65">({count})</span>
     </p>
   );
 }

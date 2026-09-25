@@ -35,7 +35,7 @@ export function AddToCartControl({
 
   if (!item.is_available) {
     return (
-      <span className="inline-flex items-center rounded-btn bg-neutral-dark/10 px-4 py-2 text-sm font-medium text-neutral-dark/60">
+      <span className="inline-flex items-center rounded-btn bg-neutral-dark/10 px-4 py-2 text-sm font-medium text-neutral-dark/65">
         Sold out
       </span>
     );
