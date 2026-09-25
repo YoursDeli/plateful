@@ -133,25 +133,82 @@ export async function saveNotifications(_prev: FormState, formData: FormData): P
   return { ok: true };
 }
 
-// Restaurant WhatsApp number for "Message us on WhatsApp". Blank = hidden.
+// Contact & footer (docs/pages-referrals-footer.md §4). WhatsApp powers the
+// "Message us" buttons; everything here is shown in the site-wide footer.
+// Blank fields are hidden.
+const httpsUrl = z
+  .string()
+  .max(300)
+  .regex(/^https:\/\/\S+$/, "Paste the full link, starting with https://")
+  .nullable();
+
+const contactSchema = z.object({
+  tagline: z.string().max(120, "Keep it under 120 characters").nullable(),
+  opening_hours: z.string().max(300, "Keep it under 300 characters").nullable(),
+  location: z.string().max(200).nullable(),
+  contact_phone: z
+    .string()
+    .max(30)
+    .regex(/^\+?[\d\s()-]{7,}$/, "Enter a phone number, e.g. +234 816 269 4737")
+    .nullable(),
+  contact_email: z.email("Enter a valid email address").nullable(),
+  instagram_url: httpsUrl,
+  tiktok_url: httpsUrl,
+  facebook_url: httpsUrl,
+  x_url: httpsUrl,
+});
+
+const CONTACT_FIELDS = [
+  "whatsapp_number",
+  "tagline",
+  "opening_hours",
+  "location",
+  "contact_phone",
+  "contact_email",
+  "instagram_url",
+  "tiktok_url",
+  "facebook_url",
+  "x_url",
+] as const;
+
 export async function saveContact(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireStaff("/admin/settings");
 
   const raw = emptyToNull(formData.get("whatsapp_number"));
   const whatsapp_number = raw === null ? null : toWhatsAppNumber(raw);
+  const parsed = contactSchema.safeParse({
+    tagline: emptyToNull(formData.get("tagline")),
+    // Textarea line breaks arrive as \r\n; store plain \n.
+    opening_hours: emptyToNull(formData.get("opening_hours"))?.replace(/\r\n?/g, "\n") ?? null,
+    location: emptyToNull(formData.get("location")),
+    contact_phone: emptyToNull(formData.get("contact_phone")),
+    contact_email: emptyToNull(formData.get("contact_email")),
+    instagram_url: emptyToNull(formData.get("instagram_url")),
+    tiktok_url: emptyToNull(formData.get("tiktok_url")),
+    facebook_url: emptyToNull(formData.get("facebook_url")),
+    x_url: emptyToNull(formData.get("x_url")),
+  });
+
+  const fieldErrors: Record<string, string[] | undefined> = parsed.success
+    ? {}
+    : { ...z.flattenError(parsed.error).fieldErrors };
   if (raw !== null && whatsapp_number === null) {
-    return {
-      fieldErrors: { whatsapp_number: ["Enter a valid number, e.g. 0803 123 4567 or +234 803 123 4567"] },
-      values: formValues(formData, ["whatsapp_number"]),
-    };
+    fieldErrors.whatsapp_number = ["Enter a valid number, e.g. 0803 123 4567 or +234 803 123 4567"];
+  }
+  if (!parsed.success || Object.keys(fieldErrors).length > 0) {
+    return { fieldErrors, values: formValues(formData, CONTACT_FIELDS) };
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.from("site_settings").update({ whatsapp_number }).eq("id", 1);
+  const { error } = await supabase
+    .from("site_settings")
+    .update({ whatsapp_number, ...parsed.data })
+    .eq("id", 1);
   if (error) {
     console.error("saveContact failed:", error.code, error.message);
-    return { error: "Couldn't save contact settings.", values: formValues(formData, ["whatsapp_number"]) };
+    return { error: "Couldn't save contact settings.", values: formValues(formData, CONTACT_FIELDS) };
   }
+  // The footer is part of the storefront layout on every page.
   revalidatePath("/", "layout");
   return { ok: true };
 }

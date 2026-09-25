@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
 // close and an inert page behind it; it also closes on backdrop tap and on
 // navigation. Purely navigation — access control stays server-side.
 
-export type NavIcon = "orders" | "menu" | "settings" | "overview" | "favorites" | "staff" | "referrals";
+export type NavIcon = "orders" | "menu" | "settings" | "overview" | "favorites" | "staff" | "referrals" | "pages";
 
 export type NavItem = {
   href: string;
@@ -61,6 +61,12 @@ const ICON_PATHS: Record<NavIcon, React.ReactNode> = {
       <circle cx="9" cy="8" r="3.5" />
       <path d="M2.5 20c1-3.2 3.4-5 6.5-5s5.5 1.8 6.5 5" />
       <path d="M17 8v6M14 11h6" />
+    </>
+  ),
+  pages: (
+    <>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+      <path d="M14 3v5h5M9 13h6M9 17h4" />
     </>
   ),
 };

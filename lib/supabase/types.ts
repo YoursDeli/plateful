@@ -78,6 +78,27 @@ export type SiteSettings = {
   referral_bonus_amount: number;
   loyalty_enabled: boolean;
   loyalty_points_per_1000: number;
+  tagline: string | null;
+  opening_hours: string | null;
+  location: string | null;
+  contact_phone: string | null;
+  contact_email: string | null;
+  instagram_url: string | null;
+  tiktok_url: string | null;
+  facebook_url: string | null;
+  x_url: string | null;
+  updated_at: string;
+};
+
+export type PageSlug = "about" | "terms" | "privacy";
+
+export type SitePage = {
+  id: string;
+  slug: PageSlug;
+  title: string;
+  content: string;
+  chef_photo_url: string | null;
+  is_draft: boolean;
   updated_at: string;
 };
 
@@ -222,6 +243,15 @@ export type Database = {
             | "referral_bonus_amount"
             | "loyalty_enabled"
             | "loyalty_points_per_1000"
+            | "tagline"
+            | "opening_hours"
+            | "location"
+            | "contact_phone"
+            | "contact_email"
+            | "instagram_url"
+            | "tiktok_url"
+            | "facebook_url"
+            | "x_url"
           >
         >
       >;
@@ -233,6 +263,7 @@ export type Database = {
       referrals: Table<Referral, never, never>;
       referral_ledger: Table<ReferralLedgerEntry, never, never>;
       loyalty_ledger: Table<LoyaltyLedgerEntry, never, never>;
+      pages: Table<SitePage, never, Partial<Pick<SitePage, "title" | "content" | "chef_photo_url" | "is_draft">>>;
       favorites: Table<
         Favorite,
         Pick<Favorite, "user_id" | "menu_item_id">,

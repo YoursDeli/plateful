@@ -18,6 +18,15 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   referral_bonus_amount: 200,
   loyalty_enabled: true,
   loyalty_points_per_1000: 10,
+  tagline: null,
+  opening_hours: null,
+  location: null,
+  contact_phone: null,
+  contact_email: null,
+  instagram_url: null,
+  tiktok_url: null,
+  facebook_url: null,
+  x_url: null,
   updated_at: new Date(0).toISOString(),
 };
 

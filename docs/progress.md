@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-25
-Current phase: **Steps 0–7 verified live; 8, 9, 10 + UI changes live (awaiting user verification). Next: step 11 (static pages + footer).**
+Current phase: **Steps 0–7 verified live; 8, 9, 10 + UI changes live (awaiting user verification). Step 11 built — waiting on its migration, then push. Next: step 13 polish.**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -107,17 +107,17 @@ from `main`; Paystack in **test** mode).
 - [ ] Admin toggle UI in `/admin/settings` — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 11. Static pages & Footer
-- [ ] `pages` table (`about`/`terms`/`privacy`) + admin content editor
-- [ ] `/about` (chef page)
-- [ ] `/terms`, `/privacy`
-- [ ] Site-wide `Footer` component in root layout
+- [ ] `pages` table (`about`/`terms`/`privacy`) + admin content editor (`/admin/pages`) — *built 2026-09-25 — awaiting migration + live check*
+- [ ] `/about` (chef page) — *built 2026-09-25 — awaiting migration + live check*
+- [ ] `/terms`, `/privacy` — *built 2026-09-25 — awaiting migration + live check*
+- [ ] Site-wide `Footer` component in the storefront layout + admin "Contact & footer" settings — *built 2026-09-25 — awaiting migration + live check*
 - [ ] Real Terms/Privacy copy approved by client (not shipped as placeholder text)
 
 ### 12. Image uploads (Supabase Storage)
 - [x] `images` bucket + Storage RLS (`supabase/migrations/20260924000000_storage_images.sql`) — *verified 2026-09-24*
 - [x] Menu item photo upload — *verified 2026-09-24*
 - [x] Logo upload (admin branding settings) — *verified 2026-09-24*
-- [ ] Chef photo upload (`/admin/settings` Pages tab) — lands with step 11
+- [ ] Chef photo upload (`/admin/pages/about`) — *built 2026-09-25 — awaiting migration + live check*
 
 ### 13. Polish
 - [ ] Animations / transitions (reduced-motion respected)
@@ -503,6 +503,20 @@ from `main`; Paystack in **test** mode).
   `docs/accounts-loyalty-and-images.md` §2 "As built". `create_order()`
   gained `p_apply_loyalty` (8-arg signature; 7-arg dropped).
 
+- **2026-09-25** — **Step 11 pages/footer as built.** Page text is edited
+  on its own admin page, **Admin → Pages** (`/admin/pages/[slug]`), not
+  a Settings tab — the Markdown editor is too big for Settings. Content is
+  Markdown rendered with `react-markdown` (no raw HTML). `{brand}` in a
+  title/body is replaced with `site_settings.brand_name` when rendered.
+  `pages.is_draft` shows a "being reviewed" notice; Terms/Privacy are
+  seeded as drafts. Legal copy names no vendors ("payment processor",
+  "email service provider", etc. — client). About text is the client's own
+  story, signed by Chef Onome Joy Ebubechukwu. Footer data (tagline,
+  opening hours, location, phone, email, Instagram/TikTok/Facebook/X links)
+  lives on `site_settings`, edited in Settings → **Contact & footer**
+  (with the WhatsApp number); blank fields are hidden. Pages are ISR (1h),
+  revalidated on save. Migration `20261004000000_pages_footer.sql`.
+
 ---
 
 ## Open Blockers
@@ -517,9 +531,10 @@ from `main`; Paystack in **test** mode).
   applied 2026-09-29; button hidden until a number is saved).
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
   2026-09-29 Netlify decision) or deploys silently stop.
-- Real Terms & Conditions and Privacy Policy copy needs client/legal
-  sign-off before launch — dev can seed the admin editor with a generic
-  draft in the meantime (see `docs/pages-referrals-footer.md` §3).
+- **Run migration `20261004000000_pages_footer.sql`** (user) — step 11 is
+  not pushed until it's applied.
+- Terms & Conditions and Privacy Policy are seeded as **drafts** — need
+  client/legal sign-off, then untick "Draft" in Admin → Pages.
 - **TS types are hand-written** (`lib/supabase/types.ts`) since the Supabase CLI
   isn't installed — regenerate with `npx supabase gen types` once a project exists.
 
@@ -663,3 +678,4 @@ from `main`; Paystack in **test** mode).
   Not pushed until migration runs.
 - **2026-09-25** — Loyalty migration applied (verified); sign-in card accent moved to the bottom; pushed step 10 live.
 - **2026-09-25** — Loyalty points card on Orders home trimmed to just the available points (client).
+- **2026-09-25** — Built step 11: pages table + seeded About (client story)/Terms/Privacy drafts, /about /terms /privacy, site-wide footer, Settings → Contact & footer, Admin → Pages editor with chef photo. Build/lint/tsc clean. Not pushed until migration runs.

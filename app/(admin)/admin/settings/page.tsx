@@ -10,8 +10,8 @@ import { ReferralsForm } from "./referrals-form";
 
 export const metadata: Metadata = { title: "Settings" };
 
-// Branding, Delivery, Referrals, Loyalty, Contact, Notifications. Pages
-// (step 11) tabs are added to this page in their own build steps.
+// Branding, Delivery, Referrals, Loyalty, Contact & footer, Notifications.
+// About / Terms / Privacy text is edited under Admin → Pages.
 export default async function AdminSettingsPage() {
   await requireStaff("/admin/settings");
 
@@ -43,8 +43,8 @@ export default async function AdminSettingsPage() {
         <LoyaltyForm enabled={settings.loyalty_enabled} rate={settings.loyalty_points_per_1000} />
       </section>
       <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/60">Contact</h2>
-        <ContactForm whatsapp={settings.whatsapp_number} />
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/60">Contact &amp; footer</h2>
+        <ContactForm settings={settings} />
       </section>
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/60">Notifications</h2>
