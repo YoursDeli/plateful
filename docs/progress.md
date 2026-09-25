@@ -712,3 +712,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Built reviews (buyers only, instant, staff hide) + dish page description moved below buttons. Build/lint/tsc clean. Not pushed until migration runs.
 - **2026-09-25** — Reviews moved to the customer dashboard (Account → Reviews: pending + posted); dish page shows posted reviews only (client).
 - **2026-09-25** — Reviews migration applied (verified: columns + functions, anon writes refused); pushed reviews live.
+- **2026-09-25** — Dish page: divider lines between Save/Share and About this dish, and between About and Reviews (client). Pushed live.

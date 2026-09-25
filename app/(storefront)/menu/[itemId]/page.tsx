@@ -96,7 +96,7 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
           </div>
           {/* Description last, after the buttons (client). */}
           {item.description && (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 border-t border-secondary/10 pt-5">
               <h2 className="text-sm font-semibold tracking-wider text-secondary uppercase">About this dish</h2>
               <p className="text-base leading-relaxed whitespace-pre-line text-neutral-dark/80">{item.description}</p>
             </div>
@@ -106,7 +106,7 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
 
       {/* Read-only (client): reviews are written from the customer dashboard
           (/account/reviews). "No reviews yet" until the first one is posted. */}
-      <section id="reviews" aria-labelledby="reviews-heading" className="flex scroll-mt-24 flex-col gap-4">
+      <section id="reviews" aria-labelledby="reviews-heading" className="flex scroll-mt-24 flex-col gap-4 border-t border-secondary/10 pt-8">
         <div className="flex flex-col gap-1">
           <h2 id="reviews-heading" className="font-display text-2xl font-semibold text-secondary">
             Reviews
