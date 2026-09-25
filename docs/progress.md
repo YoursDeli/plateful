@@ -717,3 +717,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Hero: auto-cycle every 5s (never pauses), back/next arrows, image-only thumbnails (client). Pushed live.
 - **2026-09-25** — Hero card: brand logo/name removed (header already shows it; client). Pushed live.
 - **2026-09-25** — Hero dish motion smoothed: plates pre-loaded, single-segment easing, card backdrop blur removed, GPU layers (client: swap wasn't smooth). Pushed live.
+- **2026-09-25** — Hero rebuilt as an orbit: all dishes on one turning wheel, one visible through a window (client idea); only the wheel animates. Pushed live.

@@ -113,22 +113,26 @@ The client supplied a reference video; the hero now follows it:
   everything — name, description, price,
   Order now / View details, and the thumbnail row with arrows. No brand
   mark in the card (client: the header already shows it).
-- **Plate**: the dish photo is a round "plate" with a dark rim in the card's
-  right column (above the text on phones). It turns slowly while idle
-  (`animate-plate-spin`, 60s/turn). On a switch the old plate rolls out to
-  the right (`animate-plate-out`) while the new one swings in from above,
-  overshoots slightly and settles (`animate-plate-in`); text and background
-  crossfade. Keyframes live in `app/globals.css`.
-- **Smoothness rules** (learned the hard way): keep every plate mounted
-  (hidden when not in use) so its photo is loaded before it swings in; use
-  single-segment keyframes (easing applies per segment, so multi-step paths
-  stall); no `backdrop-blur` on the card (the background is already blurred,
-  and a backdrop blur is recomputed every frame of a swap); moving layers
-  get `will-change: transform`.
+- **Orbit (client, 2026-09-25)**: all featured dishes sit evenly around one
+  big wheel whose centre is off to the right of the dish area; the dish
+  area is a clipped window onto it, so only one plate shows. Each step turns
+  the whole wheel one position (`TURN_MS` 1.1s, ease-in-out): the current
+  plate curves away down-right and out through the card edge while the next
+  comes down from above. The wheel's rotation is an ever-increasing step
+  count, so it always turns the same way (never unwinds). Orbit radius =
+  1.6 plate widths / sin(step angle), so neighbours stay outside the window.
+  Only the one wheel transform animates, which is what keeps it smooth. Each
+  plate also spins slowly on its own (60s/turn); its shadow sits on a
+  non-spinning layer. Window: full card width above the text on phones, the
+  card's right side from `md`. Plate size via `--plate` (15/18/20/24rem).
+- Superseded approaches (not smooth): separate roll-out/swing-in keyframe
+  animations per plate — multi-step keyframes stalled between steps and the
+  incoming photo loaded mid-animation.
 - **Thumbnails**: small round photos only — no name or price (client). The
   active one lifts and gets a Velvet ring. Back and next arrows either side.
 - **Auto-cycle ON (client, overrides §2's "off by default")**: next dish
-  every 5s, never paused by hover or taps; a manual pick restarts the 5s
-  timer. Users with reduced motion get no auto-cycle, instant swaps and no
+  rests 5s between turns, never paused by hover or taps; arrows turn the
+  wheel one step either way, thumbnails take the shortest way round, and
+  any manual turn restarts the rest timer. Users with reduced motion get no auto-cycle, instant swaps and no
   spin. The card text has no `aria-live` (it would announce every 5s).
 
