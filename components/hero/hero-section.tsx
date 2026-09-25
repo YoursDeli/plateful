@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { AddToCartControl } from "@/components/cart/add-to-cart-control";
 import { PriceRow } from "@/components/menu/price-row";
 import { formatNaira } from "@/lib/money";
-import type { MenuItem, SiteSettings } from "@/lib/supabase/types";
+import type { MenuItem } from "@/lib/supabase/types";
 
 // Flavor-swap hero (docs/hero-section-design.md), styled after the client's
 // reference video: one large frosted card over a soft, blurred photo of the
@@ -17,13 +17,7 @@ import type { MenuItem, SiteSettings } from "@/lib/supabase/types";
 // timer. Reduced motion → no auto-cycle, instant swaps, no spin.
 const AUTO_CYCLE_MS = 5000;
 
-export function HeroSection({
-  items,
-  settings,
-}: {
-  items: MenuItem[];
-  settings: Pick<SiteSettings, "brand_name" | "logo_url">;
-}) {
+export function HeroSection({ items }: { items: MenuItem[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   // The plate on its way out, kept on screen until its roll-out finishes.
   const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
@@ -82,21 +76,7 @@ export function HeroSection({
             contrast over busy food photos (§7). */}
         <div className="grid grid-cols-1 gap-6 rounded-[2rem] border border-white/60 bg-white/60 p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-8 md:grid-cols-[minmax(0,1fr)_20rem] md:gap-8 md:p-10 lg:grid-cols-[minmax(0,1fr)_24rem]">
           <div className="flex min-w-0 flex-col md:justify-center">
-            <div className="text-secondary">
-              {settings.logo_url ? (
-                <Image
-                  src={settings.logo_url}
-                  alt={settings.brand_name}
-                  width={120}
-                  height={32}
-                  className="h-7 w-auto object-contain"
-                />
-              ) : (
-                <span className="text-sm font-semibold tracking-wide">{settings.brand_name}</span>
-              )}
-            </div>
-
-            <div key={active.id} className="mt-4 flex animate-fade-in flex-col gap-3">
+            <div key={active.id} className="flex animate-fade-in flex-col gap-3">
               <h1 className="font-display text-4xl leading-[1.05] font-semibold text-neutral-dark sm:text-5xl lg:text-6xl">
                 {active.name}
               </h1>

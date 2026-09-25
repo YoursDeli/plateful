@@ -110,8 +110,9 @@ The client supplied a reference video; the hero now follows it:
 
 - **Light look**: soft blurred photo of the active dish under a white wash
   (not the earlier dark Velvet tint); one large frosted-white card holds
-  everything — brand mark (logo or name), name, description, price,
-  Order now / View details, and the thumbnail row with a next arrow.
+  everything — name, description, price,
+  Order now / View details, and the thumbnail row with arrows. No brand
+  mark in the card (client: the header already shows it).
 - **Plate**: the dish photo is a round "plate" with a dark rim in the card's
   right column (above the text on phones). It turns slowly while idle
   (`animate-plate-spin`, 60s/turn). On a switch the old plate rolls out to

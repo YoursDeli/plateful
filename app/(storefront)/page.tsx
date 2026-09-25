@@ -21,7 +21,7 @@ export default async function HomePage() {
   return (
     <main className="flex flex-1 flex-col">
       {featured.length > 0 ? (
-        <HeroSection items={featured} settings={settings} />
+        <HeroSection items={featured} />
       ) : (
         // Until the admin picks hero dishes (Hero position in /admin/menu).
         <section className="bg-gradient-to-br from-secondary to-secondary/80 px-4 py-20 text-center text-white sm:py-28">
