@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-25
-Current phase: **Steps 0–7 verified live; 8, 8a + side-nav/radius live (partly verified). Step 9 (referrals) built — waiting on its migration before pushing.**
+Current phase: **Steps 0–7 verified live; 8, 8a, side-nav/radius and 9 (referrals) live — awaiting user verification.**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -88,14 +88,14 @@ from `main`; Paystack in **test** mode).
 - [ ] `UploadButton` (admin image uploads via Supabase Storage, wired to real upload state) — *built 2026-09-29, awaiting user verification* (no snippet supplied; built from description)
 
 ### 9. Referral program
-- [ ] `referrals`, `referral_ledger` tables + RLS — *built 2026-09-25, awaiting migration + user verification*
-- [ ] `profiles` referral columns (`referral_code`, `referred_by`, `referral_balance`, `referral_earned_total`) — *built 2026-09-25, awaiting migration + user verification*
-- [ ] `site_settings.referral_bonus_amount` (admin-editable) — *built 2026-09-25, awaiting migration + user verification* (/admin/settings → Referrals)
-- [ ] Referral code generation on signup + `ref` cookie capture + pending referral creation — *built 2026-09-25, awaiting migration + user verification*
-- [ ] Referral completion logic on first **delivered** order (credit ledger + cached balance) — *built 2026-09-25, awaiting migration + user verification* (client: delivered, not paid)
-- [ ] Checkout redemption (apply balance, server-validated, transactional) — *built 2026-09-25, awaiting migration + user verification*
-- [ ] Refund-on-abandon logic hooked into stale-order cleanup — *built 2026-09-25, awaiting migration + user verification* (also on customer/restaurant cancel)
-- [ ] `/account/referrals` page — 3 stat cards + shareable link — *built 2026-09-25, awaiting migration + user verification*
+- [ ] `referrals`, `referral_ledger` tables + RLS — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] `profiles` referral columns (`referral_code`, `referred_by`, `referral_balance`, `referral_earned_total`) — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] `site_settings.referral_bonus_amount` (admin-editable) — *built 2026-09-25, migration applied, live — awaiting user verification* (/admin/settings → Referrals)
+- [ ] Referral code generation on signup + `ref` cookie capture + pending referral creation — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] Referral completion logic on first **delivered** order (credit ledger + cached balance) — *built 2026-09-25, migration applied, live — awaiting user verification* (client: delivered, not paid)
+- [ ] Checkout redemption (apply balance, server-validated, transactional) — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] Refund-on-abandon logic hooked into stale-order cleanup — *built 2026-09-25, migration applied, live — awaiting user verification* (also on customer/restaurant cancel)
+- [ ] `/account/referrals` page — 3 stat cards + shareable link — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 10. Loyalty points program
 - [ ] `loyalty_ledger` table + RLS
@@ -478,9 +478,6 @@ from `main`; Paystack in **test** mode).
 
 ## Open Blockers
 
-- **Run the referrals migration BEFORE the push** (user):
-  `supabase/migrations/20261002000000_referrals.sql` — the new checkout calls
-  `create_order(..., p_apply_referral)`, which only exists after it.
 - **Still to verify on live** (user): 8a buttons; step-8 flows not yet
   exercised (new order code, customer cancel, refund tracking, pickup);
   today's radius + side-nav changes.
@@ -620,3 +617,4 @@ from `main`; Paystack in **test** mode).
   ?ref cookie capture + claim after sign-in, checkout bonus toggle + ₦0
   orders, /account/referrals (link, share, 3 cards), admin bonus setting,
   side-menu entry. Build/lint/tsc clean. Not pushed until migration runs.
+- **2026-09-25** — Referrals migration applied (verified); step 9 pushed live.
