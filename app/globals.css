@@ -35,6 +35,12 @@
   --animate-rise-in: rise-in 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-slide-in: slide-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-slide-in-left: slide-in-left 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  /* Hero dish swap (client video reference): the plate turns slowly while
+     idle; on a switch the old plate rolls out to the right and the new one
+     swings in from above, overshoots a little and settles. */
+  --animate-plate-spin: plate-spin 60s linear infinite;
+  --animate-plate-out: plate-out 420ms cubic-bezier(0.55, 0, 0.8, 0.4) both;
+  --animate-plate-in: plate-in 620ms cubic-bezier(0.2, 0.8, 0.25, 1) both;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -51,6 +57,19 @@
   @keyframes slide-in-left {
     from { transform: translateX(-100%); }
     to { transform: none; }
+  }
+  @keyframes plate-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes plate-out {
+    from { transform: none; }
+    to { transform: translate(85%, 30%) rotate(110deg); }
+  }
+  @keyframes plate-in {
+    0% { transform: translate(-8%, -135%) rotate(-110deg); }
+    55% { transform: translate(-18%, -12%) rotate(-18deg); }
+    80% { transform: translate(3%, 2%) rotate(4deg); }
+    100% { transform: none; }
   }
 }
 

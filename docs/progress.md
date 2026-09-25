@@ -713,3 +713,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Reviews moved to the customer dashboard (Account → Reviews: pending + posted); dish page shows posted reviews only (client).
 - **2026-09-25** — Reviews migration applied (verified: columns + functions, anon writes refused); pushed reviews live.
 - **2026-09-25** — Dish page: divider lines between Save/Share and About this dish, and between About and Reviews (client). Pushed live.
+- **2026-09-25** — Hero rebuilt after the client's reference video (light frosted card, spinning plate, roll-out/swing-in swap, lifted thumbnail with price tag). See `docs/hero-section-design.md` §8. Pushed live.

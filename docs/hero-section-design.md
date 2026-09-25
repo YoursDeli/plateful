@@ -103,3 +103,23 @@ logic can come later once there's order data to rank by.
 - Ensure text-over-image contrast meets WCAG AA even against the busiest food
   photos — this is why the glass card needs a real background fill, not just
   blur, behind the text.
+
+## 8. As built — client video reference (2026-09-25)
+
+The client supplied a reference video; the hero now follows it:
+
+- **Light look**: soft blurred photo of the active dish under a white wash
+  (not the earlier dark Velvet tint); one large frosted-white card holds
+  everything — brand mark (logo or name), name, description, price,
+  Order now / View details, and the thumbnail row with a next arrow.
+- **Plate**: the dish photo is a round "plate" with a dark rim in the card's
+  right column (above the text on phones). It turns slowly while idle
+  (`animate-plate-spin`, 60s/turn). On a switch the old plate rolls out to
+  the right (`animate-plate-out`) while the new one swings in from above,
+  overshoots slightly and settles (`animate-plate-in`); text and background
+  crossfade. Keyframes live in `app/globals.css`.
+- **Thumbnails**: small round photos; the active one lifts onto a white chip
+  with its name and a dark price tag underneath.
+- Still no auto-rotate (§2); reduced motion makes swaps instant and stops
+  the spin.
+
