@@ -551,6 +551,7 @@ from `main`; Paystack in **test** mode).
 
 ## Open Blockers
 
+- **Netlify build credits used up** (2026-09-25): production builds paused until the billing cycle resets or the plan is upgraded. All commits are on GitHub; after the reset, Netlify → Deploys → Trigger deploy → Deploy site. Push in batches from now on (one build per work session), not per change.
 - **Brevo template wording** (user): in the Order confirmation template,
   change the points line to "You'll earn {{ params.points_earned }} loyalty
   points when this order is delivered." (repo copy already updated).
@@ -719,3 +720,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Hero dish motion smoothed: plates pre-loaded, single-segment easing, card backdrop blur removed, GPU layers (client: swap wasn't smooth). Pushed live.
 - **2026-09-25** — Hero rebuilt as an orbit: all dishes on one turning wheel, one visible through a window (client idea); only the wheel animates. Pushed live.
 - **2026-09-25** — Hero rest between turns reduced to 3s (client). Pushed live.
+- **2026-09-25** — Netlify free build credits exhausted; production builds paused. Code all on GitHub. Proposed batching pushes to one build per session.
