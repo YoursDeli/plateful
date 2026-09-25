@@ -12,7 +12,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     { href: "/account", label: "Overview", icon: "overview", exact: true },
     { href: "/account/orders", label: "Orders", icon: "orders", alsoActiveFor: ["/orders"] },
     { href: "/favorites", label: "Favourites", icon: "favorites" },
-    // Referrals (/account/referrals) joins here in Build Order step 9.
+    { href: "/account/referrals", label: "Refer & earn", icon: "referrals" },
     ...(isStaffRole(profile) ? [{ href: "/admin/orders", label: "Staff dashboard", icon: "staff" } as NavItem] : []),
   ];
 

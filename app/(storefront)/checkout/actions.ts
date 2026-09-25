@@ -1,10 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { emptyToNull, formValues, type FormState } from "@/lib/form-state";
 import { nairaToKobo } from "@/lib/money";
+import { notifyOrderPaid } from "@/lib/orders/notify";
 import { initializeTransaction, isPaystackConfigured } from "@/lib/paystack";
 import { requestOrigin } from "@/lib/request-origin";
 import { createClient } from "@/lib/supabase/server";
@@ -32,6 +34,7 @@ const checkoutSchema = z
     delivery_address: z.string().trim().max(500).nullable(),
     notes: z.string().trim().max(500, "Keep notes under 500 characters").nullable(),
     save_details: z.boolean(),
+    apply_referral: z.boolean(),
   })
   .refine((v) => v.fulfillment === "pickup" || (v.delivery_address?.length ?? 0) >= 5, {
     path: ["delivery_address"],
@@ -63,6 +66,7 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
     delivery_address: emptyToNull(formData.get("delivery_address")),
     notes: emptyToNull(formData.get("notes")),
     save_details: formData.get("save_details") === "on",
+    apply_referral: formData.get("apply_referral") === "on",
   });
   if (!parsed.success) {
     return { fieldErrors: z.flattenError(parsed.error).fieldErrors, values: formValues(formData, FIELDS) };
@@ -79,6 +83,7 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
     p_contact_phone: f.contact_phone,
     p_delivery_address: f.fulfillment === "delivery" ? f.delivery_address : null,
     p_notes: f.notes,
+    p_apply_referral: f.apply_referral,
   });
   if (error || !data?.[0]) {
     if (error?.message.includes("items_unavailable")) {
@@ -105,20 +110,28 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
       .eq("id", user.id);
   }
 
+  // Fully covered by rewards: already paid inside create_order — no Paystack.
+  if (order.status === "paid" || !order.paystack_reference) {
+    const origin = await requestOrigin();
+    after(() => notifyOrderPaid(order.order_id, origin));
+    redirect(`/checkout/verify?order=${order.order_id}`);
+  }
+  const reference = order.paystack_reference;
+
   let authorizationUrl: string;
   try {
     const tx = await initializeTransaction({
       email: order.contact_email,
       amountKobo: nairaToKobo(order.total),
-      reference: order.paystack_reference,
+      reference,
       callbackUrl: `${await requestOrigin()}/checkout/verify`,
       metadata: { order_id: order.order_id },
     });
     authorizationUrl = tx.authorization_url;
   } catch (e) {
-    console.error("paystack initialize failed:", order.paystack_reference, (e as Error).message);
+    console.error("paystack initialize failed:", reference, (e as Error).message);
     // The order exists (pending) — send them to its page to retry payment.
-    redirect(`/checkout/verify?reference=${encodeURIComponent(order.paystack_reference)}&init=failed`);
+    redirect(`/checkout/verify?reference=${encodeURIComponent(reference)}&init=failed`);
   }
 
   redirect(authorizationUrl);

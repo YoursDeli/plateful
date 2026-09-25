@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { claimPendingReferral } from "@/lib/referrals/claim";
 import { createClient } from "@/lib/supabase/client";
 
 const RESEND_COOLDOWN_SECONDS = 60;
@@ -103,6 +104,8 @@ export function SignInPanel({
       );
       return;
     }
+    // Link a referral if they arrived via someone's link (no-op otherwise).
+    await claimPendingReferral().catch(() => undefined);
     finish();
   }
 

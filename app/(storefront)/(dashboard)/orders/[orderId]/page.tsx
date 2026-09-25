@@ -105,6 +105,12 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
             <dt className="text-neutral-dark/65">{order.fulfillment === "pickup" ? "Pickup" : "Delivery"}</dt>
             <dd className="tabular-nums">{order.delivery_fee === 0 ? "Free" : formatNaira(order.delivery_fee)}</dd>
           </div>
+          {order.referral_bonus_applied > 0 && (
+            <div className="flex justify-between text-secondary">
+              <dt>Referral bonus</dt>
+              <dd className="tabular-nums">−{formatNaira(order.referral_bonus_applied)}</dd>
+            </div>
+          )}
           <div className="flex justify-between pt-1 text-base font-semibold">
             <dt>Total</dt>
             <dd className="tabular-nums">{formatNaira(order.total)}</dd>

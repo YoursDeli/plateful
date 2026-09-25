@@ -91,14 +91,19 @@ function CheckoutForm({
   const blocked = items.some(
     (i) => notices[i.menuItemId] === "unavailable" || notices[i.menuItemId] === "removed",
   );
+  const [applyReferral, setApplyReferral] = useState(false);
+  const referralBalance = profile?.referral_balance ?? 0;
   const subtotal = cartSubtotal(items);
-  const total = subtotal + deliveryFeeFor(subtotal, fulfillment, pricing);
+  // Display mirror of create_order(): bonus capped at the food subtotal.
+  const bonus = applyReferral ? Math.min(referralBalance, subtotal) : 0;
+  const total = subtotal - bonus + deliveryFeeFor(subtotal, fulfillment, pricing);
   const payload = JSON.stringify(items.map((i) => ({ menu_item_id: i.menuItemId, quantity: i.quantity })));
 
   return (
     <form action={action} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:items-start">
       <input type="hidden" name="items" value={payload} />
       <input type="hidden" name="fulfillment" value={fulfillment} />
+      <input type="hidden" name="apply_referral" value={applyReferral ? "on" : ""} />
 
       <div className="flex flex-col gap-6">
         <section className="flex flex-col gap-4 rounded-3xl bg-white p-5 shadow-sm sm:p-7">
@@ -184,7 +189,29 @@ function CheckoutForm({
       </div>
 
       <div className="flex flex-col gap-4 lg:sticky lg:top-24">
-        <OrderSummary fulfillment={fulfillment} pricing={pricing} />
+        <OrderSummary fulfillment={fulfillment} pricing={pricing} bonus={bonus} />
+        {/* Rewards (accounts doc §2 "CheckoutRewardsSection"): shown even at
+            ₦0 — disabled, not hidden — so customers know it exists. Loyalty
+            points join this section in step 10. */}
+        <section aria-label="Rewards" className="rounded-3xl bg-white p-5 shadow-sm">
+          <label
+            className={`flex items-center justify-between gap-3 text-sm ${
+              referralBalance > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-60"
+            }`}
+          >
+            <span>
+              <span className="block font-medium">Apply referral bonus</span>
+              <span className="text-xs text-neutral-dark/60">{formatNaira(referralBalance)} available</span>
+            </span>
+            <input
+              type="checkbox"
+              checked={applyReferral}
+              disabled={referralBalance <= 0}
+              onChange={(e) => setApplyReferral(e.target.checked)}
+              className="size-5 accent-secondary"
+            />
+          </label>
+        </section>
         {state.error && (
           <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
             {state.error}
@@ -196,10 +223,16 @@ function CheckoutForm({
           </p>
         )}
         <CtaButton type="submit" size="lg" fullWidth disabled={pending || blocked}>
-          {pending ? "Taking you to Paystack…" : `Pay ${formatNaira(total)}`}
+          {pending
+            ? total === 0
+              ? "Placing your order…"
+              : "Taking you to Paystack…"
+            : total === 0
+              ? "Place order"
+              : `Pay ${formatNaira(total)}`}
         </CtaButton>
         <p className="text-center text-xs text-neutral-dark/55">
-          Secure payment by Paystack. By placing this order you agree to our{" "}
+          {total === 0 ? "Covered by your referral bonus." : "Secure payment by Paystack."} By placing this order you agree to our{" "}
           <Link href="/terms" className="underline">Terms</Link> and{" "}
           <Link href="/privacy" className="underline">Privacy Policy</Link>.
         </p>
@@ -208,7 +241,15 @@ function CheckoutForm({
   );
 }
 
-function OrderSummary({ fulfillment, pricing }: { fulfillment: Fulfillment; pricing: Pricing }) {
+function OrderSummary({
+  fulfillment,
+  pricing,
+  bonus = 0,
+}: {
+  fulfillment: Fulfillment;
+  pricing: Pricing;
+  bonus?: number;
+}) {
   const items = useCart((s) => s.items);
   const notices = useCart((s) => s.notices);
   const subtotal = cartSubtotal(items);
@@ -253,9 +294,15 @@ function OrderSummary({ fulfillment, pricing }: { fulfillment: Fulfillment; pric
         {toFree !== null && (
           <p className="text-xs text-secondary">Add {formatNaira(toFree)} more for free delivery.</p>
         )}
+        {bonus > 0 && (
+          <div className="flex justify-between text-secondary">
+            <dt>Referral bonus</dt>
+            <dd className="tabular-nums">−{formatNaira(bonus)}</dd>
+          </div>
+        )}
         <div className="flex justify-between border-t border-secondary/10 pt-3 text-base font-semibold">
           <dt>Total</dt>
-          <dd className="tabular-nums">{formatNaira(subtotal + fee)}</dd>
+          <dd className="tabular-nums">{formatNaira(subtotal - bonus + fee)}</dd>
         </div>
       </dl>
     </section>

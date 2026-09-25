@@ -15,6 +15,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   free_delivery_threshold: 15000,
   order_notification_email: null,
   whatsapp_number: null,
+  referral_bonus_amount: 200,
   updated_at: new Date(0).toISOString(),
 };
 

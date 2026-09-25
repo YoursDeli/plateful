@@ -17,6 +17,10 @@ export type Profile = {
   phone: string | null;
   default_address: string | null;
   role: Role;
+  referral_code: string;
+  referred_by: string | null;
+  referral_balance: number;
+  referral_earned_total: number;
   created_at: string;
   updated_at: string;
 };
@@ -69,7 +73,27 @@ export type SiteSettings = {
   free_delivery_threshold: number | null;
   order_notification_email: string | null;
   whatsapp_number: string | null;
+  referral_bonus_amount: number;
   updated_at: string;
+};
+
+export type Referral = {
+  id: string;
+  referrer_id: string;
+  referred_user_id: string;
+  status: "pending" | "completed";
+  reward_amount: number | null;
+  created_at: string;
+  completed_at: string | null;
+};
+
+export type ReferralLedgerEntry = {
+  id: number;
+  user_id: string;
+  amount: number;
+  reason: "referral_reward" | "checkout_redemption" | "redemption_refund";
+  reference_id: string | null;
+  created_at: string;
 };
 
 export type OrderStatus =
@@ -98,6 +122,7 @@ export type Order = {
   notes: string | null;
   subtotal: number;
   delivery_fee: number;
+  referral_bonus_applied: number;
   total: number;
   paystack_reference: string | null;
   paid_at: string | null;
@@ -179,6 +204,7 @@ export type Database = {
             | "free_delivery_threshold"
             | "order_notification_email"
             | "whatsapp_number"
+            | "referral_bonus_amount"
           >
         >
       >;
@@ -187,6 +213,8 @@ export type Database = {
       orders: Table<Order, never, Partial<Pick<Order, "confirmation_emailed_at" | "vendor_emailed_at">>>;
       order_items: Table<OrderItem, never, never>;
       order_status_history: Table<OrderStatusHistory, never, never>;
+      referrals: Table<Referral, never, never>;
+      referral_ledger: Table<ReferralLedgerEntry, never, never>;
       favorites: Table<
         Favorite,
         Pick<Favorite, "user_id" | "menu_item_id">,
@@ -213,15 +241,22 @@ export type Database = {
           p_contact_phone: string;
           p_delivery_address: string | null;
           p_notes: string | null;
+          p_apply_referral?: boolean;
         };
         Returns: {
           order_id: string;
-          order_number: number;
+          order_code: string;
           total: number;
-          paystack_reference: string;
+          paystack_reference: string | null; // null when the total was ₦0
           contact_email: string;
+          status: OrderStatus; // "paid" straight away when the total was ₦0
         }[];
       };
+      claim_referral: {
+        Args: { p_code: string };
+        Returns: "claimed" | "invalid_code" | "self" | "not_eligible";
+      };
+      expire_stale_orders: { Args: Record<string, never>; Returns: number };
       renew_payment_reference: {
         Args: { p_order_id: string };
         Returns: { paystack_reference: string; total: number; contact_email: string }[];

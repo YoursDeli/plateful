@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { claimPendingReferral } from "@/lib/referrals/claim";
 import { safeNextPath } from "@/lib/safe-redirect";
 import { createClient } from "@/lib/supabase/server";
 
@@ -14,7 +15,10 @@ export async function GET(request: NextRequest) {
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) return NextResponse.redirect(new URL(next, origin));
+    if (!error) {
+      await claimPendingReferral();
+      return NextResponse.redirect(new URL(next, origin));
+    }
     console.error("OAuth code exchange failed:", error.code ?? error.message);
   } else if (searchParams.get("error")) {
     // e.g. the user pressed "Cancel" on Google's consent screen.

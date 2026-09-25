@@ -155,3 +155,28 @@ export async function saveContact(_prev: FormState, formData: FormData): Promise
   revalidatePath("/", "layout");
   return { ok: true };
 }
+
+// Referral reward credited to the referrer (docs/pages-referrals-footer.md §5).
+// Locked into each referral when it completes, so changes aren't retroactive.
+export async function saveReferrals(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireStaff("/admin/settings");
+
+  const parsed = z
+    .object({ referral_bonus_amount: nairaField.transform(Number) })
+    .safeParse({ referral_bonus_amount: String(formData.get("referral_bonus_amount") ?? "") });
+  if (!parsed.success) {
+    return {
+      fieldErrors: z.flattenError(parsed.error).fieldErrors,
+      values: formValues(formData, ["referral_bonus_amount"]),
+    };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("site_settings").update(parsed.data).eq("id", 1);
+  if (error) {
+    console.error("saveReferrals failed:", error.code, error.message);
+    return { error: "Couldn't save the referral bonus.", values: formValues(formData, ["referral_bonus_amount"]) };
+  }
+  revalidatePath("/", "layout");
+  return { ok: true };
+}

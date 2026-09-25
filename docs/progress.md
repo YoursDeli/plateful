@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-25
-Current phase: **Steps 0–7 verified live; 8 + 8a live (partly verified). Client adjustments done locally: 12px button radius + side-nav dashboards with mobile drawer — awaiting user check. Next: step 9 (referrals).**
+Current phase: **Steps 0–7 verified live; 8, 8a + side-nav/radius live (partly verified). Step 9 (referrals) built — waiting on its migration before pushing.**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -64,7 +64,7 @@ from `main`; Paystack in **test** mode).
 - [x] Sign-in gate at checkout (account required — no guest checkout) — *verified live 2026-09-28 (order #1001)*
 - [x] Checkout form — *verified live 2026-09-28 (order #1001); pickup / free-delivery / retry paths not yet exercised*
 - [x] Server-side order creation with server-computed prices — *verified live 2026-09-28 (order #1001): subtotal = Σ line totals, ₦1,500 fee applied under threshold*
-- [ ] Referral bonus / loyalty points redemption applied server-side (combined, capped at ₦0) — *deferred to steps 9/10: plugs into `create_order()`*
+- [ ] Referral bonus / loyalty points redemption applied server-side (combined, capped at ₦0) — *referral half built 2026-09-25 (step 9); loyalty half is step 10*
 - [x] Paystack initialize + redirect/inline — *verified live 2026-09-28 (order #1001) (hosted redirect, test card); ₦0 skip lands with rewards in steps 9/10*
 - [x] Webhook handler + signature verification — *verified live 2026-09-28 (order #1001): forged → 401; real `charge.success` confirmed in Netlify function logs by user*
 - [x] Return-URL verify fallback — *verified live 2026-09-28 (order #1001) (thank-you page, cart cleared)*
@@ -88,14 +88,14 @@ from `main`; Paystack in **test** mode).
 - [ ] `UploadButton` (admin image uploads via Supabase Storage, wired to real upload state) — *built 2026-09-29, awaiting user verification* (no snippet supplied; built from description)
 
 ### 9. Referral program
-- [ ] `referrals`, `referral_ledger` tables + RLS
-- [ ] `profiles` referral columns (`referral_code`, `referred_by`, `referral_balance`, `referral_earned_total`)
-- [ ] `site_settings.referral_bonus_amount` (admin-editable)
-- [ ] Referral code generation on signup + `ref` cookie capture + pending referral creation
-- [ ] Referral completion logic on first paid order (credit ledger + cached balance)
-- [ ] Checkout redemption (apply balance, server-validated, transactional)
-- [ ] Refund-on-abandon logic hooked into stale-order cleanup
-- [ ] `/account/referrals` page — 3 stat cards + shareable link
+- [ ] `referrals`, `referral_ledger` tables + RLS — *built 2026-09-25, awaiting migration + user verification*
+- [ ] `profiles` referral columns (`referral_code`, `referred_by`, `referral_balance`, `referral_earned_total`) — *built 2026-09-25, awaiting migration + user verification*
+- [ ] `site_settings.referral_bonus_amount` (admin-editable) — *built 2026-09-25, awaiting migration + user verification* (/admin/settings → Referrals)
+- [ ] Referral code generation on signup + `ref` cookie capture + pending referral creation — *built 2026-09-25, awaiting migration + user verification*
+- [ ] Referral completion logic on first **delivered** order (credit ledger + cached balance) — *built 2026-09-25, awaiting migration + user verification* (client: delivered, not paid)
+- [ ] Checkout redemption (apply balance, server-validated, transactional) — *built 2026-09-25, awaiting migration + user verification*
+- [ ] Refund-on-abandon logic hooked into stale-order cleanup — *built 2026-09-25, awaiting migration + user verification* (also on customer/restaurant cancel)
+- [ ] `/account/referrals` page — 3 stat cards + shareable link — *built 2026-09-25, awaiting migration + user verification*
 
 ### 10. Loyalty points program
 - [ ] `loyalty_ledger` table + RLS
@@ -462,10 +462,25 @@ from `main`; Paystack in **test** mode).
   `favorites/`, `orders/` — URLs unchanged. Removed now-redundant account
   link tiles / page sign-out button / "← Your account" link.
 
+- **2026-09-25** — **Referral credit on first DELIVERED order** (client
+  choice) instead of on payment — cancellable paid orders can't be gamed.
+  Other step-9 rules (eligibility, cookie, refunds, ₦0 orders) are recorded
+  in `docs/pages-referrals-footer.md` §5 "As built".
+- **2026-09-25** — **Fixed latent bug**: the profile guard trigger keyed on
+  the JWT role, so it would silently revert balance changes made inside
+  trusted security-definer functions (where the JWT still says
+  "authenticated"). It now keys on the database role (`current_user`), and
+  also guards the referral columns.
+- **2026-09-25** — `create_order()` gained `p_apply_referral` and returns
+  `order_code` + `status`; the step-6 signature was dropped and recreated.
+
 ---
 
 ## Open Blockers
 
+- **Run the referrals migration BEFORE the push** (user):
+  `supabase/migrations/20261002000000_referrals.sql` — the new checkout calls
+  `create_order(..., p_apply_referral)`, which only exists after it.
 - **Still to verify on live** (user): 8a buttons; step-8 flows not yet
   exercised (new order code, customer cancel, refund tracking, pickup);
   today's radius + side-nav changes.
@@ -600,3 +615,8 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Client adjustments: 12px button radius token applied
   site-wide (46 buttons/chips/tabs); side-nav + mobile drawer for admin and
   customer dashboards (new `(dashboard)` route group). Build/lint/tsc clean.
+- **2026-09-25** — Built step 9 referrals: migration (codes, referrals,
+  ledger, claim/credit/refund/expiry, new create_order, profile-guard fix),
+  ?ref cookie capture + claim after sign-in, checkout bonus toggle + ₦0
+  orders, /account/referrals (link, share, 3 cards), admin bonus setting,
+  side-menu entry. Build/lint/tsc clean. Not pushed until migration runs.

@@ -196,6 +196,23 @@ orders  (add)
      `cart-checkout-payment-workflow.md` §4, so an abandoned checkout
      doesn't permanently burn someone's bonus.
 
+### As built (2026-09-25) — differences from the flow above
+
+- **Credit on delivery, not payment** (client decision): the referrer is
+  credited when the friend's first order reaches **Delivered/Collected**,
+  because customers can cancel paid orders within 30 min for a full refund.
+- **Eligibility**: only brand-new accounts (created < 24h before claiming,
+  no orders, never referred) can be linked; self-referral blocked. The
+  `?ref=` code lives in a 30-day httpOnly cookie set by `proxy.ts` and is
+  claimed right after sign-in (email code or Google).
+- **Refunds of redeemed bonus**: on customer cancel, restaurant cancel, or
+  when an unpaid checkout expires after 24h (lazy `expire_stale_orders()`,
+  run at checkout and on the admin board — no scheduler). If an expired order
+  is paid late, the payment is honoured and the bonus re-taken.
+- **₦0 orders**: if the bonus covers the whole bill, `create_order()` marks
+  the order paid immediately and Paystack is skipped; emails still send.
+- Referral codes: 6 characters, same look-alike-free alphabet as order codes.
+
 ### Referrals Page (`/account/referrals`) — 3 cards
 
 ```

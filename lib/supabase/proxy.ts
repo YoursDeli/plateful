@@ -1,6 +1,23 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { REF_COOKIE, REF_COOKIE_MAX_AGE, normaliseReferralCode } from "@/lib/referrals/constants";
 import type { Database } from "./types";
+
+// Referral links (/?ref=CODE): remember the code for 30 days so it survives
+// the sign-up redirect; it's claimed after sign-in (lib/referrals/claim.ts).
+function rememberReferral(request: NextRequest, response: NextResponse) {
+  const code = normaliseReferralCode(request.nextUrl.searchParams.get("ref"));
+  if (code) {
+    response.cookies.set(REF_COOKIE, code, {
+      maxAge: REF_COOKIE_MAX_AGE,
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    });
+  }
+  return response;
+}
 
 // Refreshes the Supabase session cookie on every request (called from
 // /proxy.ts). Also does an optimistic redirect for /admin when signed out —
@@ -9,7 +26,7 @@ export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return response;
+    return rememberReferral(request, response);
   }
 
   const supabase = createServerClient<Database>(
@@ -44,5 +61,5 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return response;
+  return rememberReferral(request, response);
 }

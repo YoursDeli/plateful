@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { formatNaira } from "@/lib/money";
 import { settlePayment, type SettleResult } from "@/lib/orders/settle";
@@ -21,22 +22,28 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
   const reference = [params.reference, params.trxref].find((r) => typeof r === "string") as
     | string
     | undefined;
-  if (!reference) redirect("/cart");
+  // ?order=<id>: orders fully covered by rewards (no Paystack reference).
+  const orderId = typeof params.order === "string" && z.uuid().safeParse(params.order).success ? params.order : null;
+  if (!reference && !orderId) redirect("/cart");
 
   const user = await getCurrentUser();
   if (!user) {
-    redirect(`/login?next=${encodeURIComponent(`/checkout/verify?reference=${reference}`)}`);
+    const back = reference ? `/checkout/verify?reference=${reference}` : `/checkout/verify?order=${orderId}`;
+    redirect(`/login?next=${encodeURIComponent(back)}`);
   }
 
   // RLS: only the owner (or staff) can read this order.
   const supabase = await createClient();
   const loadOrder = async () =>
-    (await supabase.from("orders").select("*").eq("paystack_reference", reference).maybeSingle()).data;
+    (reference
+      ? await supabase.from("orders").select("*").eq("paystack_reference", reference).maybeSingle()
+      : await supabase.from("orders").select("*").eq("id", orderId!).maybeSingle()
+    ).data;
 
   let order = await loadOrder();
   let settle: SettleResult | { outcome: "error" } = { outcome: "error" };
   // Only ask Paystack while the order is still unpaid (webhook may have won).
-  if (order?.status === "pending_payment" && params.init !== "failed" && isPaystackConfigured()) {
+  if (reference && order?.status === "pending_payment" && params.init !== "failed" && isPaystackConfigured()) {
     try {
       settle = await settlePayment(reference, await requestOrigin());
       if (settle.outcome === "paid") order = await loadOrder();
@@ -93,6 +100,9 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
             label={order.fulfillment === "pickup" ? "Pickup" : "Delivery"}
             value={order.delivery_fee === 0 ? "Free" : formatNaira(order.delivery_fee)}
           />
+          {order.referral_bonus_applied > 0 && (
+            <Row label="Referral bonus" value={`−${formatNaira(order.referral_bonus_applied)}`} />
+          )}
           <Row label="Total paid" value={formatNaira(order.total)} strong />
         </dl>
         <p className="text-sm text-neutral-dark/70">

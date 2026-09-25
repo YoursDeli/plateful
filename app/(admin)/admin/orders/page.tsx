@@ -53,6 +53,9 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
   const tab: Tab = typeof rawTab === "string" && rawTab in TABS ? (rawTab as Tab) : "active";
 
   const supabase = await createClient();
+  // Lazy cleanup: unpaid checkouts older than 24h → failed, bonuses returned.
+  await supabase.rpc("expire_stale_orders");
+
   let query = supabase
     .from("orders")
     .select("*")
@@ -202,6 +205,11 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
           <strong className="tabular-nums">{formatNaira(order.total)}</strong>
           {order.delivery_fee > 0 && (
             <span className="text-xs text-neutral-dark/50"> (incl. {formatNaira(order.delivery_fee)} delivery)</span>
+          )}
+          {order.referral_bonus_applied > 0 && (
+            <span className="block text-xs text-secondary">
+              {formatNaira(order.referral_bonus_applied)} paid with referral bonus
+            </span>
           )}
         </p>
         <div className="flex flex-wrap items-center gap-2">
