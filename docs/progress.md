@@ -274,8 +274,10 @@ from `main`; Paystack in **test** mode).
   available featured dishes in that order; home falls back to a brand intro
   when none are featured. Home "Popular" row = available `Bestseller`-badged
   dishes, else the first available dishes.
-- **2026-09-25** — **Menu cards on mobile are single-column horizontal cards**
-  (photo left, details right); 2/3/4-column grid from `sm`/`lg`/`xl`.
+- **2026-09-25** — **Menu cards on mobile are single-column** full-width
+  cards; 2/3/4-column grid from `sm`/`lg`/`xl`. *(Superseded 2026-09-25 by
+  the client: cards are vertical at every size — photo on top, details below;
+  the horizontal photo-left mobile variant is gone.)*
   `menu-and-product-page.md` §1 said "2 cols mobile", but CLAUDE.md §6 +
   `pages-referrals-footer.md` §6 (stacked mobile) take precedence.
 - **2026-09-25** — Public reviews are read through the
@@ -679,3 +681,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Built step 11: pages table + seeded About (client story)/Terms/Privacy drafts, /about /terms /privacy, site-wide footer, Settings → Contact & footer, Admin → Pages editor with chef photo. Build/lint/tsc clean. Not pushed until migration runs.
 - **2026-09-25** — Pages/footer migration applied (verified: 3 pages seeded, footer settings set); pushed step 11 live.
 - **2026-09-25** — About title split: small "Meet Chef" line over the chef's name in large type (client). Pushed live.
+- **2026-09-25** — Menu cards: photo on top, details below on mobile too (client; was photo-left). Pushed live.
