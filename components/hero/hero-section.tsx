@@ -17,7 +17,7 @@ import type { MenuItem } from "@/lib/supabase/types";
 // Only that one wheel animates, which is what keeps it smooth on phones.
 // Auto-cycles and keeps going through hover/taps (client); arrows and
 // thumbnails turn the wheel too. Reduced motion → no auto-cycle, instant.
-const AUTO_CYCLE_MS = 5000;
+const AUTO_CYCLE_MS = 3000;
 const TURN_MS = 1100;
 
 export function HeroSection({ items }: { items: MenuItem[] }) {

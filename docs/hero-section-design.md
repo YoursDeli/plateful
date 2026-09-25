@@ -131,7 +131,7 @@ The client supplied a reference video; the hero now follows it:
 - **Thumbnails**: small round photos only — no name or price (client). The
   active one lifts and gets a Velvet ring. Back and next arrows either side.
 - **Auto-cycle ON (client, overrides §2's "off by default")**: next dish
-  rests 5s between turns, never paused by hover or taps; arrows turn the
+  rests 3s between turns, never paused by hover or taps; arrows turn the
   wheel one step either way, thumbnails take the shortest way round, and
   any manual turn restarts the rest timer. Users with reduced motion get no auto-cycle, instant swaps and no
   spin. The card text has no `aria-live` (it would announce every 5s).
