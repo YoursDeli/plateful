@@ -31,14 +31,14 @@ export default async function AdminOverviewPage() {
 
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <li>
-          <Link href="/admin/orders" className="flex h-full flex-col gap-1 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-secondary/5 transition hover:ring-secondary/20">
+          <Link href="/admin/orders" className="flex h-full flex-col gap-1 rounded-2xl bg-white card-accent p-5 shadow-sm ring-1 ring-secondary/5 transition hover:ring-secondary/20">
             <span className="text-sm text-neutral-dark/60">Active orders</span>
             <span className="font-display text-3xl font-semibold text-secondary tabular-nums">{overview.activeOrders}</span>
             <span className="text-xs text-neutral-dark/55">Paid and not yet delivered</span>
           </Link>
         </li>
         <li>
-          <Link href="/admin/orders?tab=cancelled" className="flex h-full flex-col gap-1 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-secondary/5 transition hover:ring-secondary/20">
+          <Link href="/admin/orders?tab=cancelled" className="flex h-full flex-col gap-1 rounded-2xl bg-white card-accent p-5 shadow-sm ring-1 ring-secondary/5 transition hover:ring-secondary/20">
             <span className="text-sm text-neutral-dark/60">Refunds due</span>
             <span className={`font-display text-3xl font-semibold tabular-nums ${overview.refundsDue > 0 ? "text-red-700" : "text-secondary"}`}>
               {overview.refundsDue}
@@ -46,7 +46,7 @@ export default async function AdminOverviewPage() {
             <span className="text-xs text-neutral-dark/55">Cancelled paid orders not yet marked refunded</span>
           </Link>
         </li>
-        <li className="flex flex-col gap-1 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-secondary/5">
+        <li className="flex flex-col gap-1 rounded-2xl bg-white card-accent p-5 shadow-sm ring-1 ring-secondary/5">
           <span className="text-sm text-neutral-dark/60">Average order (this month)</span>
           <span className="font-display text-3xl font-semibold text-secondary tabular-nums">
             {overview.avgOrderValueMonth === null ? "—" : formatNaira(Math.round(overview.avgOrderValueMonth))}
@@ -60,7 +60,7 @@ export default async function AdminOverviewPage() {
 
 function PeriodCard({ stats }: { stats: PeriodStats }) {
   return (
-    <article className="flex h-full flex-col gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-secondary/5">
+    <article className="flex h-full flex-col gap-4 rounded-2xl bg-white card-accent p-5 shadow-sm ring-1 ring-secondary/5">
       <h2 className="text-sm font-semibold tracking-wide text-neutral-dark/60 uppercase">{stats.label}</h2>
       <div>
         <p className="text-xs text-neutral-dark/55">Revenue</p>

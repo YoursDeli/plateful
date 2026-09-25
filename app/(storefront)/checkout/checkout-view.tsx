@@ -51,7 +51,7 @@ export function CheckoutView({
   if (!signedIn) {
     return (
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]">
-        <section className="rounded-3xl bg-white p-5 shadow-sm sm:p-8">
+        <section className="rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-8">
           <h2 className="font-display text-2xl font-semibold text-secondary">Sign in to check out</h2>
           <p className="mt-1 mb-6 text-sm text-neutral-dark/65">
             You&apos;ll need an account to track your order. Your cart is saved — you&apos;ll pick up right here.
@@ -106,7 +106,7 @@ function CheckoutForm({
       <input type="hidden" name="apply_referral" value={applyReferral ? "on" : ""} />
 
       <div className="flex flex-col gap-6">
-        <section className="flex flex-col gap-4 rounded-3xl bg-white p-5 shadow-sm sm:p-7">
+        <section className="flex flex-col gap-4 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-7">
           <h2 className="font-display text-2xl font-semibold text-secondary">How would you like it?</h2>
           <div role="radiogroup" aria-label="Delivery or pickup" className="grid grid-cols-2 gap-3">
             {(["delivery", "pickup"] as const).map((option) => (
@@ -133,7 +133,7 @@ function CheckoutForm({
           </div>
         </section>
 
-        <section className="flex flex-col gap-4 rounded-3xl bg-white p-5 shadow-sm sm:p-7">
+        <section className="flex flex-col gap-4 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-7">
           <h2 className="font-display text-2xl font-semibold text-secondary">Your details</h2>
           <Field label="Full name" error={errors.contact_name}>
             <input
@@ -193,7 +193,7 @@ function CheckoutForm({
         {/* Rewards (accounts doc §2 "CheckoutRewardsSection"): shown even at
             ₦0 — disabled, not hidden — so customers know it exists. Loyalty
             points join this section in step 10. */}
-        <section aria-label="Rewards" className="rounded-3xl bg-white p-5 shadow-sm">
+        <section aria-label="Rewards" className="rounded-3xl bg-white card-accent p-5 shadow-sm">
           <label
             className={`flex items-center justify-between gap-3 text-sm ${
               referralBalance > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-60"
@@ -257,7 +257,7 @@ function OrderSummary({
   const toFree = fulfillment === "delivery" ? amountToFreeDelivery(subtotal, pricing) : null;
 
   return (
-    <section aria-labelledby="summary-heading" className="flex flex-col gap-4 rounded-3xl bg-white p-5 shadow-sm sm:p-6">
+    <section aria-labelledby="summary-heading" className="flex flex-col gap-4 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-6">
       <div className="flex items-baseline justify-between">
         <h2 id="summary-heading" className="font-display text-xl font-semibold text-secondary">Order summary</h2>
         <Link href="/cart" className="text-sm text-secondary underline-offset-4 hover:underline">Edit</Link>

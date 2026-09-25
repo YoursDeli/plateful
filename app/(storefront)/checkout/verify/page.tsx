@@ -158,7 +158,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <main className="mx-auto flex w-full max-w-xl flex-col px-4 py-10 sm:py-16">
-      <div className="flex animate-rise-in flex-col gap-5 rounded-3xl bg-white p-6 shadow-sm sm:p-8">{children}</div>
+      <div className="flex animate-rise-in flex-col gap-5 rounded-3xl bg-white card-accent p-6 shadow-sm sm:p-8">{children}</div>
     </main>
   );
 }

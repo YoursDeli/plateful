@@ -14,7 +14,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     { href: "/favorites", label: "Favourites", icon: "favorites" },
     { href: "/account/referrals", label: "Refer & earn", icon: "referrals" },
     { href: "/account", label: "Account", icon: "overview", exact: true },
-    ...(isStaffRole(profile) ? [{ href: "/admin/orders", label: "Staff dashboard", icon: "staff" } as NavItem] : []),
+    ...(isStaffRole(profile) ? [{ href: "/admin", label: "Staff dashboard", icon: "staff" } as NavItem] : []),
   ];
 
   return (

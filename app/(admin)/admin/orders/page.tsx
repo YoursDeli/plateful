@@ -130,7 +130,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
 function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
   const actions = nextActions(order.status, order.fulfillment);
   return (
-    <article className="flex h-full flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-secondary/5 sm:p-5">
+    <article className="flex h-full flex-col gap-3 rounded-2xl bg-white card-accent p-4 shadow-sm ring-1 ring-secondary/5 sm:p-5">
       <header className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="font-display text-xl font-semibold text-secondary">#{order.order_code}</p>

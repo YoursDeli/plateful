@@ -51,6 +51,16 @@
   }
 }
 
+/* Card "ambience bar" (client): a Velvet accent down the left edge of info &
+   dashboard cards. card-accent-light is for dark (Velvet) cards. Dish cards
+   and the hero glass card deliberately don't use it. */
+@utility card-accent {
+  border-left: 4px solid var(--brand-secondary);
+}
+@utility card-accent-light {
+  border-left: 4px solid var(--brand-primary);
+}
+
 /* Respect reduced-motion everywhere: swaps become instant. */
 @media (prefers-reduced-motion: reduce) {
   *,

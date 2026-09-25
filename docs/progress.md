@@ -487,6 +487,16 @@ from `main`; Paystack in **test** mode).
   referral bonus). Lagos time (fixed UTC+1), weeks start Monday. Computed in
   `lib/admin/stats.ts` from the staff session — no migration.
 
+- **2026-09-25** — **Card "ambience bar"** (client): 4px Velvet accent down
+  the left edge of info/dashboard cards via Tailwind utilities `card-accent`
+  (Velvet) / `card-accent-light` (Lavender, for dark cards) in `globals.css`.
+  Not on dish cards or the hero glass card. New info cards should use it.
+- **2026-09-25** — **"Menu" page renamed "Food Menu"** (header link, page
+  titles, breadcrumb, admin side menu) — avoids confusion with the mobile
+  drawer's "Menu" button. Header hides the brand name below `sm` (logo
+  only; a home icon if no logo). Customer "Staff dashboard" link → `/admin`
+  (Overview is the admin default).
+
 ---
 
 ## Open Blockers
@@ -634,3 +644,6 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Client changes while testing step 9: customer dashboard
   defaults to Orders, Overview renamed Account (details + delivery address
   sections); new admin Overview with revenue/orders growth cards. Pushed live.
+- **2026-09-25** — Client UI changes: left accent bar on 29 info cards,
+  "Food Menu" naming, logo-only mobile header, staff link → admin Overview.
+  Pushed live.

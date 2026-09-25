@@ -45,7 +45,7 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-6 sm:py-10">
       <nav aria-label="Breadcrumb" className="text-sm text-neutral-dark/60">
-        <Link href="/menu" className="hover:underline">Menu</Link>
+        <Link href="/menu" className="hover:underline">Food Menu</Link>
         {category && (
           <>
             <span aria-hidden="true"> / </span>
@@ -109,7 +109,7 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
           </h2>
           <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {reviews.map((r) => (
-              <li key={r.id} className="flex flex-col gap-2 rounded-2xl bg-white p-4 shadow-sm">
+              <li key={r.id} className="flex flex-col gap-2 rounded-2xl bg-white card-accent p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <span aria-hidden="true" className="flex size-9 items-center justify-center rounded-full bg-primary font-semibold text-secondary">
                     {r.reviewer_name.charAt(0).toUpperCase()}

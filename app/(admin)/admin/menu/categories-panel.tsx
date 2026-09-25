@@ -11,7 +11,7 @@ const inputClass =
 
 export function CategoriesPanel({ categories }: { categories: Category[] }) {
   return (
-    <details className="rounded-xl bg-white p-4 shadow-sm" open={categories.length === 0}>
+    <details className="rounded-xl bg-white card-accent p-4 shadow-sm" open={categories.length === 0}>
       <summary className="cursor-pointer font-medium">
         Categories <span className="text-neutral-dark/50">({categories.length})</span>
       </summary>

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const NAV: NavItem[] = [
   { href: "/admin", label: "Overview", icon: "staff", exact: true },
   { href: "/admin/orders", label: "Orders", icon: "orders" },
-  { href: "/admin/menu", label: "Menu", icon: "menu" },
+  { href: "/admin/menu", label: "Food Menu", icon: "menu" },
   { href: "/admin/settings", label: "Settings", icon: "settings" },
 ];
 

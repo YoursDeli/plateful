@@ -7,7 +7,7 @@ export function ReferralLinkBox({ link, brandName }: { link: string; brandName: 
   const [copied, setCopied] = useState(false);
 
   return (
-    <div className="flex flex-col gap-3 rounded-3xl bg-secondary p-5 text-white shadow-sm sm:p-6">
+    <div className="flex flex-col gap-3 rounded-3xl bg-secondary card-accent-light p-5 text-white shadow-sm sm:p-6">
       <p className="text-sm text-white/75">Your referral link</p>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <input

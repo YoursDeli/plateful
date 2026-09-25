@@ -18,7 +18,7 @@ export function DeliveryForm({
   const v = state.values;
 
   return (
-    <form action={action} className="flex flex-col gap-5 rounded-xl bg-white p-4 shadow-sm sm:p-6">
+    <form action={action} className="flex flex-col gap-5 rounded-xl bg-white card-accent p-4 shadow-sm sm:p-6">
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 text-sm font-medium">
           Delivery fee (₦)

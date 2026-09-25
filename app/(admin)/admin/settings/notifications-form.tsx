@@ -13,7 +13,7 @@ export function NotificationsForm({ email }: { email: string | null }) {
   const v = state.values;
 
   return (
-    <form action={action} className="flex flex-col gap-5 rounded-xl bg-white p-4 shadow-sm sm:p-6">
+    <form action={action} className="flex flex-col gap-5 rounded-xl bg-white card-accent p-4 shadow-sm sm:p-6">
       <label className="flex flex-col gap-1.5 text-sm font-medium">
         New-order alert email
         <input

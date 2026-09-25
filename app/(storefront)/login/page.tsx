@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/60 via-neutral-light to-neutral-light" />
       <div aria-hidden="true" className="absolute -top-24 -right-24 -z-10 size-72 rounded-full bg-secondary/10 blur-3xl" />
 
-      <div className="w-full max-w-sm animate-rise-in rounded-3xl border border-white/60 bg-white/85 p-6 shadow-xl backdrop-blur-md sm:p-8">
+      <div className="w-full max-w-sm animate-rise-in rounded-3xl border-y border-r border-white/60 bg-white/85 card-accent p-6 shadow-xl backdrop-blur-md sm:p-8">
         <div className="mb-6 flex flex-col gap-1.5 text-center">
           <h1 className="font-display text-3xl font-semibold text-secondary">Welcome</h1>
           <p className="text-sm text-neutral-dark/65">

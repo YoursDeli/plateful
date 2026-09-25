@@ -68,7 +68,7 @@ export default async function HomePage() {
                 {hasBestsellers ? "Bestsellers" : "Popular right now"}
               </h2>
               <Link href="/menu" className="text-sm font-medium text-secondary underline-offset-4 hover:underline">
-                Full menu →
+                Full food menu →
               </Link>
             </div>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">

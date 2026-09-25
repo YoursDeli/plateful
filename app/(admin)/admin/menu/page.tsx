@@ -9,7 +9,7 @@ import type { Category, MenuItem } from "@/lib/supabase/types";
 import { deleteMenuItem, setMenuItemAvailability } from "./actions";
 import { CategoriesPanel } from "./categories-panel";
 
-export const metadata: Metadata = { title: "Menu" };
+export const metadata: Metadata = { title: "Food Menu" };
 
 export default async function AdminMenuPage() {
   await requireStaff("/admin/menu");
@@ -33,7 +33,7 @@ export default async function AdminMenuPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-2xl font-semibold text-secondary sm:text-3xl">Menu</h1>
+        <h1 className="font-display text-2xl font-semibold text-secondary sm:text-3xl">Food Menu</h1>
         <Link
           href="/admin/menu/new"
           className="rounded-btn bg-primary px-4 py-2 text-sm font-medium text-secondary"
@@ -73,7 +73,7 @@ export default async function AdminMenuPage() {
 
 function MenuItemRow({ item }: { item: MenuItem }) {
   return (
-    <li className="flex flex-col gap-3 rounded-xl bg-white p-3 shadow-sm sm:flex-row sm:items-center">
+    <li className="flex flex-col gap-3 rounded-xl bg-white card-accent p-3 shadow-sm sm:flex-row sm:items-center">
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-neutral-light">
           {item.image_url && (

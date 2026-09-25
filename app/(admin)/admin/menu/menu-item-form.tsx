@@ -25,7 +25,7 @@ export function MenuItemForm({
     v ? v[key] : (fallback ?? "");
 
   return (
-    <form action={action} className="flex flex-col gap-5 rounded-xl bg-white p-4 shadow-sm sm:p-6">
+    <form action={action} className="flex flex-col gap-5 rounded-xl bg-white card-accent p-4 shadow-sm sm:p-6">
       {item && <input type="hidden" name="id" value={item.id} />}
 
       <Field label="Name" error={errors.name}>

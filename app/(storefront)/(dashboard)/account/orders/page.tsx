@@ -57,7 +57,7 @@ export default async function OrderHistoryPage() {
               <li key={o.id}>
                 <Link
                   href={href}
-                  className="flex items-center justify-between gap-3 rounded-2xl bg-white px-5 py-4 shadow-sm ring-1 ring-secondary/5 transition hover:bg-primary/20"
+                  className="flex items-center justify-between gap-3 rounded-2xl bg-white card-accent px-5 py-4 shadow-sm ring-1 ring-secondary/5 transition hover:bg-primary/20"
                 >
                   <div className="flex min-w-0 flex-col gap-1">
                     <span className="font-semibold">Order #{o.order_code}</span>

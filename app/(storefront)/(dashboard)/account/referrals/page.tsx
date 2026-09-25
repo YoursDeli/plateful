@@ -45,7 +45,7 @@ export default async function ReferralsPage() {
   ]);
 
   const link = `${origin}/?ref=${profile.referral_code}`;
-  const card = "flex flex-col gap-1 rounded-3xl bg-white p-5 shadow-sm";
+  const card = "flex flex-col gap-1 rounded-3xl bg-white card-accent p-5 shadow-sm";
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8 sm:py-12">

@@ -49,7 +49,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-8 sm:py-12">
       <OrderLiveRefresh orderId={order.id} channel={`order-${order.id}`} />
 
-      <section className="flex flex-col gap-5 rounded-3xl bg-white p-5 shadow-sm sm:p-8">
+      <section className="flex flex-col gap-5 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-8">
         <div>
           <h1 className="font-display text-3xl font-semibold text-secondary">Order status</h1>
           <p className="mt-1 text-neutral-dark/70" aria-live="polite">
@@ -84,7 +84,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
         )}
       </section>
 
-      <section className="flex flex-col gap-3 rounded-3xl bg-white p-5 shadow-sm sm:p-8">
+      <section className="flex flex-col gap-3 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-8">
         <h2 className="font-display text-xl font-semibold text-secondary">Order details</h2>
         <ul className="flex flex-col divide-y divide-secondary/10">
           {items?.map((item) => (
@@ -122,7 +122,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
       </section>
 
       {settings.whatsapp_number && (
-        <section className="flex flex-col items-start gap-3 rounded-3xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <section className="flex flex-col items-start gap-3 rounded-3xl bg-white card-accent p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <p className="text-sm text-neutral-dark/70">Questions about this order?</p>
           <WhatsAppButton
             phone={settings.whatsapp_number}
@@ -133,7 +133,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
       )}
 
       {/* Footer bar: back · order meta · Buy again (secondary button). */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl bg-white px-5 py-4 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl bg-white card-accent px-5 py-4 shadow-sm">
         <div className="flex items-center gap-3">
           <Link
             href="/account/orders"

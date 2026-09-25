@@ -13,7 +13,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
   const errors = state.fieldErrors ?? {};
   const v = state.values;
 
-  const card = "flex flex-col gap-4 rounded-3xl bg-white p-5 shadow-sm sm:p-7";
+  const card = "flex flex-col gap-4 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-7";
   const heading = "font-display text-2xl font-semibold text-secondary";
 
   return (
