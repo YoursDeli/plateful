@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-25
-Current phase: **Steps 0–7 verified live; 8–9 + UI changes live (partly verified). Step 10 (loyalty) built — waiting on its migration before pushing.**
+Current phase: **Steps 0–7 verified live; 8, 9, 10 + UI changes live (awaiting user verification). Next: step 11 (static pages + footer).**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -98,13 +98,13 @@ from `main`; Paystack in **test** mode).
 - [ ] `/account/referrals` page — 3 stat cards + shareable link — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 10. Loyalty points program
-- [ ] `loyalty_ledger` table + RLS — *built 2026-09-25, awaiting migration + user verification*
-- [ ] `profiles` loyalty columns (`loyalty_points_balance`, `loyalty_points_earned_total`) — *built 2026-09-25, awaiting migration + user verification*
-- [ ] `site_settings.loyalty_enabled`, `loyalty_points_per_1000` (admin-editable) — *built 2026-09-25, awaiting migration + user verification*
-- [ ] Earning logic on **delivered** transition (10 pts / ₦1,000 net spend) — *built 2026-09-25, awaiting migration + user verification* (client: delivered, not paid)
-- [ ] Checkout redemption combined with referral bonus (capped at ₦0 total) — *built 2026-09-25, awaiting migration + user verification*
-- [ ] Refund-on-abandon logic (shared cleanup pass with referral bonus) — *built 2026-09-25, awaiting migration + user verification*
-- [ ] Admin toggle UI in `/admin/settings` — *built 2026-09-25, awaiting migration + user verification*
+- [ ] `loyalty_ledger` table + RLS — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] `profiles` loyalty columns (`loyalty_points_balance`, `loyalty_points_earned_total`) — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] `site_settings.loyalty_enabled`, `loyalty_points_per_1000` (admin-editable) — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] Earning logic on **delivered** transition (10 pts / ₦1,000 net spend) — *built 2026-09-25, migration applied, live — awaiting user verification* (client: delivered, not paid)
+- [ ] Checkout redemption combined with referral bonus (capped at ₦0 total) — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] Refund-on-abandon logic (shared cleanup pass with referral bonus) — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] Admin toggle UI in `/admin/settings` — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 11. Static pages & Footer
 - [ ] `pages` table (`about`/`terms`/`privacy`) + admin content editor
@@ -489,7 +489,8 @@ from `main`; Paystack in **test** mode).
 
 - **2026-09-25** — **Card "ambience bar"** (client): 4px Velvet accent down
   the left edge of info/dashboard cards via Tailwind utilities `card-accent`
-  (Velvet) / `card-accent-light` (Lavender, for dark cards) in `globals.css`.
+  (Velvet) / `card-accent-light` (Lavender, for dark cards) in `globals.css`;
+  the sign-in card uses `card-accent-bottom` (bar along the bottom, client).
   Not on dish cards or the hero glass card. New info cards should use it.
 - **2026-09-25** — **"Menu" page renamed "Food Menu"** (header link, page
   titles, breadcrumb, admin side menu) — avoids confusion with the mobile
@@ -506,8 +507,6 @@ from `main`; Paystack in **test** mode).
 
 ## Open Blockers
 
-- **Run the loyalty migration BEFORE the push** (user):
-  `supabase/migrations/20261003000000_loyalty.sql`.
 - **Brevo template wording** (user): in the Order confirmation template,
   change the points line to "You'll earn {{ params.points_earned }} loyalty
   points when this order is delivered." (repo copy already updated).
@@ -662,3 +661,4 @@ from `main`; Paystack in **test** mode).
   toggle (after referral bonus), points on receipts/order page/email,
   points card on Orders home, admin Loyalty settings. Build/lint/tsc clean.
   Not pushed until migration runs.
+- **2026-09-25** — Loyalty migration applied (verified); sign-in card accent moved to the bottom; pushed step 10 live.
