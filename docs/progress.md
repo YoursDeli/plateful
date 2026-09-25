@@ -678,3 +678,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Loyalty points card on Orders home trimmed to just the available points (client).
 - **2026-09-25** — Built step 11: pages table + seeded About (client story)/Terms/Privacy drafts, /about /terms /privacy, site-wide footer, Settings → Contact & footer, Admin → Pages editor with chef photo. Build/lint/tsc clean. Not pushed until migration runs.
 - **2026-09-25** — Pages/footer migration applied (verified: 3 pages seeded, footer settings set); pushed step 11 live.
+- **2026-09-25** — About title split: small "Meet Chef" line over the chef's name in large type (client). Pushed live.
