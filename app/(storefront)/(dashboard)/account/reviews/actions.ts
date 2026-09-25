@@ -13,8 +13,7 @@ const reviewSchema = z.object({
 });
 
 // Create or edit the signed-in customer's review. submit_review() (security
-// definer) checks the dish was actually delivered to them — the browser's
-// "can review" check only decides whether to show the form.
+// definer) checks the dish was actually delivered to them.
 export async function submitReview(input: {
   menuItemId: string;
   rating: number;
@@ -36,9 +35,10 @@ export async function submitReview(input: {
     return { ok: false, error: "Couldn't post your review. Please try again." };
   }
 
-  // Dish page, plus menu cards and home rows that show the star average.
+  // The dish page shows posted reviews; menu cards and home show the average.
   revalidatePath(`/menu/${parsed.data.menuItemId}`);
   revalidatePath("/menu");
   revalidatePath("/");
+  revalidatePath("/account/reviews");
   return { ok: true };
 }

@@ -538,10 +538,14 @@ from `main`; Paystack in **test** mode).
   One review per customer per dish; re-submitting edits it. All writes via
   `submit_review()` / `set_review_hidden()` (security definer); customers
   still have no direct write rights on `reviews`. Dish page always shows a
-  Reviews section ("No reviews yet" when empty); menu cards still show
-  stars only once a dish has reviews. Delivered order pages show a "How was
-  your food?" card linking to each dish's review form. Dish page:
-  description moved below the cart/save/share buttons (client).
+  Reviews section ("No reviews yet" when empty) but it is **read-only** —
+  reviews are written only from the customer dashboard, **Account →
+  Reviews** (`/account/reviews`): "Waiting for your review" (dishes from
+  delivered orders, newest first, not yet reviewed) + "Your reviews"
+  (edit). Delivered order pages show a "How was your food?" card linking
+  there. Menu cards still show stars only once a dish has reviews.
+  (`my_review_status()` in the migration is now unused — harmless.) Dish
+  page: description moved below the cart/save/share buttons (client).
 
 ---
 
@@ -707,3 +711,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Menu cards: photo on top, details below on mobile too (client; was photo-left). Pushed live.
 - **2026-09-25** — Step 13 polish: 404/error/loading screens, page fade-in, focus ring + skip links, contrast raise, security headers/CSP, RLS probe (all refused). Build/lint/tsc clean; pushed live.
 - **2026-09-25** — Built reviews (buyers only, instant, staff hide) + dish page description moved below buttons. Build/lint/tsc clean. Not pushed until migration runs.
+- **2026-09-25** — Reviews moved to the customer dashboard (Account → Reviews: pending + posted); dish page shows posted reviews only (client).

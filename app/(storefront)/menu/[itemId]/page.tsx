@@ -7,7 +7,6 @@ import { HeartButton } from "@/components/favorites/heart-button";
 import { PriceRow } from "@/components/menu/price-row";
 import { ProductPurchase } from "@/components/menu/product-purchase";
 import { RatingRow } from "@/components/menu/rating-row";
-import { ReviewPrompt } from "@/components/reviews/review-prompt";
 import { ShareButtonCluster } from "@/components/ui/share-button-cluster";
 import { getCategories, getMenuItem, getReviews } from "@/lib/menu";
 
@@ -105,7 +104,8 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
         </div>
       </div>
 
-      {/* Always shown (client): "No reviews yet" until the first one lands. */}
+      {/* Read-only (client): reviews are written from the customer dashboard
+          (/account/reviews). "No reviews yet" until the first one is posted. */}
       <section id="reviews" aria-labelledby="reviews-heading" className="flex scroll-mt-24 flex-col gap-4">
         <div className="flex flex-col gap-1">
           <h2 id="reviews-heading" className="font-display text-2xl font-semibold text-secondary">
@@ -117,7 +117,6 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
             <p className="text-sm text-neutral-dark/70">No reviews yet.</p>
           )}
         </div>
-        <ReviewPrompt menuItemId={item.id} dishName={item.name} />
         {reviews.length > 0 && (
           <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {reviews.map((r) => (

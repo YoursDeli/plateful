@@ -11,6 +11,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   // Orders is the customer's home screen (client: no overview page).
   const items: NavItem[] = [
     { href: "/account/orders", label: "Orders", icon: "orders", alsoActiveFor: ["/orders"] },
+    { href: "/account/reviews", label: "Reviews", icon: "reviews" },
     { href: "/favorites", label: "Favourites", icon: "favorites" },
     { href: "/account/referrals", label: "Refer & earn", icon: "referrals" },
     { href: "/account", label: "Account", icon: "overview", exact: true },
