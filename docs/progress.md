@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-25
-Current phase: **Steps 0–7 verified live; 8, 9, 10 + UI changes live (awaiting user verification). Step 11 built — waiting on its migration, then push. Next: step 13 polish.**
+Current phase: **Steps 0–7 verified live; 8, 9, 10 + UI changes live (awaiting user verification). Step 11 live (awaiting user verification). Next: step 13 polish.**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -107,17 +107,17 @@ from `main`; Paystack in **test** mode).
 - [ ] Admin toggle UI in `/admin/settings` — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 11. Static pages & Footer
-- [ ] `pages` table (`about`/`terms`/`privacy`) + admin content editor (`/admin/pages`) — *built 2026-09-25 — awaiting migration + live check*
-- [ ] `/about` (chef page) — *built 2026-09-25 — awaiting migration + live check*
-- [ ] `/terms`, `/privacy` — *built 2026-09-25 — awaiting migration + live check*
-- [ ] Site-wide `Footer` component in the storefront layout + admin "Contact & footer" settings — *built 2026-09-25 — awaiting migration + live check*
+- [ ] `pages` table (`about`/`terms`/`privacy`) + admin content editor (`/admin/pages`) — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] `/about` (chef page) — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] `/terms`, `/privacy` — *built 2026-09-25, migration applied, live — awaiting user verification*
+- [ ] Site-wide `Footer` component in the storefront layout + admin "Contact & footer" settings — *built 2026-09-25, migration applied, live — awaiting user verification*
 - [ ] Real Terms/Privacy copy approved by client (not shipped as placeholder text)
 
 ### 12. Image uploads (Supabase Storage)
 - [x] `images` bucket + Storage RLS (`supabase/migrations/20260924000000_storage_images.sql`) — *verified 2026-09-24*
 - [x] Menu item photo upload — *verified 2026-09-24*
 - [x] Logo upload (admin branding settings) — *verified 2026-09-24*
-- [ ] Chef photo upload (`/admin/pages/about`) — *built 2026-09-25 — awaiting migration + live check*
+- [ ] Chef photo upload (`/admin/pages/about`) — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 13. Polish
 - [ ] Animations / transitions (reduced-motion respected)
@@ -531,8 +531,6 @@ from `main`; Paystack in **test** mode).
   applied 2026-09-29; button hidden until a number is saved).
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
   2026-09-29 Netlify decision) or deploys silently stop.
-- **Run migration `20261004000000_pages_footer.sql`** (user) — step 11 is
-  not pushed until it's applied.
 - Terms & Conditions and Privacy Policy are seeded as **drafts** — need
   client/legal sign-off, then untick "Draft" in Admin → Pages.
 - **TS types are hand-written** (`lib/supabase/types.ts`) since the Supabase CLI
@@ -679,3 +677,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Loyalty migration applied (verified); sign-in card accent moved to the bottom; pushed step 10 live.
 - **2026-09-25** — Loyalty points card on Orders home trimmed to just the available points (client).
 - **2026-09-25** — Built step 11: pages table + seeded About (client story)/Terms/Privacy drafts, /about /terms /privacy, site-wide footer, Settings → Contact & footer, Admin → Pages editor with chef photo. Build/lint/tsc clean. Not pushed until migration runs.
+- **2026-09-25** — Pages/footer migration applied (verified: 3 pages seeded, footer settings set); pushed step 11 live.
