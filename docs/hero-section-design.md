@@ -118,8 +118,10 @@ The client supplied a reference video; the hero now follows it:
   the right (`animate-plate-out`) while the new one swings in from above,
   overshoots slightly and settles (`animate-plate-in`); text and background
   crossfade. Keyframes live in `app/globals.css`.
-- **Thumbnails**: small round photos; the active one lifts onto a white chip
-  with its name and a dark price tag underneath.
-- Still no auto-rotate (§2); reduced motion makes swaps instant and stops
-  the spin.
+- **Thumbnails**: small round photos only — no name or price (client). The
+  active one lifts and gets a Velvet ring. Back and next arrows either side.
+- **Auto-cycle ON (client, overrides §2's "off by default")**: next dish
+  every 5s, never paused by hover or taps; a manual pick restarts the 5s
+  timer. Users with reduced motion get no auto-cycle, instant swaps and no
+  spin. The card text has no `aria-live` (it would announce every 5s).
 

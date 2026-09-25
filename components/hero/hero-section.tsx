@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddToCartControl } from "@/components/cart/add-to-cart-control";
 import { PriceRow } from "@/components/menu/price-row";
 import { formatNaira } from "@/lib/money";
@@ -12,8 +12,11 @@ import type { MenuItem, SiteSettings } from "@/lib/supabase/types";
 // reference video: one large frosted card over a soft, blurred photo of the
 // selected dish. The plated dish turns slowly; picking another dish rolls the
 // old plate out to the right while the new one swings in from above, and the
-// text + background crossfade. No auto-rotate (§2). Reduced motion → instant
-// swaps and no spin (global rule in globals.css).
+// text + background crossfade. Auto-cycles every few seconds and keeps going
+// through hover/taps (client); the arrows jump back/forth and restart the
+// timer. Reduced motion → no auto-cycle, instant swaps, no spin.
+const AUTO_CYCLE_MS = 5000;
+
 export function HeroSection({
   items,
   settings,
@@ -28,6 +31,20 @@ export function HeroSection({
   const [swaps, setSwaps] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const active = items[activeIndex];
+
+  // Next dish after a pause; re-armed on every change, so a manual pick gets
+  // a full interval before the next automatic one.
+  useEffect(() => {
+    if (items.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = setTimeout(() => {
+      setLeavingIndex(activeIndex);
+      setActiveIndex((activeIndex + 1) % items.length);
+      setSwaps((n) => n + 1);
+      setExpanded(false);
+    }, AUTO_CYCLE_MS);
+    return () => clearTimeout(timer);
+  }, [activeIndex, items.length]);
 
   function select(index: number) {
     if (index === activeIndex) return;
@@ -79,7 +96,7 @@ export function HeroSection({
               )}
             </div>
 
-            <div key={active.id} aria-live="polite" className="mt-4 flex animate-fade-in flex-col gap-3">
+            <div key={active.id} className="mt-4 flex animate-fade-in flex-col gap-3">
               <h1 className="font-display text-4xl leading-[1.05] font-semibold text-neutral-dark sm:text-5xl lg:text-6xl">
                 {active.name}
               </h1>
@@ -118,8 +135,18 @@ export function HeroSection({
               <div
                 role="group"
                 aria-label="Choose a featured dish"
-                className="-mx-5 mt-8 flex items-start gap-4 overflow-x-auto px-5 pt-1 pb-2 sm:-mx-8 sm:px-8 md:mx-0 md:px-0"
+                className="-mx-5 mt-8 flex items-center gap-4 overflow-x-auto px-5 py-3 sm:-mx-8 sm:px-8 md:mx-0 md:px-1"
               >
+                <button
+                  type="button"
+                  onClick={() => select((activeIndex - 1 + items.length) % items.length)}
+                  aria-label="Previous featured dish"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/80 text-secondary shadow-sm transition hover:bg-white"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m15 6-6 6 6 6" />
+                  </svg>
+                </button>
                 {items.map((item, i) => {
                   const isActive = i === activeIndex;
                   return (
@@ -129,25 +156,13 @@ export function HeroSection({
                       onClick={() => select(i)}
                       aria-pressed={isActive}
                       aria-label={`View ${item.name}, ${formatNaira(item.price)}`}
-                      className={`flex w-16 shrink-0 flex-col items-center gap-1 rounded-2xl p-1 transition duration-300 ${
-                        isActive ? "-translate-y-1 bg-white shadow-md" : "hover:-translate-y-0.5"
+                      className={`relative size-12 shrink-0 overflow-hidden rounded-full bg-primary/40 transition duration-300 ${
+                        isActive
+                          ? "-translate-y-1 scale-110 shadow-md ring-[3px] ring-secondary"
+                          : "opacity-80 ring-2 ring-neutral-dark/70 hover:-translate-y-0.5 hover:opacity-100"
                       }`}
                     >
-                      <span className="relative size-12 overflow-hidden rounded-full bg-primary/40 ring-2 ring-neutral-dark/80">
-                        {item.image_url && (
-                          <Image src={item.image_url} alt="" fill sizes="48px" className="object-cover" />
-                        )}
-                      </span>
-                      {isActive && (
-                        <span className="flex animate-fade-in flex-col items-center gap-1">
-                          <span className="w-full truncate text-center text-[11px] leading-tight font-medium text-neutral-dark">
-                            {item.name}
-                          </span>
-                          <span className="rounded-full bg-neutral-dark px-2 py-0.5 text-[10px] font-semibold text-white tabular-nums">
-                            {formatNaira(item.price)}
-                          </span>
-                        </span>
-                      )}
+                      {item.image_url && <Image src={item.image_url} alt="" fill sizes="56px" className="object-cover" />}
                     </button>
                   );
                 })}
@@ -155,7 +170,7 @@ export function HeroSection({
                   type="button"
                   onClick={() => select((activeIndex + 1) % items.length)}
                   aria-label="Next featured dish"
-                  className="mt-3 flex size-10 shrink-0 items-center justify-center rounded-full bg-white/80 text-secondary shadow-sm transition hover:bg-white"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/80 text-secondary shadow-sm transition hover:bg-white"
                 >
                   <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                     <path d="m9 6 6 6-6 6" />
