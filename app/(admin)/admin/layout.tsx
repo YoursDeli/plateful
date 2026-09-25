@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 const NAV: NavItem[] = [
+  { href: "/admin", label: "Overview", icon: "staff", exact: true },
   { href: "/admin/orders", label: "Orders", icon: "orders" },
   { href: "/admin/menu", label: "Menu", icon: "menu" },
   { href: "/admin/settings", label: "Settings", icon: "settings" },
@@ -24,7 +25,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   const { brand_name } = await getSiteSettings();
 
   const brand = (
-    <Link href="/admin/orders">
+    <Link href="/admin">
       {brand_name} <span className="font-sans text-sm font-normal text-primary/80">admin</span>
     </Link>
   );

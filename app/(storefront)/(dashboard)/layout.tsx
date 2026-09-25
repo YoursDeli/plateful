@@ -8,11 +8,12 @@ import { getCurrentProfile, isStaffRole } from "@/lib/auth";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentProfile();
 
+  // Orders is the customer's home screen (client: no overview page).
   const items: NavItem[] = [
-    { href: "/account", label: "Overview", icon: "overview", exact: true },
     { href: "/account/orders", label: "Orders", icon: "orders", alsoActiveFor: ["/orders"] },
     { href: "/favorites", label: "Favourites", icon: "favorites" },
     { href: "/account/referrals", label: "Refer & earn", icon: "referrals" },
+    { href: "/account", label: "Account", icon: "overview", exact: true },
     ...(isStaffRole(profile) ? [{ href: "/admin/orders", label: "Staff dashboard", icon: "staff" } as NavItem] : []),
   ];
 

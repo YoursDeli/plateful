@@ -47,7 +47,7 @@ export function AuthLink() {
       </Link>
       {/* Sign out lives on /account. */}
       <Link
-        href="/account"
+        href="/account/orders"
         aria-label="Your account"
         className="flex size-10 items-center justify-center rounded-full text-secondary hover:bg-primary/40"
       >

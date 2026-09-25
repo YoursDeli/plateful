@@ -474,6 +474,19 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — `create_order()` gained `p_apply_referral` and returns
   `order_code` + `status`; the step-6 signature was dropped and recreated.
 
+- **2026-09-25** — **Customer dashboard home = Orders** (client): no
+  overview page; header account icon opens `/account/orders`; side menu order
+  is Orders, Favourites, Refer & earn, Account. `/account` is now the
+  **Account** settings page with "Your details" and "Delivery address"
+  sections (one save).
+- **2026-09-25** — **Admin Overview** at `/admin` (admin home, first in the
+  side menu): Today / This week / This month cards with revenue + orders
+  processed and growth vs the SAME elapsed point of the previous period;
+  plus Active orders, Refunds due, Average order (month). "Processed" =
+  paid → delivered (not cancelled/unpaid); revenue = order total (after
+  referral bonus). Lagos time (fixed UTC+1), weeks start Monday. Computed in
+  `lib/admin/stats.ts` from the staff session — no migration.
+
 ---
 
 ## Open Blockers
@@ -618,3 +631,6 @@ from `main`; Paystack in **test** mode).
   orders, /account/referrals (link, share, 3 cards), admin bonus setting,
   side-menu entry. Build/lint/tsc clean. Not pushed until migration runs.
 - **2026-09-25** — Referrals migration applied (verified); step 9 pushed live.
+- **2026-09-25** — Client changes while testing step 9: customer dashboard
+  defaults to Orders, Overview renamed Account (details + delivery address
+  sections); new admin Overview with revenue/orders growth cards. Pushed live.
