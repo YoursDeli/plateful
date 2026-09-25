@@ -36,14 +36,13 @@ export default async function OrderHistoryPage() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8 sm:py-12">
       <header className="flex flex-col gap-1">
-        <Link href="/account" className="text-sm text-secondary underline-offset-4 hover:underline">← Your account</Link>
         <h1 className="font-display text-4xl font-semibold text-secondary">Your orders</h1>
       </header>
 
       {orders.length === 0 ? (
         <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-secondary/20 px-6 py-14 text-center">
           <p className="font-display text-2xl text-secondary">No orders yet</p>
-          <Link href="/menu" className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-secondary">
+          <Link href="/menu" className="rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary">
             Browse the menu
           </Link>
         </div>

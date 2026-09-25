@@ -46,7 +46,7 @@ export function HeartButton({
         onClick={onClick}
         aria-pressed={saved}
         aria-label={label}
-        className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
+        className={`inline-flex items-center gap-2 rounded-btn border px-4 py-2 text-sm font-medium transition ${
           saved
             ? "border-secondary bg-secondary text-white"
             : "border-secondary/30 text-secondary hover:bg-primary/40"

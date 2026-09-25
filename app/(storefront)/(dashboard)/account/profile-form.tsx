@@ -53,7 +53,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-full bg-primary px-6 py-3 font-semibold text-secondary disabled:opacity-60"
+        className="self-start rounded-btn bg-primary px-6 py-3 font-semibold text-secondary disabled:opacity-60"
       >
         {pending ? "Saving…" : "Save details"}
       </button>

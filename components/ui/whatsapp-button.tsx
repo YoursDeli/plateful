@@ -23,7 +23,7 @@ const Link = styled.a`
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
-  border-radius: 999px;
+  border-radius: var(--btn-radius);
   background: #e8e8e8;
   border: 1px solid #e8e8e8;
   box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;

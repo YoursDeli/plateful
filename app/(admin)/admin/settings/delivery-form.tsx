@@ -61,7 +61,7 @@ export function DeliveryForm({
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-secondary disabled:opacity-60 sm:w-auto"
+          className="w-full rounded-btn bg-primary px-5 py-2.5 text-sm font-medium text-secondary disabled:opacity-60 sm:w-auto"
         >
           {pending ? "Saving…" : "Save delivery pricing"}
         </button>

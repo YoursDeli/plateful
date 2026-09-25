@@ -23,14 +23,14 @@ export function QuantityStepper({
     <div
       role="group"
       aria-label={`Quantity for ${label}`}
-      className="inline-flex items-center rounded-full border border-secondary/25 bg-white"
+      className="inline-flex items-center rounded-btn border border-secondary/25 bg-white"
     >
       <button
         type="button"
         onClick={() => onChange(value - 1)}
         disabled={value <= min}
         aria-label={value - 1 === 0 ? `Remove ${label}` : `Decrease ${label}`}
-        className={`${btn} flex items-center justify-center rounded-full font-semibold text-secondary hover:bg-primary/40 disabled:opacity-30`}
+        className={`${btn} flex items-center justify-center rounded-lg font-semibold text-secondary hover:bg-primary/40 disabled:opacity-30`}
       >
         −
       </button>
@@ -42,7 +42,7 @@ export function QuantityStepper({
         onClick={() => onChange(value + 1)}
         disabled={value >= MAX_QUANTITY}
         aria-label={`Increase ${label}`}
-        className={`${btn} flex items-center justify-center rounded-full font-semibold text-secondary hover:bg-primary/40 disabled:opacity-30`}
+        className={`${btn} flex items-center justify-center rounded-lg font-semibold text-secondary hover:bg-primary/40 disabled:opacity-30`}
       >
         +
       </button>

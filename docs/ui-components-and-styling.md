@@ -123,6 +123,9 @@ the client:
 The order page doesn't get a share cluster: order pages are private (RLS),
 so a shared link would 404 for anyone else.
 
+**Button shape (2026-09-25):** all buttons use a 12px radius from one token,
+`--btn-radius` (Tailwind `rounded-btn`); tags/badges stay pills.
+
 **General note on all four:** they were supplied as generic/example
 components (unrelated placeholder colors, hardcoded English text). Before
 using "anywhere needed" site-wide, each instance should get: (a) its label

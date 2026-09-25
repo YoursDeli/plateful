@@ -32,7 +32,7 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
         <Link
           href="/menu"
           onClick={onNavigate}
-          className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-secondary"
+          className="rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary"
         >
           Browse the menu
         </Link>
@@ -99,14 +99,14 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
           Delivery fee and any rewards are applied at checkout.
         </p>
         {blocked ? (
-          <span className="w-full cursor-not-allowed rounded-full bg-secondary/50 px-5 py-3 text-center font-semibold text-white">
+          <span className="w-full cursor-not-allowed rounded-btn bg-secondary/50 px-5 py-3 text-center font-semibold text-white">
             Checkout
           </span>
         ) : (
           <Link
             href="/checkout"
             onClick={onNavigate}
-            className="w-full rounded-full bg-secondary px-5 py-3 text-center font-semibold text-white transition hover:brightness-110"
+            className="w-full rounded-btn bg-secondary px-5 py-3 text-center font-semibold text-white transition hover:brightness-110"
           >
             Checkout
           </Link>

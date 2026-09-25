@@ -33,7 +33,7 @@ export default async function HomePage() {
           </p>
           <Link
             href="/menu"
-            className="mt-8 inline-block rounded-full bg-primary px-6 py-3 font-semibold text-secondary"
+            className="mt-8 inline-block rounded-btn bg-primary px-6 py-3 font-semibold text-secondary"
           >
             Browse the menu
           </Link>
@@ -51,7 +51,7 @@ export default async function HomePage() {
                 <li key={c.id} className="shrink-0">
                   <Link
                     href={`/menu?category=${c.id}`}
-                    className="block rounded-full bg-white px-5 py-2.5 text-sm font-medium text-secondary shadow-sm ring-1 ring-secondary/10 transition hover:bg-primary/50"
+                    className="block rounded-btn bg-white px-5 py-2.5 text-sm font-medium text-secondary shadow-sm ring-1 ring-secondary/10 transition hover:bg-primary/50"
                   >
                     {c.name}
                   </Link>

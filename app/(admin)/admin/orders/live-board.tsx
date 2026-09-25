@@ -42,7 +42,7 @@ export function LiveBoard() {
               </span>
             )}
           </span>
-          <button type="button" onClick={() => setAlerts([])} className="rounded-full px-3 py-1 text-sm text-primary hover:bg-white/10">
+          <button type="button" onClick={() => setAlerts([])} className="rounded-btn px-3 py-1 text-sm text-primary hover:bg-white/10">
             Dismiss
           </button>
         </div>

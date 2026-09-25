@@ -52,7 +52,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
         <p className="text-neutral-dark/70">
           If you were charged, don&apos;t worry — it will be matched to your order shortly.
         </p>
-        <Link href="/account" className="self-start rounded-full bg-primary px-5 py-2.5 font-semibold text-secondary">
+        <Link href="/account" className="self-start rounded-btn bg-primary px-5 py-2.5 font-semibold text-secondary">
           Go to your account
         </Link>
       </Shell>
@@ -101,10 +101,10 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
             : `Delivering to: ${order.delivery_address}`}
         </p>
         <div className="flex flex-wrap gap-3">
-          <Link href={`/orders/${order.id}`} className="rounded-full bg-primary px-5 py-2.5 font-semibold text-secondary">
+          <Link href={`/orders/${order.id}`} className="rounded-btn bg-primary px-5 py-2.5 font-semibold text-secondary">
             Track your order
           </Link>
-          <Link href="/menu" className="rounded-full border border-secondary/30 px-5 py-2.5 font-medium text-secondary">
+          <Link href="/menu" className="rounded-btn border border-secondary/30 px-5 py-2.5 font-medium text-secondary">
             Back to the menu
           </Link>
         </div>
@@ -130,11 +130,11 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
       <div className="flex flex-wrap gap-3">
         <form action={retryPayment}>
           <input type="hidden" name="order_id" value={order.id} />
-          <button type="submit" className="rounded-full bg-primary px-6 py-3 font-semibold text-secondary">
+          <button type="submit" className="rounded-btn bg-primary px-6 py-3 font-semibold text-secondary">
             Try payment again
           </button>
         </form>
-        <Link href="/cart" className="rounded-full border border-secondary/30 px-5 py-3 font-medium text-secondary">
+        <Link href="/cart" className="rounded-btn border border-secondary/30 px-5 py-3 font-medium text-secondary">
           Back to cart
         </Link>
       </div>

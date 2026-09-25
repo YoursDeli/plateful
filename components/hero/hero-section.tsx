@@ -89,7 +89,7 @@ export function HeroSection({
             <AddToCartControl item={active} label="Order now" />
             <Link
               href={`/menu/${active.id}`}
-              className="rounded-full px-4 py-2.5 text-sm font-medium text-secondary underline-offset-4 hover:underline"
+              className="rounded-btn px-4 py-2.5 text-sm font-medium text-secondary underline-offset-4 hover:underline"
             >
               View details
             </Link>

@@ -57,7 +57,7 @@ function CategoryRow({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-full border border-secondary px-3 py-1.5 text-sm text-secondary disabled:opacity-60"
+            className="rounded-btn border border-secondary px-3 py-1.5 text-sm text-secondary disabled:opacity-60"
           >
             {pending ? "Saving…" : "Rename"}
           </button>
@@ -70,7 +70,7 @@ function CategoryRow({
               type="submit"
               disabled={isFirst}
               aria-label={`Move ${category.name} up`}
-              className="rounded-full px-2.5 py-1.5 hover:bg-neutral-dark/5 disabled:opacity-30"
+              className="rounded-btn px-2.5 py-1.5 hover:bg-neutral-dark/5 disabled:opacity-30"
             >
               ↑
             </button>
@@ -82,7 +82,7 @@ function CategoryRow({
               type="submit"
               disabled={isLast}
               aria-label={`Move ${category.name} down`}
-              className="rounded-full px-2.5 py-1.5 hover:bg-neutral-dark/5 disabled:opacity-30"
+              className="rounded-btn px-2.5 py-1.5 hover:bg-neutral-dark/5 disabled:opacity-30"
             >
               ↓
             </button>
@@ -91,7 +91,7 @@ function CategoryRow({
             <input type="hidden" name="id" value={category.id} />
             <ConfirmSubmitButton
               message={`Delete the "${category.name}" category? Its items will become uncategorised.`}
-              className="rounded-full px-2.5 py-1.5 text-red-700 hover:bg-red-50"
+              className="rounded-btn px-2.5 py-1.5 text-red-700 hover:bg-red-50"
             >
               Delete
             </ConfirmSubmitButton>
@@ -118,7 +118,7 @@ function NewCategoryForm() {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-secondary disabled:opacity-60"
+          className="rounded-btn bg-primary px-4 py-1.5 text-sm font-medium text-secondary disabled:opacity-60"
         >
           {pending ? "Adding…" : "Add"}
         </button>

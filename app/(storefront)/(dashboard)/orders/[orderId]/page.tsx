@@ -145,7 +145,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
         </div>
         <BuyAgainButton
           lines={(items ?? []).map((i) => ({ menu_item_id: i.menu_item_id, quantity: i.quantity }))}
-          className="rounded-full bg-secondary px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+          className="rounded-btn bg-secondary px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
         />
       </div>
     </main>

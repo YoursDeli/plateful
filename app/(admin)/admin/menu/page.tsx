@@ -36,7 +36,7 @@ export default async function AdminMenuPage() {
         <h1 className="font-display text-2xl font-semibold text-secondary sm:text-3xl">Menu</h1>
         <Link
           href="/admin/menu/new"
-          className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-secondary"
+          className="rounded-btn bg-primary px-4 py-2 text-sm font-medium text-secondary"
         >
           + Add item
         </Link>
@@ -110,13 +110,13 @@ function MenuItemRow({ item }: { item: MenuItem }) {
         <form action={setMenuItemAvailability}>
           <input type="hidden" name="id" value={item.id} />
           <input type="hidden" name="is_available" value={String(!item.is_available)} />
-          <button type="submit" className="rounded-full border border-neutral-dark/20 px-3 py-1.5">
+          <button type="submit" className="rounded-btn border border-neutral-dark/20 px-3 py-1.5">
             {item.is_available ? "Mark unavailable" : "Mark available"}
           </button>
         </form>
         <Link
           href={`/admin/menu/${item.id}`}
-          className="rounded-full bg-secondary px-3 py-1.5 text-white"
+          className="rounded-btn bg-secondary px-3 py-1.5 text-white"
         >
           Edit
         </Link>
@@ -124,7 +124,7 @@ function MenuItemRow({ item }: { item: MenuItem }) {
           <input type="hidden" name="id" value={item.id} />
           <ConfirmSubmitButton
             message={`Delete "${item.name}"? This can't be undone.`}
-            className="rounded-full px-3 py-1.5 text-red-700 hover:bg-red-50"
+            className="rounded-btn px-3 py-1.5 text-red-700 hover:bg-red-50"
           >
             Delete
           </ConfirmSubmitButton>

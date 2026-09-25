@@ -41,7 +41,7 @@ export function CheckoutView({
     return (
       <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-secondary/20 px-6 py-14 text-center">
         <p className="font-display text-2xl text-secondary">Your cart is empty</p>
-        <Link href="/menu" className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-secondary">
+        <Link href="/menu" className="rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary">
           Browse the menu
         </Link>
       </div>

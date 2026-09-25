@@ -10,6 +10,10 @@
   --brand-secondary: #3b2a60; /* Velvet */
   --neutral-dark: #1a1a1a;
   --neutral-light: #fbf8f3;
+  /* One radius for every button, chip and tab (client: 12px, not pills).
+     Styled buttons use var(--btn-radius); Tailwind class: rounded-btn.
+     Small tags/badges stay pill-shaped; circles stay round. */
+  --btn-radius: 12px;
 }
 
 @theme inline {
@@ -19,12 +23,15 @@
   --color-neutral-dark: var(--neutral-dark);
   --color-neutral-light: var(--neutral-light);
 
+  --radius-btn: var(--btn-radius);
+
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 
   --animate-fade-in: fade-in 450ms ease-out both;
   --animate-rise-in: rise-in 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-slide-in: slide-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-slide-in-left: slide-in-left 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -36,6 +43,10 @@
   }
   @keyframes slide-in {
     from { transform: translateX(100%); }
+    to { transform: none; }
+  }
+  @keyframes slide-in-left {
+    from { transform: translateX(-100%); }
     to { transform: none; }
   }
 }

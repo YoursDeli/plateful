@@ -24,7 +24,7 @@ const Button = styled.button`
   gap: 8px;
   padding: 10px 20px;
   border: 0;
-  border-radius: 14px;
+  border-radius: var(--btn-radius);
   font-family: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -98,7 +98,7 @@ export function UploadButton({
   noun?: string; // "photo", "logo"…
 }) {
   const ref = useRef<HTMLButtonElement>(null);
-  const [box, setBox] = useState<{ w: number; h: number } | null>(null);
+  const [box, setBox] = useState<{ w: number; h: number; r: number } | null>(null);
 
   // Measure the button so the progress border traces it exactly (SVG
   // attributes can't use calc() reliably across browsers).
@@ -106,7 +106,9 @@ export function UploadButton({
     const el = ref.current;
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {
-      setBox({ w: entry.contentRect.width + 40, h: entry.contentRect.height + 20 });
+      // Corner radius comes from the --btn-radius token via CSS.
+      const r = parseFloat(getComputedStyle(el).borderTopLeftRadius) || 12;
+      setBox({ w: entry.contentRect.width + 40, h: entry.contentRect.height + 20, r });
     });
     ro.observe(el);
     return () => ro.disconnect();
@@ -133,7 +135,7 @@ export function UploadButton({
             y={1.25}
             width={box.w - 2.5}
             height={box.h - 2.5}
-            rx={13}
+            rx={Math.max(0, box.r - 1.25)}
             pathLength={100}
             strokeDasharray={100}
             strokeDashoffset={status === "uploading" ? 100 - pct : 0}

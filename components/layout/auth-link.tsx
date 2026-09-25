@@ -27,7 +27,7 @@ export function AuthLink() {
     return (
       <Link
         href={`/login?next=${encodeURIComponent(next)}`}
-        className="rounded-full px-3 py-2 text-sm font-medium text-secondary hover:bg-primary/40"
+        className="rounded-btn px-3 py-2 text-sm font-medium text-secondary hover:bg-primary/40"
       >
         Sign in
       </Link>

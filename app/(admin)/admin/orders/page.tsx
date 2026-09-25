@@ -91,7 +91,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
             key={t}
             href={t === "active" ? "/admin/orders" : `/admin/orders?tab=${t}`}
             aria-current={t === tab ? "page" : undefined}
-            className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium ${
+            className={`shrink-0 rounded-btn px-4 py-2 text-sm font-medium ${
               t === tab ? "bg-secondary text-white" : "bg-white text-secondary ring-1 ring-secondary/15"
             }`}
           >
@@ -170,7 +170,7 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
               <input type="hidden" name="order_id" value={order.id} />
               <ConfirmSubmitButton
                 message={`Confirm you've refunded ${formatNaira(order.total)} for order #${order.order_code} in Paystack?`}
-                className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-red-800 ring-1 ring-red-200 hover:bg-red-100"
+                className="rounded-btn bg-white px-3 py-1.5 text-xs font-semibold text-red-800 ring-1 ring-red-200 hover:bg-red-100"
               >
                 Mark refunded
               </ConfirmSubmitButton>
@@ -211,7 +211,7 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
               <input type="hidden" name="status" value="cancelled" />
               <ConfirmSubmitButton
                 message={`Cancel order #${order.order_code}? The customer has paid — refund ${formatNaira(order.total)} in your Paystack dashboard, then tap "Mark refunded".`}
-                className="rounded-full px-3 py-2 text-sm text-red-700 hover:bg-red-50"
+                className="rounded-btn px-3 py-2 text-sm text-red-700 hover:bg-red-50"
               >
                 Cancel
               </ConfirmSubmitButton>
@@ -223,7 +223,7 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
               <input type="hidden" name="status" value={a.status} />
               <button
                 type="submit"
-                className="rounded-full bg-secondary px-4 py-2 text-sm font-semibold text-white hover:brightness-110"
+                className="rounded-btn bg-secondary px-4 py-2 text-sm font-semibold text-white hover:brightness-110"
               >
                 {a.label} →
               </button>

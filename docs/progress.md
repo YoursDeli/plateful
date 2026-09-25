@@ -5,8 +5,8 @@
 > session, and update it at the end of every session or completed feature —
 > see `CLAUDE.md` §9 for the exact workflow.
 
-Last updated: 2026-09-28
-Current phase: **Steps 0–7 verified live; step 8 live + partly verified; step 8a (animated buttons) built, awaiting verification.**
+Last updated: 2026-09-25
+Current phase: **Steps 0–7 verified live; 8 + 8a live (partly verified). Client adjustments done locally: 12px button radius + side-nav dashboards with mobile drawer — awaiting user check. Next: step 9 (referrals).**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -445,23 +445,30 @@ from `main`; Paystack in **test** mode).
   cluster; order pages don't (private — links would 404 for others).
   styled-components stays confined to `/components/ui/`.
 
+- **2026-09-25** — **Button radius = 12px** (client), one token:
+  `--btn-radius` in `globals.css` (`:root`), exposed to Tailwind as
+  `rounded-btn` and used by the styled `/components/ui` buttons. Applies to
+  every button, link-button, filter chip, tab and the quantity stepper; small
+  tags/badges stay pill-shaped (`rounded-full`), circles stay round. Change
+  the whole site's button shape by editing that one value.
+- **2026-09-25** — **Dashboard side navigation** (client request): shared
+  `components/layout/side-nav.tsx` — sticky sidebar at `lg+`, and below that
+  a "Menu" button that opens a left slide-in drawer (native `<dialog>`: focus
+  trap, Esc, backdrop tap, auto-close on navigation). **Admin**: dark Velvet
+  sidebar (Orders, Menu, Settings; name, View site, Sign out) replaces the
+  top bar. **Customer**: light sidebar (Overview, Orders, Favourites, Staff
+  dashboard for staff; Sign out; Referrals slot for step 9) via a new
+  `app/(storefront)/(dashboard)/` route group holding `account/`,
+  `favorites/`, `orders/` — URLs unchanged. Removed now-redundant account
+  link tiles / page sign-out button / "← Your account" link.
+
 ---
 
 ## Open Blockers
 
-- **Next session, start here:** (1) confirm the step-8a Netlify deploy
-  (`ed91516`) finished — on 2026-09-29 it hadn't appeared after ~5 min; if
-  Deploys shows it failed or "Unrecognized Git contributor", fix per the
-  2026-09-29 Netlify decision; (2) user verifies 8a buttons + remaining step-8
-  flows (new order code, customer cancel, refund tracking, pickup) on live;
-  (3) **user-requested next work (before step 9):** a side navigation menu
-  for the admin dashboard AND the customer account area (/account,
-  /account/orders, /favorites…), collapsing on mobile into a drawer that
-  slides in from the side via a menu button; (4) **reduce button corner
-  radius** — client finds the new 8a buttons too rounded (CtaButton and
-  WhatsAppButton are pill-shaped, 999px; the original snippets used 15px /
-  0.5em) — agree a radius and apply consistently; (5) then Build Order
-  step 9 (referral program).
+- **Still to verify on live** (user): 8a buttons; step-8 flows not yet
+  exercised (new order code, customer cancel, refund tracking, pickup);
+  today's radius + side-nav changes.
 - **Set the WhatsApp number** (user): /admin/settings → Contact (migration
   applied 2026-09-29; button hidden until a number is saved).
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
@@ -590,3 +597,6 @@ from `main`; Paystack in **test** mode).
   deploy slow/unconfirmed at shutdown. Working tree clean.
 - **2026-09-29** — Step 8a confirmed live by user (new buttons visible).
   Feedback: buttons too rounded — adjust next session.
+- **2026-09-25** — Client adjustments: 12px button radius token applied
+  site-wide (46 buttons/chips/tabs); side-nav + mobile drawer for admin and
+  customer dashboards (new `(dashboard)` route group). Build/lint/tsc clean.

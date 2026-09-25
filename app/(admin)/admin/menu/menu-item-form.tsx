@@ -132,14 +132,14 @@ export function MenuItemForm({
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Link
           href="/admin/menu"
-          className="rounded-full border border-secondary px-5 py-2.5 text-center text-sm font-medium text-secondary"
+          className="rounded-btn border border-secondary px-5 py-2.5 text-center text-sm font-medium text-secondary"
         >
           Cancel
         </Link>
         <button
           type="submit"
           disabled={pending}
-          className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-secondary disabled:opacity-60"
+          className="rounded-btn bg-primary px-5 py-2.5 text-sm font-medium text-secondary disabled:opacity-60"
         >
           {pending ? "Saving…" : item ? "Save changes" : "Add item"}
         </button>

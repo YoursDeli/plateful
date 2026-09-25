@@ -37,7 +37,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
         <nav aria-label="Main" className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1">
           <Link
             href="/menu"
-            className="rounded-full px-3 py-2 text-sm font-medium text-secondary hover:bg-primary/40"
+            className="rounded-btn px-3 py-2 text-sm font-medium text-secondary hover:bg-primary/40"
           >
             Menu
           </Link>

@@ -18,17 +18,17 @@ const sizes: Record<Size, ReturnType<typeof css>> = {
   sm: css`
     padding: 8px 16px;
     font-size: 14px;
-    border-radius: 999px;
+    border-radius: var(--btn-radius);
   `,
   md: css`
     padding: 11px 24px;
     font-size: 16px;
-    border-radius: 999px;
+    border-radius: var(--btn-radius);
   `,
   lg: css`
     padding: 15px 28px;
     font-size: 18px;
-    border-radius: 999px;
+    border-radius: var(--btn-radius);
   `,
 };
 
