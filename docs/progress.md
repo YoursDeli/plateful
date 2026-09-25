@@ -662,3 +662,4 @@ from `main`; Paystack in **test** mode).
   points card on Orders home, admin Loyalty settings. Build/lint/tsc clean.
   Not pushed until migration runs.
 - **2026-09-25** — Loyalty migration applied (verified); sign-in card accent moved to the bottom; pushed step 10 live.
+- **2026-09-25** — Loyalty points card on Orders home trimmed to just the available points (client).

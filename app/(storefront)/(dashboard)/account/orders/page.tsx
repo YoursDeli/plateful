@@ -45,16 +45,9 @@ export default async function OrderHistoryPage() {
       </header>
 
       {showPoints && (
-        <section aria-label="Loyalty points" className="flex flex-col gap-1 rounded-3xl bg-secondary card-accent-light p-5 text-white shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-white/70">Loyalty points</p>
-            <p className="font-display text-3xl font-semibold tabular-nums text-primary">{formatPoints(points)}</p>
-          </div>
-          <p className="text-sm text-white/80 sm:max-w-xs sm:text-right">
-            {settings.loyalty_enabled
-              ? `Worth ${formatNaira(points)} at checkout. Earn ${settings.loyalty_points_per_1000} points for every ₦1,000 you spend, credited when each order is delivered.`
-              : `Worth ${formatNaira(points)} — our points program is paused, but your balance is kept.`}
-          </p>
+        <section aria-label="Loyalty points" className="flex flex-col gap-1 rounded-3xl bg-secondary card-accent-light p-5 text-white shadow-sm">
+          <p className="text-sm text-white/70">Loyalty points</p>
+          <p className="font-display text-3xl font-semibold tabular-nums text-primary">{formatPoints(points)}</p>
         </section>
       )}
 
