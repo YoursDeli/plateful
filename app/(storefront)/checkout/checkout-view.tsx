@@ -9,11 +9,13 @@ import { CtaButton } from "@/components/ui/cta-button";
 import { useCartRefresh } from "@/components/cart/use-cart-refresh";
 import { cartSubtotal, useCart } from "@/lib/cart/store";
 import { amountToFreeDelivery, deliveryFeeFor } from "@/lib/delivery";
+import { formatPoints, pointsForAmount } from "@/lib/loyalty";
 import { formatNaira } from "@/lib/money";
 import type { Fulfillment, Profile, SiteSettings } from "@/lib/supabase/types";
 import { placeOrder, type CheckoutState } from "./actions";
 
 type Pricing = Pick<SiteSettings, "delivery_fee" | "free_delivery_threshold">;
+type Loyalty = Pick<SiteSettings, "loyalty_enabled" | "loyalty_points_per_1000">;
 
 const input =
   "w-full rounded-xl border border-secondary/20 bg-white px-4 py-3 text-base outline-none focus:border-secondary focus:ring-2 focus:ring-primary";
@@ -23,11 +25,13 @@ export function CheckoutView({
   email,
   profile,
   pricing,
+  loyalty,
 }: {
   signedIn: boolean;
   email: string | null;
   profile: Profile | null;
   pricing: Pricing;
+  loyalty: Loyalty;
 }) {
   const router = useRouter();
   const items = useCart((s) => s.items);
@@ -64,17 +68,19 @@ export function CheckoutView({
     );
   }
 
-  return <CheckoutForm email={email} profile={profile} pricing={pricing} />;
+  return <CheckoutForm email={email} profile={profile} pricing={pricing} loyalty={loyalty} />;
 }
 
 function CheckoutForm({
   email,
   profile,
   pricing,
+  loyalty,
 }: {
   email: string | null;
   profile: Profile | null;
   pricing: Pricing;
+  loyalty: Loyalty;
 }) {
   const items = useCart((s) => s.items);
   const notices = useCart((s) => s.notices);
@@ -92,11 +98,17 @@ function CheckoutForm({
     (i) => notices[i.menuItemId] === "unavailable" || notices[i.menuItemId] === "removed",
   );
   const [applyReferral, setApplyReferral] = useState(false);
+  const [applyPoints, setApplyPoints] = useState(false);
   const referralBalance = profile?.referral_balance ?? 0;
+  const pointsBalance = profile?.loyalty_points_balance ?? 0;
   const subtotal = cartSubtotal(items);
-  // Display mirror of create_order(): bonus capped at the food subtotal.
+  // Display mirror of create_order(): referral bonus first, then points
+  // (₦1 each) — together capped at the food subtotal.
   const bonus = applyReferral ? Math.min(referralBalance, subtotal) : 0;
-  const total = subtotal - bonus + deliveryFeeFor(subtotal, fulfillment, pricing);
+  const points =
+    applyPoints && loyalty.loyalty_enabled ? Math.max(0, Math.min(pointsBalance, Math.floor(subtotal - bonus))) : 0;
+  const total = subtotal - bonus - points + deliveryFeeFor(subtotal, fulfillment, pricing);
+  const willEarn = pointsForAmount(total, loyalty);
   const payload = JSON.stringify(items.map((i) => ({ menu_item_id: i.menuItemId, quantity: i.quantity })));
 
   return (
@@ -104,6 +116,7 @@ function CheckoutForm({
       <input type="hidden" name="items" value={payload} />
       <input type="hidden" name="fulfillment" value={fulfillment} />
       <input type="hidden" name="apply_referral" value={applyReferral ? "on" : ""} />
+      <input type="hidden" name="apply_loyalty" value={applyPoints ? "on" : ""} />
 
       <div className="flex flex-col gap-6">
         <section className="flex flex-col gap-4 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-7">
@@ -189,11 +202,11 @@ function CheckoutForm({
       </div>
 
       <div className="flex flex-col gap-4 lg:sticky lg:top-24">
-        <OrderSummary fulfillment={fulfillment} pricing={pricing} bonus={bonus} />
+        <OrderSummary fulfillment={fulfillment} pricing={pricing} bonus={bonus} points={points} />
         {/* Rewards (accounts doc §2 "CheckoutRewardsSection"): shown even at
-            ₦0 — disabled, not hidden — so customers know it exists. Loyalty
-            points join this section in step 10. */}
-        <section aria-label="Rewards" className="rounded-3xl bg-white card-accent p-5 shadow-sm">
+            ₦0 — disabled, not hidden — so customers know they exist. The
+            points toggle is hidden only when the program is switched off. */}
+        <section aria-label="Rewards" className="flex flex-col gap-4 rounded-3xl bg-white card-accent p-5 shadow-sm">
           <label
             className={`flex items-center justify-between gap-3 text-sm ${
               referralBalance > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-60"
@@ -211,6 +224,32 @@ function CheckoutForm({
               className="size-5 accent-secondary"
             />
           </label>
+          {loyalty.loyalty_enabled && (
+            <label
+              className={`flex items-center justify-between gap-3 border-t border-secondary/10 pt-4 text-sm ${
+                pointsBalance > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-60"
+              }`}
+            >
+              <span>
+                <span className="block font-medium">Apply loyalty points</span>
+                <span className="text-xs text-neutral-dark/60">
+                  {formatPoints(pointsBalance)} available (₦1 each)
+                </span>
+              </span>
+              <input
+                type="checkbox"
+                checked={applyPoints}
+                disabled={pointsBalance <= 0}
+                onChange={(e) => setApplyPoints(e.target.checked)}
+                className="size-5 accent-secondary"
+              />
+            </label>
+          )}
+          {willEarn > 0 && (
+            <p className="text-xs text-secondary">
+              You&apos;ll earn {formatPoints(willEarn)} when this order is delivered.
+            </p>
+          )}
         </section>
         {state.error && (
           <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
@@ -232,7 +271,7 @@ function CheckoutForm({
               : `Pay ${formatNaira(total)}`}
         </CtaButton>
         <p className="text-center text-xs text-neutral-dark/55">
-          {total === 0 ? "Covered by your referral bonus." : "Secure payment by Paystack."} By placing this order you agree to our{" "}
+          {total === 0 ? "Covered by your rewards." : "Secure payment by Paystack."} By placing this order you agree to our{" "}
           <Link href="/terms" className="underline">Terms</Link> and{" "}
           <Link href="/privacy" className="underline">Privacy Policy</Link>.
         </p>
@@ -245,10 +284,12 @@ function OrderSummary({
   fulfillment,
   pricing,
   bonus = 0,
+  points = 0,
 }: {
   fulfillment: Fulfillment;
   pricing: Pricing;
   bonus?: number;
+  points?: number;
 }) {
   const items = useCart((s) => s.items);
   const notices = useCart((s) => s.notices);
@@ -300,9 +341,15 @@ function OrderSummary({
             <dd className="tabular-nums">−{formatNaira(bonus)}</dd>
           </div>
         )}
+        {points > 0 && (
+          <div className="flex justify-between text-secondary">
+            <dt>Loyalty points</dt>
+            <dd className="tabular-nums">−{formatNaira(points)}</dd>
+          </div>
+        )}
         <div className="flex justify-between border-t border-secondary/10 pt-3 text-base font-semibold">
           <dt>Total</dt>
-          <dd className="tabular-nums">{formatNaira(subtotal - bonus + fee)}</dd>
+          <dd className="tabular-nums">{formatNaira(subtotal - bonus - points + fee)}</dd>
         </div>
       </dl>
     </section>

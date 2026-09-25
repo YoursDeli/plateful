@@ -26,6 +26,10 @@ export default async function CheckoutPage() {
           delivery_fee: settings.delivery_fee,
           free_delivery_threshold: settings.free_delivery_threshold,
         }}
+        loyalty={{
+          loyalty_enabled: settings.loyalty_enabled,
+          loyalty_points_per_1000: settings.loyalty_points_per_1000,
+        }}
       />
     </main>
   );

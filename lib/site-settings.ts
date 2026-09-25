@@ -16,6 +16,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   order_notification_email: null,
   whatsapp_number: null,
   referral_bonus_amount: 200,
+  loyalty_enabled: true,
+  loyalty_points_per_1000: 10,
   updated_at: new Date(0).toISOString(),
 };
 

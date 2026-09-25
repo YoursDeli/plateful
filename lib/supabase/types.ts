@@ -21,6 +21,8 @@ export type Profile = {
   referred_by: string | null;
   referral_balance: number;
   referral_earned_total: number;
+  loyalty_points_balance: number;
+  loyalty_points_earned_total: number;
   created_at: string;
   updated_at: string;
 };
@@ -74,6 +76,8 @@ export type SiteSettings = {
   order_notification_email: string | null;
   whatsapp_number: string | null;
   referral_bonus_amount: number;
+  loyalty_enabled: boolean;
+  loyalty_points_per_1000: number;
   updated_at: string;
 };
 
@@ -85,6 +89,15 @@ export type Referral = {
   reward_amount: number | null;
   created_at: string;
   completed_at: string | null;
+};
+
+export type LoyaltyLedgerEntry = {
+  id: number;
+  user_id: string;
+  points: number;
+  reason: "order_earned" | "checkout_redemption" | "redemption_refund";
+  reference_id: string | null;
+  created_at: string;
 };
 
 export type ReferralLedgerEntry = {
@@ -123,6 +136,8 @@ export type Order = {
   subtotal: number;
   delivery_fee: number;
   referral_bonus_applied: number;
+  loyalty_points_redeemed: number; // 1 point = ₦1 off
+  loyalty_points_earned: number; // credited on delivery
   total: number;
   paystack_reference: string | null;
   paid_at: string | null;
@@ -205,6 +220,8 @@ export type Database = {
             | "order_notification_email"
             | "whatsapp_number"
             | "referral_bonus_amount"
+            | "loyalty_enabled"
+            | "loyalty_points_per_1000"
           >
         >
       >;
@@ -215,6 +232,7 @@ export type Database = {
       order_status_history: Table<OrderStatusHistory, never, never>;
       referrals: Table<Referral, never, never>;
       referral_ledger: Table<ReferralLedgerEntry, never, never>;
+      loyalty_ledger: Table<LoyaltyLedgerEntry, never, never>;
       favorites: Table<
         Favorite,
         Pick<Favorite, "user_id" | "menu_item_id">,
@@ -242,6 +260,7 @@ export type Database = {
           p_delivery_address: string | null;
           p_notes: string | null;
           p_apply_referral?: boolean;
+          p_apply_loyalty?: boolean;
         };
         Returns: {
           order_id: string;

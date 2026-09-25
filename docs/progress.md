@@ -6,7 +6,7 @@
 > see `CLAUDE.md` §9 for the exact workflow.
 
 Last updated: 2026-09-25
-Current phase: **Steps 0–7 verified live; 8, 8a, side-nav/radius and 9 (referrals) live — awaiting user verification.**
+Current phase: **Steps 0–7 verified live; 8–9 + UI changes live (partly verified). Step 10 (loyalty) built — waiting on its migration before pushing.**
 
 Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
 from `main`; Paystack in **test** mode).
@@ -64,7 +64,7 @@ from `main`; Paystack in **test** mode).
 - [x] Sign-in gate at checkout (account required — no guest checkout) — *verified live 2026-09-28 (order #1001)*
 - [x] Checkout form — *verified live 2026-09-28 (order #1001); pickup / free-delivery / retry paths not yet exercised*
 - [x] Server-side order creation with server-computed prices — *verified live 2026-09-28 (order #1001): subtotal = Σ line totals, ₦1,500 fee applied under threshold*
-- [ ] Referral bonus / loyalty points redemption applied server-side (combined, capped at ₦0) — *referral half built 2026-09-25 (step 9); loyalty half is step 10*
+- [ ] Referral bonus / loyalty points redemption applied server-side (combined, capped at ₦0) — *both halves built (steps 9 + 10), awaiting verification*
 - [x] Paystack initialize + redirect/inline — *verified live 2026-09-28 (order #1001) (hosted redirect, test card); ₦0 skip lands with rewards in steps 9/10*
 - [x] Webhook handler + signature verification — *verified live 2026-09-28 (order #1001): forged → 401; real `charge.success` confirmed in Netlify function logs by user*
 - [x] Return-URL verify fallback — *verified live 2026-09-28 (order #1001) (thank-you page, cart cleared)*
@@ -98,13 +98,13 @@ from `main`; Paystack in **test** mode).
 - [ ] `/account/referrals` page — 3 stat cards + shareable link — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 10. Loyalty points program
-- [ ] `loyalty_ledger` table + RLS
-- [ ] `profiles` loyalty columns (`loyalty_points_balance`, `loyalty_points_earned_total`)
-- [ ] `site_settings.loyalty_enabled`, `loyalty_points_per_1000` (admin-editable)
-- [ ] Earning logic on first paid-order transition (10 pts / ₦1,000 net spend)
-- [ ] Checkout redemption combined with referral bonus (capped at ₦0 total)
-- [ ] Refund-on-abandon logic (shared cleanup pass with referral bonus)
-- [ ] Admin toggle UI in `/admin/settings`
+- [ ] `loyalty_ledger` table + RLS — *built 2026-09-25, awaiting migration + user verification*
+- [ ] `profiles` loyalty columns (`loyalty_points_balance`, `loyalty_points_earned_total`) — *built 2026-09-25, awaiting migration + user verification*
+- [ ] `site_settings.loyalty_enabled`, `loyalty_points_per_1000` (admin-editable) — *built 2026-09-25, awaiting migration + user verification*
+- [ ] Earning logic on **delivered** transition (10 pts / ₦1,000 net spend) — *built 2026-09-25, awaiting migration + user verification* (client: delivered, not paid)
+- [ ] Checkout redemption combined with referral bonus (capped at ₦0 total) — *built 2026-09-25, awaiting migration + user verification*
+- [ ] Refund-on-abandon logic (shared cleanup pass with referral bonus) — *built 2026-09-25, awaiting migration + user verification*
+- [ ] Admin toggle UI in `/admin/settings` — *built 2026-09-25, awaiting migration + user verification*
 
 ### 11. Static pages & Footer
 - [ ] `pages` table (`about`/`terms`/`privacy`) + admin content editor
@@ -497,10 +497,20 @@ from `main`; Paystack in **test** mode).
   only; a home icon if no logo). Customer "Staff dashboard" link → `/admin`
   (Overview is the admin default).
 
+- **2026-09-25** — **Loyalty points earned on DELIVERY** (client choice,
+  consistent with referrals). Details in
+  `docs/accounts-loyalty-and-images.md` §2 "As built". `create_order()`
+  gained `p_apply_loyalty` (8-arg signature; 7-arg dropped).
+
 ---
 
 ## Open Blockers
 
+- **Run the loyalty migration BEFORE the push** (user):
+  `supabase/migrations/20261003000000_loyalty.sql`.
+- **Brevo template wording** (user): in the Order confirmation template,
+  change the points line to "You'll earn {{ params.points_earned }} loyalty
+  points when this order is delivered." (repo copy already updated).
 - **Still to verify on live** (user): 8a buttons; step-8 flows not yet
   exercised (new order code, customer cancel, refund tracking, pickup);
   today's radius + side-nav changes.
@@ -647,3 +657,8 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Client UI changes: left accent bar on 29 info cards,
   "Food Menu" naming, logo-only mobile header, staff link → admin Overview.
   Pushed live.
+- **2026-09-25** — Built step 10 loyalty: migration (ledger, columns,
+  award-on-delivery, refunds, new create_order, guard), checkout points
+  toggle (after referral bonus), points on receipts/order page/email,
+  points card on Orders home, admin Loyalty settings. Build/lint/tsc clean.
+  Not pushed until migration runs.

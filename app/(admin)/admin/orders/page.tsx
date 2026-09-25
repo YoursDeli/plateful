@@ -211,6 +211,11 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
               {formatNaira(order.referral_bonus_applied)} paid with referral bonus
             </span>
           )}
+          {order.loyalty_points_redeemed > 0 && (
+            <span className="block text-xs text-secondary">
+              {formatNaira(order.loyalty_points_redeemed)} paid with loyalty points
+            </span>
+          )}
         </p>
         <div className="flex flex-wrap items-center gap-2">
           {canCancel(order.status) && (

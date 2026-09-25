@@ -7,6 +7,7 @@ import { OrderLiveRefresh } from "@/components/orders/live-refresh";
 import { OrderTimeline } from "@/components/orders/order-timeline";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { getCurrentUser } from "@/lib/auth";
+import { formatPoints } from "@/lib/loyalty";
 import { formatNaira } from "@/lib/money";
 import { buildTimeline, openCancelDeadline, statusLabel } from "@/lib/orders/status";
 import { getSiteSettings } from "@/lib/site-settings";
@@ -111,6 +112,12 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
               <dd className="tabular-nums">−{formatNaira(order.referral_bonus_applied)}</dd>
             </div>
           )}
+          {order.loyalty_points_redeemed > 0 && (
+            <div className="flex justify-between text-secondary">
+              <dt>Loyalty points</dt>
+              <dd className="tabular-nums">−{formatNaira(order.loyalty_points_redeemed)}</dd>
+            </div>
+          )}
           <div className="flex justify-between pt-1 text-base font-semibold">
             <dt>Total</dt>
             <dd className="tabular-nums">{formatNaira(order.total)}</dd>
@@ -119,6 +126,11 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
         <p className="text-sm text-neutral-dark/65">
           {order.fulfillment === "pickup" ? "Pickup order" : `Delivering to: ${order.delivery_address}`}
         </p>
+        {order.loyalty_points_earned > 0 && (
+          <p className="text-sm font-medium text-secondary">
+            You earned {formatPoints(order.loyalty_points_earned)} on this order.
+          </p>
+        )}
       </section>
 
       {settings.whatsapp_number && (

@@ -100,6 +100,21 @@ orders  (add)
    still honor that order's already-committed redemption (don't retroactively
    unwind it) — the toggle only gates *new* earning/redemption going forward.
 
+### As built (2026-09-25)
+
+- **Earned on delivery**, not on payment (client decision, same as
+  referrals): `_award_loyalty_on_delivery()` runs on the Delivered/Collected
+  transition. Cancelled orders never earn. The confirmation email says how
+  many points *will* be earned on delivery.
+- Whole points: `floor(floor(total / 1000) × loyalty_points_per_1000)`, on
+  the order total actually paid (after bonus/points).
+- Redemption applied after the referral bonus; together capped at the food
+  subtotal. Refunded on customer/restaurant cancel and 24h expiry (same pass
+  as referral refunds). Expired-then-paid orders re-take the points.
+- Balance shown on the customer's Orders page (dashboard home); points
+  earned/redeemed on receipts and the order page; admin switch + rate in
+  /admin/settings → Loyalty points.
+
 ### Checkout UI
 
 ```

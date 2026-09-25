@@ -180,3 +180,42 @@ export async function saveReferrals(_prev: FormState, formData: FormData): Promi
   revalidatePath("/", "layout");
   return { ok: true };
 }
+
+// Loyalty program switch + earn rate (docs/accounts-loyalty-and-images.md §2).
+// Turning it off stops new earning/redemption but keeps everyone's balance.
+export async function saveLoyalty(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireStaff("/admin/settings");
+
+  const parsed = z
+    .object({
+      loyalty_enabled: z.boolean(),
+      loyalty_points_per_1000: z
+        .string()
+        .trim()
+        .regex(/^\d{1,4}(\.\d{1,2})?$/, "Enter points per ₦1,000, e.g. 10")
+        .transform(Number)
+        .pipe(z.number().min(0).max(1000, "Keep it at 1,000 or less")),
+    })
+    .safeParse({
+      loyalty_enabled: formData.get("loyalty_enabled") === "on",
+      loyalty_points_per_1000: String(formData.get("loyalty_points_per_1000") ?? ""),
+    });
+  if (!parsed.success) {
+    return {
+      fieldErrors: z.flattenError(parsed.error).fieldErrors,
+      values: formValues(formData, ["loyalty_enabled", "loyalty_points_per_1000"]),
+    };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("site_settings").update(parsed.data).eq("id", 1);
+  if (error) {
+    console.error("saveLoyalty failed:", error.code, error.message);
+    return {
+      error: "Couldn't save loyalty settings.",
+      values: formValues(formData, ["loyalty_enabled", "loyalty_points_per_1000"]),
+    };
+  }
+  revalidatePath("/", "layout");
+  return { ok: true };
+}

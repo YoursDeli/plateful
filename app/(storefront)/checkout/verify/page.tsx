@@ -103,6 +103,9 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
           {order.referral_bonus_applied > 0 && (
             <Row label="Referral bonus" value={`−${formatNaira(order.referral_bonus_applied)}`} />
           )}
+          {order.loyalty_points_redeemed > 0 && (
+            <Row label="Loyalty points" value={`−${formatNaira(order.loyalty_points_redeemed)}`} />
+          )}
           <Row label="Total paid" value={formatNaira(order.total)} strong />
         </dl>
         <p className="text-sm text-neutral-dark/70">

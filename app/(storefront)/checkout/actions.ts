@@ -35,6 +35,7 @@ const checkoutSchema = z
     notes: z.string().trim().max(500, "Keep notes under 500 characters").nullable(),
     save_details: z.boolean(),
     apply_referral: z.boolean(),
+    apply_loyalty: z.boolean(),
   })
   .refine((v) => v.fulfillment === "pickup" || (v.delivery_address?.length ?? 0) >= 5, {
     path: ["delivery_address"],
@@ -67,6 +68,7 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
     notes: emptyToNull(formData.get("notes")),
     save_details: formData.get("save_details") === "on",
     apply_referral: formData.get("apply_referral") === "on",
+    apply_loyalty: formData.get("apply_loyalty") === "on",
   });
   if (!parsed.success) {
     return { fieldErrors: z.flattenError(parsed.error).fieldErrors, values: formValues(formData, FIELDS) };
@@ -84,6 +86,7 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
     p_delivery_address: f.fulfillment === "delivery" ? f.delivery_address : null,
     p_notes: f.notes,
     p_apply_referral: f.apply_referral,
+    p_apply_loyalty: f.apply_loyalty,
   });
   if (error || !data?.[0]) {
     if (error?.message.includes("items_unavailable")) {

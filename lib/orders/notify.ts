@@ -1,5 +1,6 @@
 import "server-only";
 import { isBrevoConfigured, sendTemplateEmail, templateId } from "@/lib/brevo";
+import { pointsForAmount } from "@/lib/loyalty";
 import { formatNaira } from "@/lib/money";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -52,8 +53,9 @@ export async function notifyOrderPaid(orderId: string, siteUrl: string) {
       timeStyle: "short",
       timeZone: "Africa/Lagos",
     }),
-    // Loyalty points earned on this order — filled in by step 10.
-    points_earned: 0,
+    // Points are credited on delivery (step 10) — the receipt says how many
+    // are coming. 0 hides the block (program off / tiny order).
+    points_earned: pointsForAmount(order.total, settings),
     order_url: `${siteUrl}/orders/${order.id}`,
     admin_url: `${siteUrl}/admin/orders`,
     site_url: siteUrl,

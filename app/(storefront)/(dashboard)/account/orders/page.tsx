@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
+import { formatPoints } from "@/lib/loyalty";
 import { formatNaira } from "@/lib/money";
 import { statusLabel } from "@/lib/orders/status";
+import { getSiteSettings } from "@/lib/site-settings";
 import { createClient } from "@/lib/supabase/server";
 import type { OrderStatus } from "@/lib/supabase/types";
 
@@ -22,8 +24,11 @@ const pill: Record<OrderStatus, string> = {
 
 // Order history (docs/site-sections-and-features.md §7). RLS = own orders only.
 export default async function OrderHistoryPage() {
-  const user = await getCurrentUser();
+  const [user, profile, settings] = await Promise.all([getCurrentUser(), getCurrentProfile(), getSiteSettings()]);
   if (!user) redirect("/login?next=/account/orders");
+  const points = profile?.loyalty_points_balance ?? 0;
+  // Show the points card while the program runs — or if they still hold points.
+  const showPoints = settings.loyalty_enabled || points > 0;
 
   const supabase = await createClient();
   const { data: orders, error } = await supabase
@@ -38,6 +43,20 @@ export default async function OrderHistoryPage() {
       <header className="flex flex-col gap-1">
         <h1 className="font-display text-4xl font-semibold text-secondary">Your orders</h1>
       </header>
+
+      {showPoints && (
+        <section aria-label="Loyalty points" className="flex flex-col gap-1 rounded-3xl bg-secondary card-accent-light p-5 text-white shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-white/70">Loyalty points</p>
+            <p className="font-display text-3xl font-semibold tabular-nums text-primary">{formatPoints(points)}</p>
+          </div>
+          <p className="text-sm text-white/80 sm:max-w-xs sm:text-right">
+            {settings.loyalty_enabled
+              ? `Worth ${formatNaira(points)} at checkout. Earn ${settings.loyalty_points_per_1000} points for every ₦1,000 you spend, credited when each order is delivered.`
+              : `Worth ${formatNaira(points)} — our points program is paused, but your balance is kept.`}
+          </p>
+        </section>
+      )}
 
       {orders.length === 0 ? (
         <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-secondary/20 px-6 py-14 text-center">
