@@ -716,3 +716,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Hero rebuilt after the client's reference video (light frosted card, spinning plate, roll-out/swing-in swap, lifted thumbnail with price tag). See `docs/hero-section-design.md` §8. Pushed live.
 - **2026-09-25** — Hero: auto-cycle every 5s (never pauses), back/next arrows, image-only thumbnails (client). Pushed live.
 - **2026-09-25** — Hero card: brand logo/name removed (header already shows it; client). Pushed live.
+- **2026-09-25** — Hero dish motion smoothed: plates pre-loaded, single-segment easing, card backdrop blur removed, GPU layers (client: swap wasn't smooth). Pushed live.

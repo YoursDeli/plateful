@@ -119,6 +119,12 @@ The client supplied a reference video; the hero now follows it:
   the right (`animate-plate-out`) while the new one swings in from above,
   overshoots slightly and settles (`animate-plate-in`); text and background
   crossfade. Keyframes live in `app/globals.css`.
+- **Smoothness rules** (learned the hard way): keep every plate mounted
+  (hidden when not in use) so its photo is loaded before it swings in; use
+  single-segment keyframes (easing applies per segment, so multi-step paths
+  stall); no `backdrop-blur` on the card (the background is already blurred,
+  and a backdrop blur is recomputed every frame of a swap); moving layers
+  get `will-change: transform`.
 - **Thumbnails**: small round photos only — no name or price (client). The
   active one lifts and gets a Velvet ring. Back and next arrows either side.
 - **Auto-cycle ON (client, overrides §2's "off by default")**: next dish

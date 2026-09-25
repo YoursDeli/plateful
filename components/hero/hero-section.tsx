@@ -62,7 +62,7 @@ export function HeroSection({ items }: { items: MenuItem[] }) {
               fill
               priority={i === 0}
               sizes="100vw"
-              className={`scale-110 object-cover blur-2xl transition-opacity duration-500 ${
+              className={`scale-110 object-cover blur-2xl transition-opacity duration-500 will-change-[opacity] ${
                 i === activeIndex ? "opacity-100" : "opacity-0"
               }`}
             />
@@ -74,7 +74,7 @@ export function HeroSection({ items }: { items: MenuItem[] }) {
       <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:py-10 md:py-14">
         {/* Glass card — a real white fill behind the text, not just blur, for AA
             contrast over busy food photos (§7). */}
-        <div className="grid grid-cols-1 gap-6 rounded-[2rem] border border-white/60 bg-white/60 p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-8 md:grid-cols-[minmax(0,1fr)_20rem] md:gap-8 md:p-10 lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <div className="grid grid-cols-1 gap-6 rounded-[2rem] border border-white/60 bg-white/65 p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)] sm:p-8 md:grid-cols-[minmax(0,1fr)_20rem] md:gap-8 md:p-10 lg:grid-cols-[minmax(0,1fr)_24rem]">
           <div className="flex min-w-0 flex-col md:justify-center">
             <div key={active.id} className="flex animate-fade-in flex-col gap-3">
               <h1 className="font-display text-4xl leading-[1.05] font-semibold text-neutral-dark sm:text-5xl lg:text-6xl">
@@ -160,22 +160,23 @@ export function HeroSection({ items }: { items: MenuItem[] }) {
             )}
           </div>
 
-          {/* Plated dish: above the text on phones, right column from md. The
-              outer layer does the swap motion, the inner one the slow spin. */}
+          {/* Plated dish: above the text on phones, right column from md. Every
+              plate stays mounted so its photo is already loaded when it swings
+              in; only the active and leaving plates are visible. */}
           <div className="relative order-first mx-auto aspect-square w-60 sm:w-72 md:order-none md:w-full md:self-center">
-            {leavingIndex !== null && (
-              <Plate
-                item={items[leavingIndex]}
-                className="animate-plate-out"
-                onAnimationEnd={() => setLeavingIndex(null)}
-              />
-            )}
-            <Plate
-              key={`${active.id}-${swaps}`}
-              item={active}
-              priority={activeIndex === 0}
-              className={swaps > 0 ? "animate-plate-in" : ""}
-            />
+            {items.map((item, i) => {
+              const state = i === activeIndex ? "in" : i === leavingIndex ? "out" : "hidden";
+              return (
+                <Plate
+                  key={item.id}
+                  item={item}
+                  state={state}
+                  animateIn={swaps > 0}
+                  priority={i === 0}
+                  onLeft={() => setLeavingIndex((current) => (current === i ? null : current))}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
@@ -185,29 +186,42 @@ export function HeroSection({ items }: { items: MenuItem[] }) {
 
 function Plate({
   item,
-  className,
-  priority = false,
-  onAnimationEnd,
+  state,
+  animateIn,
+  priority,
+  onLeft,
 }: {
   item: MenuItem;
-  className: string;
-  priority?: boolean;
-  onAnimationEnd?: () => void;
+  state: "in" | "out" | "hidden";
+  animateIn: boolean;
+  priority: boolean;
+  onLeft: () => void;
 }) {
+  const motion = state === "out" ? "animate-plate-out" : state === "in" && animateIn ? "animate-plate-in" : "";
   return (
     <div
-      aria-hidden={onAnimationEnd ? true : undefined}
-      onAnimationEnd={onAnimationEnd}
-      className={`absolute inset-0 ${className}`}
+      aria-hidden={state !== "in"}
+      // Only this layer's own roll-out counts (the inner spin never ends).
+      onAnimationEnd={(e) => {
+        if (state === "out" && e.target === e.currentTarget) onLeft();
+      }}
+      className={`absolute inset-0 will-change-transform ${motion} ${state === "hidden" ? "invisible" : ""} ${
+        state === "in" ? "z-10" : ""
+      }`}
     >
-      <div className="size-full animate-plate-spin rounded-full border-[10px] border-neutral-dark bg-neutral-dark shadow-[0_30px_50px_-18px_rgba(0,0,0,0.6)]">
+      <div
+        className={`size-full rounded-full border-[10px] border-neutral-dark bg-neutral-dark shadow-[0_30px_50px_-18px_rgba(0,0,0,0.6)] will-change-transform ${
+          state === "hidden" ? "" : "animate-plate-spin"
+        }`}
+      >
         {item.image_url ? (
           <div className="relative size-full overflow-hidden rounded-full">
             <Image
               src={item.image_url}
-              alt={onAnimationEnd ? "" : item.name}
+              alt={state === "in" ? item.name : ""}
               fill
               priority={priority}
+              loading={priority ? undefined : "eager"}
               sizes="(min-width: 1024px) 24rem, (min-width: 768px) 20rem, 18rem"
               className="object-cover"
             />
