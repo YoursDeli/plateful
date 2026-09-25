@@ -38,8 +38,8 @@ from `main`; Paystack in **test** mode).
 ### 1. Menu data model + admin CRUD
 - [x] `menu_items`, `categories`, `site_settings`, `profiles`, `reviews` tables + RLS policies — *verified 2026-09-24: anon probes + staff CRUD* (`supabase/migrations/20260923000000_core_schema.sql`)
 - [x] `handle_new_user` trigger (creates `profiles` row on signup) — *verified 2026-09-24*
-- [ ] Review-aggregate trigger (keeps `menu_items.avg_rating`/`review_count` in sync) — *rewritten 2026-09-25 (visible reviews only, recomputes on edits/hide) in `20261005000000_reviews.sql` — awaiting migration + live check*
-- [ ] Review writing (buyers only) + admin Reviews (hide/show) — *built 2026-09-25 — awaiting migration + live check*
+- [ ] Review-aggregate trigger (keeps `menu_items.avg_rating`/`review_count` in sync) — *rewritten 2026-09-25 (visible reviews only, recomputes on edits/hide) in `20261005000000_reviews.sql` — migration applied, live — awaiting user verification*
+- [ ] Review writing (buyers only) + admin Reviews (hide/show) — *built 2026-09-25 — migration applied, live — awaiting user verification*
 - [x] Admin menu CRUD UI (`/admin/menu`) — including `compare_at_price`, `badge`, photo upload (Supabase Storage) — *verified 2026-09-24* (items + categories add/rename/reorder/delete, availability toggle, validation keeps typed values)
 - [x] Admin branding settings page (edit `site_settings`, logo upload via Supabase Storage) — *verified 2026-09-24*
 
@@ -559,7 +559,6 @@ from `main`; Paystack in **test** mode).
   today's radius + side-nav changes.
 - **Before re-privatising the GitHub repo**: pick a deploy path (see
   2026-09-29 Netlify decision) or deploys silently stop.
-- **Run migration `20261005000000_reviews.sql`** (user) — reviews are not pushed until it's applied.
 - Terms & Conditions and Privacy Policy are seeded as **drafts** — need
   client/legal sign-off, then untick "Draft" in Admin → Pages.
 - **TS types are hand-written** (`lib/supabase/types.ts`) since the Supabase CLI
@@ -712,3 +711,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Step 13 polish: 404/error/loading screens, page fade-in, focus ring + skip links, contrast raise, security headers/CSP, RLS probe (all refused). Build/lint/tsc clean; pushed live.
 - **2026-09-25** — Built reviews (buyers only, instant, staff hide) + dish page description moved below buttons. Build/lint/tsc clean. Not pushed until migration runs.
 - **2026-09-25** — Reviews moved to the customer dashboard (Account → Reviews: pending + posted); dish page shows posted reviews only (client).
+- **2026-09-25** — Reviews migration applied (verified: columns + functions, anon writes refused); pushed reviews live.
