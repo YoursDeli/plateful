@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { ImageUploadField } from "@/components/admin/image-upload-field";
 import { initialFormState } from "@/lib/form-state";
-import type { Category, MenuItem } from "@/lib/supabase/types";
+import type { BowlSize, Category, MenuItem } from "@/lib/supabase/types";
 import { saveMenuItem } from "./actions";
 
 const inputClass =
@@ -13,9 +13,13 @@ const inputClass =
 export function MenuItemForm({
   item,
   categories,
+  bowlSizes,
+  sizePrices = {},
 }: {
   item?: MenuItem;
   categories: Category[];
+  bowlSizes: BowlSize[];
+  sizePrices?: Record<string, number>; // sizeId → this dish's price
 }) {
   const [state, action, pending] = useActionState(saveMenuItem, initialFormState);
   const errors = state.fieldErrors ?? {};
@@ -71,6 +75,44 @@ export function MenuItemForm({
           />
         </Field>
       </div>
+
+      <fieldset className="flex flex-col gap-3 rounded-lg border border-neutral-dark/10 p-4">
+        <legend className="px-1 text-sm font-medium">Bowl sizes &amp; prices</legend>
+        {bowlSizes.length === 0 ? (
+          <p className="text-xs text-neutral-dark/65">
+            No bowl sizes yet. Add them under &quot;Bowl sizes&quot; on the Food Menu page, then set prices here.
+          </p>
+        ) : (
+          <>
+            <p className="text-xs text-neutral-dark/65">
+              Enter a price for each size this dish comes in; leave the rest blank. If any size has a price, customers
+              must choose a size and the Price above isn&apos;t used.
+            </p>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {bowlSizes.map((size) => {
+                const field = `size_price:${size.id}`;
+                return (
+                  <label key={size.id} className="flex items-center gap-3 text-sm">
+                    <span className="w-28 shrink-0 font-medium">{size.name}</span>
+                    <input
+                      name={field}
+                      type="number"
+                      inputMode="decimal"
+                      min={0}
+                      step="0.01"
+                      placeholder="Not offered"
+                      aria-label={`${size.name} price (₦)`}
+                      defaultValue={v ? v[field] : (sizePrices[size.id] ?? "")}
+                      className={inputClass}
+                    />
+                  </label>
+                );
+              })}
+            </div>
+          </>
+        )}
+        {errors.sizes && <p className="text-xs text-red-700">{errors.sizes[0]}</p>}
+      </fieldset>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <Field label="Category" error={errors.category_id}>

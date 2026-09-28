@@ -12,6 +12,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const items: NavItem[] = [
     { href: "/account/orders", label: "Orders", icon: "orders", alsoActiveFor: ["/orders"] },
     { href: "/account/reviews", label: "Reviews", icon: "reviews" },
+    { href: "/account/catering", label: "Event requests", icon: "events" },
     { href: "/favorites", label: "Favourites", icon: "favorites" },
     { href: "/account/referrals", label: "Refer & earn", icon: "referrals" },
     { href: "/account", label: "Account", icon: "overview", exact: true },

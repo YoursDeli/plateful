@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import type { Category, MenuItem } from "@/lib/supabase/types";
+import type { Category, MenuDish } from "@/lib/supabase/types";
 import { MenuItemCard } from "./menu-item-card";
 
 const ALL = "all";
@@ -10,7 +10,7 @@ const ALL = "all";
 // Client-side category filter + search (a simple in-memory filter is enough
 // at single-restaurant menu sizes — docs/site-sections-and-features.md §2).
 // The selected category mirrors ?category=<id> so home-page chips deep-link.
-type Props = { categories: Category[]; items: MenuItem[] };
+type Props = { categories: Category[]; items: MenuDish[] };
 
 // Reads ?category= — must render inside <Suspense> (see menu/page.tsx).
 export function MenuBrowserFromUrl(props: Props) {

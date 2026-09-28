@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { cartSubtotal, useCart, type CartItemNotice } from "@/lib/cart/store";
+import { BLOCKING_NOTICES, cartSubtotal, useCart, type CartItemNotice } from "@/lib/cart/store";
 import { formatNaira } from "@/lib/money";
 import { QuantityStepper } from "./quantity-stepper";
 
@@ -10,6 +10,8 @@ const NOTICE_TEXT: Record<CartItemNotice, string> = {
   price_changed: "Price updated since you added this.",
   unavailable: "Sold out right now — remove it to check out.",
   removed: "No longer on the menu — please remove it.",
+  size_removed: "This bowl size is no longer offered — please remove it and choose another.",
+  needs_size: "This dish now comes in bowl sizes — please remove it and add it again with a size.",
 };
 
 // Shared by the slide-over panel and the /cart page.
@@ -40,15 +42,13 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
     );
   }
 
-  const blocked = items.some(
-    (i) => notices[i.menuItemId] === "unavailable" || notices[i.menuItemId] === "removed",
-  );
+  const blocked = items.some((i) => notices[i.key] && BLOCKING_NOTICES.includes(notices[i.key]));
 
   return (
     <div className="flex flex-col gap-4">
       <ul className="flex flex-col divide-y divide-secondary/10">
         {items.map((item) => (
-          <li key={item.menuItemId} className="flex gap-3 py-4">
+          <li key={item.key} className="flex gap-3 py-4">
             <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-primary/30">
               {item.imageUrl && (
                 <Image src={item.imageUrl} alt="" fill sizes="64px" className="object-cover" />
@@ -62,24 +62,25 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
                   className="font-medium leading-snug hover:underline"
                 >
                   {item.name}
+                  {item.sizeName && (
+                    <span className="block text-xs font-normal text-neutral-dark/70">{item.sizeName}</span>
+                  )}
                 </Link>
                 <span className="shrink-0 text-sm font-semibold tabular-nums">
                   {formatNaira(item.unitPrice * item.quantity)}
                 </span>
               </div>
-              {notices[item.menuItemId] && (
-                <p className="text-xs text-red-700">{NOTICE_TEXT[notices[item.menuItemId]]}</p>
-              )}
+              {notices[item.key] && <p className="text-xs text-red-700">{NOTICE_TEXT[notices[item.key]]}</p>}
               <div className="flex items-center justify-between gap-2">
                 <QuantityStepper
                   value={item.quantity}
-                  onChange={(q) => setQuantity(item.menuItemId, q)}
+                  onChange={(q) => setQuantity(item.key, q)}
                   label={item.name}
                   size="sm"
                 />
                 <button
                   type="button"
-                  onClick={() => remove(item.menuItemId)}
+                  onClick={() => remove(item.key)}
                   className="text-xs text-neutral-dark/65 underline hover:text-red-700"
                 >
                   Remove
@@ -112,7 +113,7 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
           </Link>
         )}
         {blocked && (
-          <p className="text-xs text-red-700">Remove sold-out items before checking out.</p>
+          <p className="text-xs text-red-700">Fix the items marked above before checking out.</p>
         )}
       </div>
     </div>

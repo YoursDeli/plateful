@@ -10,6 +10,7 @@ import { requestOrigin } from "@/lib/request-origin";
 import { createClient } from "@/lib/supabase/server";
 import { retryPayment } from "../actions";
 import { ClearCartOnMount } from "./clear-cart";
+import { orderLineName } from "@/lib/orders/labels";
 
 export const metadata: Metadata = { title: "Order status", robots: { index: false } };
 
@@ -88,7 +89,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
           {items?.map((item) => (
             <li key={item.id} className="flex justify-between gap-3 py-3 text-sm">
               <span>
-                {item.name} <span className="text-neutral-dark/65">× {item.quantity}</span>
+                {orderLineName(item)} <span className="text-neutral-dark/65">× {item.quantity}</span>
               </span>
               <span className="tabular-nums">{formatNaira(item.line_total)}</span>
             </li>
@@ -111,7 +112,7 @@ export default async function VerifyPage({ searchParams }: PageProps<"/checkout/
         <p className="text-sm text-neutral-dark/70">
           {order.fulfillment === "pickup"
             ? "We'll let you know when it's ready to collect."
-            : `Delivering to: ${order.delivery_address}`}
+            : `Delivering to: ${order.delivery_address}${order.delivery_zone ? ` (${order.delivery_zone})` : ""}`}
         </p>
         <div className="flex flex-wrap gap-3">
           <Link href={`/orders/${order.id}`} className="rounded-btn bg-primary px-5 py-2.5 font-semibold text-secondary">

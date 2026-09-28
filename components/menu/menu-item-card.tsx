@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AddToCartControl } from "@/components/cart/add-to-cart-control";
 import { HeartButton } from "@/components/favorites/heart-button";
-import type { MenuItem } from "@/lib/supabase/types";
+import type { MenuDish } from "@/lib/supabase/types";
 import { PriceRow } from "./price-row";
 import { RatingRow } from "./rating-row";
 
@@ -14,7 +14,7 @@ export function MenuItemCard({
   categoryName,
   priority = false,
 }: {
-  item: MenuItem;
+  item: MenuDish;
   categoryName?: string | null;
   priority?: boolean;
 }) {

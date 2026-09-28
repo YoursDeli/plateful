@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Order, OrderItem, OrderStatus } from "@/lib/supabase/types";
 import { markRefunded, updateOrderStatus } from "./actions";
 import { LiveBoard } from "./live-board";
+import { orderLineName } from "@/lib/orders/labels";
 
 export const metadata: Metadata = { title: "Orders" };
 
@@ -157,7 +158,10 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
           </a>
         </p>
         {order.fulfillment === "delivery" && (
-          <p className="mt-1 text-neutral-dark/80">{order.delivery_address}</p>
+          <p className="mt-1 text-neutral-dark/80">
+            {order.delivery_zone && <strong className="text-secondary">{order.delivery_zone}: </strong>}
+            {order.delivery_address}
+          </p>
         )}
       </div>
 
@@ -192,7 +196,7 @@ function OrderCard({ order, items }: { order: Order; items: OrderItem[] }) {
         {items.map((item) => (
           <li key={item.id} className="flex justify-between gap-2 py-2">
             <span>
-              <strong className="text-secondary">{item.quantity}×</strong> {item.name}
+              <strong className="text-secondary">{item.quantity}×</strong> {orderLineName(item)}
             </span>
             <span className="tabular-nums text-neutral-dark/65">{formatNaira(item.line_total)}</span>
           </li>

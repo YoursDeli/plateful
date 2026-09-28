@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { AddToCartControl } from "@/components/cart/add-to-cart-control";
 import { PriceRow } from "@/components/menu/price-row";
 import { formatNaira } from "@/lib/money";
-import type { MenuItem } from "@/lib/supabase/types";
+import type { MenuDish } from "@/lib/supabase/types";
 
 // Flavor-swap hero (docs/hero-section-design.md §8), after the client's
 // reference video: one large frosted card over a soft, blurred photo of the
@@ -20,7 +20,7 @@ import type { MenuItem } from "@/lib/supabase/types";
 const AUTO_CYCLE_MS = 3000;
 const TURN_MS = 1100;
 
-export function HeroSection({ items }: { items: MenuItem[] }) {
+export function HeroSection({ items }: { items: MenuDish[] }) {
   const count = items.length;
   // Total steps turned so far — never wraps, so the wheel always keeps
   // turning the same way instead of unwinding back to the start.
@@ -196,7 +196,7 @@ export function HeroSection({ items }: { items: MenuItem[] }) {
 
 // Shadow on the outer layer, slow idle spin on the inner one, so the shadow
 // stays underneath instead of circling round with the spin.
-function Plate({ item, alt, priority }: { item: MenuItem; alt: string; priority: boolean }) {
+function Plate({ item, alt, priority }: { item: MenuDish; alt: string; priority: boolean }) {
   return (
     <div className="size-full rounded-full shadow-[0_30px_50px_-18px_rgba(0,0,0,0.6)]">
       <div className="size-full animate-plate-spin rounded-full border-[10px] border-neutral-dark bg-neutral-dark will-change-transform">

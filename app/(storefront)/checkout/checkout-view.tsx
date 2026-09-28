@@ -7,14 +7,15 @@ import { useActionState, useState } from "react";
 import { SignInPanel } from "@/components/auth/sign-in-panel";
 import { CtaButton } from "@/components/ui/cta-button";
 import { useCartRefresh } from "@/components/cart/use-cart-refresh";
-import { cartSubtotal, useCart } from "@/lib/cart/store";
+import { BLOCKING_NOTICES, cartSubtotal, useCart } from "@/lib/cart/store";
 import { amountToFreeDelivery, deliveryFeeFor } from "@/lib/delivery";
 import { formatPoints, pointsForAmount } from "@/lib/loyalty";
 import { formatNaira } from "@/lib/money";
 import type { Fulfillment, Profile, SiteSettings } from "@/lib/supabase/types";
 import { placeOrder, type CheckoutState } from "./actions";
 
-type Pricing = Pick<SiteSettings, "delivery_fee" | "free_delivery_threshold">;
+type Pricing = Pick<SiteSettings, "free_delivery_threshold">;
+type Zone = { id: string; name: string; fee: number };
 type Loyalty = Pick<SiteSettings, "loyalty_enabled" | "loyalty_points_per_1000">;
 
 const input =
@@ -24,12 +25,14 @@ export function CheckoutView({
   signedIn,
   email,
   profile,
+  zones,
   pricing,
   loyalty,
 }: {
   signedIn: boolean;
   email: string | null;
   profile: Profile | null;
+  zones: Zone[];
   pricing: Pricing;
   loyalty: Loyalty;
 }) {
@@ -63,22 +66,24 @@ export function CheckoutView({
           {/* Inline sign-in: re-render this page with the new session. */}
           <SignInPanel next="/checkout" onSignedIn={() => router.refresh()} />
         </section>
-        <OrderSummary fulfillment="delivery" pricing={pricing} />
+        <OrderSummary fulfillment="delivery" zone={null} pricing={pricing} />
       </div>
     );
   }
 
-  return <CheckoutForm email={email} profile={profile} pricing={pricing} loyalty={loyalty} />;
+  return <CheckoutForm email={email} profile={profile} zones={zones} pricing={pricing} loyalty={loyalty} />;
 }
 
 function CheckoutForm({
   email,
   profile,
+  zones,
   pricing,
   loyalty,
 }: {
   email: string | null;
   profile: Profile | null;
+  zones: Zone[];
   pricing: Pricing;
   loyalty: Loyalty;
 }) {
@@ -90,13 +95,13 @@ function CheckoutForm({
   const [fulfillment, setFulfillment] = useState<Fulfillment>(
     (v?.fulfillment as Fulfillment | undefined) ?? "delivery",
   );
+  const [zoneId, setZoneId] = useState(v?.delivery_zone_id ?? "");
+  const zone = fulfillment === "delivery" ? (zones.find((z) => z.id === zoneId) ?? null) : null;
   // Re-check prices/availability on arrival, and again whenever the server
   // says a dish sold out while they were filling the form.
   useCartRefresh(true, state.code === "items_unavailable" ? state : null);
 
-  const blocked = items.some(
-    (i) => notices[i.menuItemId] === "unavailable" || notices[i.menuItemId] === "removed",
-  );
+  const blocked = items.some((i) => notices[i.key] && BLOCKING_NOTICES.includes(notices[i.key]));
   const [applyReferral, setApplyReferral] = useState(false);
   const [applyPoints, setApplyPoints] = useState(false);
   const referralBalance = profile?.referral_balance ?? 0;
@@ -107,9 +112,11 @@ function CheckoutForm({
   const bonus = applyReferral ? Math.min(referralBalance, subtotal) : 0;
   const points =
     applyPoints && loyalty.loyalty_enabled ? Math.max(0, Math.min(pointsBalance, Math.floor(subtotal - bonus))) : 0;
-  const total = subtotal - bonus - points + deliveryFeeFor(subtotal, fulfillment, pricing);
+  const total = subtotal - bonus - points + deliveryFeeFor(subtotal, fulfillment, zone?.fee ?? null, pricing);
   const willEarn = pointsForAmount(total, loyalty);
-  const payload = JSON.stringify(items.map((i) => ({ menu_item_id: i.menuItemId, quantity: i.quantity })));
+  const payload = JSON.stringify(
+    items.map((i) => ({ menu_item_id: i.menuItemId, size_id: i.sizeId, quantity: i.quantity })),
+  );
 
   return (
     <form action={action} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:items-start">
@@ -144,6 +151,30 @@ function CheckoutForm({
               </button>
             ))}
           </div>
+          {fulfillment === "delivery" && (
+            <Field
+              label="Delivery area"
+              hint={zones.length === 0 ? "Delivery isn't available right now — please choose Pickup." : undefined}
+              error={errors.delivery_zone_id}
+            >
+              <select
+                name="delivery_zone_id"
+                required
+                value={zoneId}
+                onChange={(e) => setZoneId(e.target.value)}
+                className={input}
+              >
+                <option value="" disabled>
+                  Choose your area
+                </option>
+                {zones.map((z) => (
+                  <option key={z.id} value={z.id}>
+                    {z.name} — {formatNaira(z.fee)}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          )}
         </section>
 
         <section className="flex flex-col gap-4 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-7">
@@ -202,7 +233,7 @@ function CheckoutForm({
       </div>
 
       <div className="flex flex-col gap-4 lg:sticky lg:top-24">
-        <OrderSummary fulfillment={fulfillment} pricing={pricing} bonus={bonus} points={points} />
+        <OrderSummary fulfillment={fulfillment} zone={zone} pricing={pricing} bonus={bonus} points={points} />
         {/* Rewards (accounts doc §2 "CheckoutRewardsSection"): shown even at
             ₦0 — disabled, not hidden — so customers know they exist. The
             points toggle is hidden only when the program is switched off. */}
@@ -258,7 +289,7 @@ function CheckoutForm({
         )}
         {blocked && (
           <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
-            Some dishes are sold out — <Link href="/cart" className="underline">edit your cart</Link> to continue.
+            Some items need your attention — <Link href="/cart" className="underline">edit your cart</Link> to continue.
           </p>
         )}
         <CtaButton type="submit" size="lg" fullWidth disabled={pending || blocked}>
@@ -282,11 +313,13 @@ function CheckoutForm({
 
 function OrderSummary({
   fulfillment,
+  zone,
   pricing,
   bonus = 0,
   points = 0,
 }: {
   fulfillment: Fulfillment;
+  zone: Zone | null;
   pricing: Pricing;
   bonus?: number;
   points?: number;
@@ -294,8 +327,10 @@ function OrderSummary({
   const items = useCart((s) => s.items);
   const notices = useCart((s) => s.notices);
   const subtotal = cartSubtotal(items);
-  const fee = deliveryFeeFor(subtotal, fulfillment, pricing);
+  const fee = deliveryFeeFor(subtotal, fulfillment, zone?.fee ?? null, pricing);
   const toFree = fulfillment === "delivery" ? amountToFreeDelivery(subtotal, pricing) : null;
+  const deliveryText =
+    fulfillment === "pickup" ? "Free" : !zone ? "Choose your area" : fee === 0 ? "Free" : formatNaira(fee);
 
   return (
     <section aria-labelledby="summary-heading" className="flex flex-col gap-4 rounded-3xl bg-white card-accent p-5 shadow-sm sm:p-6">
@@ -305,18 +340,18 @@ function OrderSummary({
       </div>
       <ul className="flex flex-col gap-3">
         {items.map((item) => (
-          <li key={item.menuItemId} className="flex items-center gap-3">
+          <li key={item.key} className="flex items-center gap-3">
             <div className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-primary/30">
               {item.imageUrl && <Image src={item.imageUrl} alt="" fill sizes="48px" className="object-cover" />}
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{item.name}</p>
-              <p className="text-xs text-neutral-dark/65">× {item.quantity}</p>
-              {notices[item.menuItemId] === "price_changed" && (
-                <p className="text-xs text-amber-700">Price updated</p>
-              )}
-              {(notices[item.menuItemId] === "unavailable" || notices[item.menuItemId] === "removed") && (
-                <p className="text-xs text-red-700">Sold out</p>
+              <p className="text-xs text-neutral-dark/65">
+                {item.sizeName ? `${item.sizeName} · ` : ""}× {item.quantity}
+              </p>
+              {notices[item.key] === "price_changed" && <p className="text-xs text-amber-700">Price updated</p>}
+              {notices[item.key] && BLOCKING_NOTICES.includes(notices[item.key]) && (
+                <p className="text-xs text-red-700">Needs attention in your cart</p>
               )}
             </div>
             <span className="text-sm font-semibold tabular-nums">{formatNaira(item.unitPrice * item.quantity)}</span>
@@ -329,8 +364,10 @@ function OrderSummary({
           <dd className="tabular-nums">{formatNaira(subtotal)}</dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-neutral-dark/65">{fulfillment === "pickup" ? "Pickup" : "Delivery"}</dt>
-          <dd className="tabular-nums">{fee === 0 ? "Free" : formatNaira(fee)}</dd>
+          <dt className="text-neutral-dark/65">
+            {fulfillment === "pickup" ? "Pickup" : zone ? `Delivery (${zone.name})` : "Delivery"}
+          </dt>
+          <dd className="tabular-nums">{deliveryText}</dd>
         </div>
         {toFree !== null && (
           <p className="text-xs text-secondary">Add {formatNaira(toFree)} more for free delivery.</p>

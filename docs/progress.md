@@ -120,6 +120,12 @@ from `main`; Paystack in **test** mode).
 - [x] Logo upload (admin branding settings) — *verified 2026-09-24*
 - [ ] Chef photo upload (`/admin/pages/about`) — *built 2026-09-25, migration applied, live — awaiting user verification*
 
+### 14. Client additions (2026-09-28)
+- [ ] Delivery areas with prices (checkout dropdown; admin Settings → Delivery) — *built 2026-09-28 — awaiting migration + live check*
+- [ ] Bowl sizes (shared list in Admin → Food Menu; price per size in each dish; size picker on cards/hero/dish page; size on cart, orders, emails) — *built 2026-09-28 — awaiting migration + live check*
+- [ ] FAQ (`/faq`, footer link, checkout section; Admin → Pages → FAQ) — *built 2026-09-28 — awaiting migration + live check*
+- [ ] Events & Catering quote requests (`/catering`, home section, footer link; Account → Event requests; Admin → Event requests; emails to restaurant + customer) — *built 2026-09-28 — awaiting migration + live check*
+
 ### 13. Polish
 - [ ] Animations / transitions (reduced-motion respected) — page fade-in on every storefront page (`template.tsx`) — *done 2026-09-25, live — awaiting user verification*
 - [ ] Empty states, error states — empty states already covered; added branded 404s, storefront error screen, root error fallback, loading skeletons (dashboard, checkout, admin) — *done 2026-09-25, live — awaiting user verification*
@@ -547,10 +553,29 @@ from `main`; Paystack in **test** mode).
   (`my_review_status()` in the migration is now unused — harmless.) Dish
   page: description moved below the cart/save/share buttons (client).
 
+- **2026-09-28** — **Client additions** (migration `20261006000000_zones_sizes_faq_catering.sql`):
+  - **Delivery areas** replace the single flat fee: `delivery_zones` (name, fee, active, order),
+    chosen at checkout; `create_order()` gained `p_delivery_zone_id` (9-arg; 8-arg dropped) and
+    charges the area fee. **Free-delivery threshold kept for every area** (client).
+    `site_settings.delivery_fee` is now unused (left in place). Area name copied to
+    `orders.delivery_zone`.
+  - **Bowl sizes: shared list, price per dish** (client). `bowl_sizes` + `menu_item_sizes`;
+    a dish with any size price MUST be ordered by size (create_order enforces), otherwise it
+    keeps its single price. Cart lines are keyed by dish + size (localStorage cart v2 migrates
+    old carts). Cards/hero open a size picker; dish page shows size options. Compare-at
+    discount only shows on single-price dishes. `order_items.size_id/size_name`.
+  - **FAQ**: `faqs` table (published + "show on checkout"), `/faq`, checkout section, edited in
+    Admin → Pages → FAQ. Seeded with 10 draft answers.
+  - **Catering requests: signed-in customers only** (client). Inserted only via
+    `submit_catering_request()` (validates date, food types, 5/day limit). Emails (restaurant
+    alert with reply-to = customer, and a customer confirmation) are plain HTML via Brevo
+    (`sendHtmlEmail`) — no new Brevo templates needed.
+
 ---
 
 ## Open Blockers
 
+- **Run migration `20261006000000_zones_sizes_faq_catering.sql`** (user) — this batch isn't pushed until it's applied (and Netlify builds are paused anyway).
 - **Netlify build credits used up** (2026-09-25): production builds paused until the billing cycle resets or the plan is upgraded. All commits are on GitHub; after the reset, Netlify → Deploys → Trigger deploy → Deploy site. Push in batches from now on (one build per work session), not per change.
 - **Brevo template wording** (user): in the Order confirmation template,
   change the points line to "You'll earn {{ params.points_earned }} loyalty
@@ -721,3 +746,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Hero rebuilt as an orbit: all dishes on one turning wheel, one visible through a window (client idea); only the wheel animates. Pushed live.
 - **2026-09-25** — Hero rest between turns reduced to 3s (client). Pushed live.
 - **2026-09-25** — Netlify free build credits exhausted; production builds paused. Code all on GitHub. Proposed batching pushes to one build per session.
+- **2026-09-28** — Built client additions: delivery areas, bowl sizes, FAQ, Events & Catering requests. tsc/lint clean; build needs the migration (new tables). Not pushed.

@@ -86,6 +86,27 @@ export default async function HomePage() {
 
         {/* Signed-in visitors with saved dishes only (filled client-side). */}
         <HomeFavoritesRow items={allItems} categories={categories} />
+
+        {/* Catering / event quotes (client, 2026-09-28). */}
+        <section
+          aria-labelledby="home-catering"
+          className="flex flex-col items-start gap-4 rounded-3xl bg-secondary p-6 text-white card-accent-light sm:flex-row sm:items-center sm:justify-between sm:p-8"
+        >
+          <div className="flex flex-col gap-1">
+            <h2 id="home-catering" className="font-display text-2xl font-semibold text-primary">
+              Planning an event?
+            </h2>
+            <p className="text-sm text-white/80">
+              Weddings, birthdays, office parties and more — tell us about it and we&apos;ll send you a quote.
+            </p>
+          </div>
+          <Link
+            href="/catering"
+            className="shrink-0 rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary transition hover:brightness-95"
+          >
+            Request a quote
+          </Link>
+        </section>
       </div>
     </main>
   );

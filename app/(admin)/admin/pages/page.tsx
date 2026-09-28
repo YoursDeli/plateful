@@ -48,6 +48,15 @@ export default async function AdminPagesPage() {
             </Link>
           </li>
         ))}
+        <li>
+          <Link
+            href="/admin/faq"
+            className="flex flex-col gap-1 rounded-xl bg-white card-accent p-4 shadow-sm transition hover:shadow-md sm:p-5"
+          >
+            <span className="font-medium text-secondary">FAQ</span>
+            <span className="text-xs text-neutral-dark/65">/faq · questions and answers, also shown on checkout</span>
+          </Link>
+        </li>
       </ul>
     </div>
   );

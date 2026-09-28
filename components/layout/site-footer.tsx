@@ -94,6 +94,8 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
             <ul className="flex flex-col gap-1.5 text-sm">
               <li><Link href="/menu" className={link}>Food Menu</Link></li>
               <li><Link href="/about" className={link}>About</Link></li>
+              <li><Link href="/catering" className={link}>Events &amp; Catering</Link></li>
+              <li><Link href="/faq" className={link}>FAQ</Link></li>
               <li><Link href="/account/referrals" className={link}>Refer &amp; earn</Link></li>
             </ul>
           </div>

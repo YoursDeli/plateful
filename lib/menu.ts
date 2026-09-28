@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { createPublicClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import type { Category, MenuItem, PublicReview } from "@/lib/supabase/types";
+import type { BowlSize, Category, DishSize, MenuDish, PublicReview } from "@/lib/supabase/types";
 
 // Public storefront reads. Cookie-less anon client so pages stay statically
 // cached; admin edits call revalidatePath("/", "layout") to refresh them.
@@ -17,25 +17,55 @@ export const getCategories = cache(async (): Promise<Category[]> => {
   return data;
 });
 
-export const getMenuItems = cache(async (): Promise<MenuItem[]> => {
+export const getBowlSizes = cache(async (): Promise<BowlSize[]> => {
   if (!isSupabaseConfigured()) return [];
   const { data, error } = await createPublicClient()
-    .from("menu_items")
+    .from("bowl_sizes")
     .select("*")
+    .order("sort_order")
     .order("name");
-  if (error) throw new Error(`Couldn't load the menu: ${error.message}`);
+  if (error) throw new Error(`Couldn't load bowl sizes: ${error.message}`);
   return data;
 });
 
-export const getMenuItem = cache(async (id: string): Promise<MenuItem | null> => {
+// Every dish's size prices, in the bowl-size list's order.
+const getSizesByDish = cache(async (): Promise<Map<string, DishSize[]>> => {
+  if (!isSupabaseConfigured()) return new Map();
+  const [sizes, { data, error }] = await Promise.all([
+    getBowlSizes(),
+    createPublicClient().from("menu_item_sizes").select("*"),
+  ]);
+  if (error) throw new Error(`Couldn't load dish sizes: ${error.message}`);
+  const byDish = new Map<string, DishSize[]>();
+  for (const size of sizes) {
+    for (const row of data) {
+      if (row.size_id !== size.id) continue;
+      const list = byDish.get(row.menu_item_id) ?? [];
+      list.push({ id: size.id, name: size.name, price: row.price });
+      byDish.set(row.menu_item_id, list);
+    }
+  }
+  return byDish;
+});
+
+export const getMenuItems = cache(async (): Promise<MenuDish[]> => {
+  if (!isSupabaseConfigured()) return [];
+  const [{ data, error }, sizes] = await Promise.all([
+    createPublicClient().from("menu_items").select("*").order("name"),
+    getSizesByDish(),
+  ]);
+  if (error) throw new Error(`Couldn't load the menu: ${error.message}`);
+  return data.map((item) => ({ ...item, sizes: sizes.get(item.id) ?? [] }));
+});
+
+export const getMenuItem = cache(async (id: string): Promise<MenuDish | null> => {
   if (!isSupabaseConfigured()) return null;
-  const { data, error } = await createPublicClient()
-    .from("menu_items")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data, error }, sizes] = await Promise.all([
+    createPublicClient().from("menu_items").select("*").eq("id", id).maybeSingle(),
+    getSizesByDish(),
+  ]);
   if (error) throw new Error(`Couldn't load this dish: ${error.message}`);
-  return data;
+  return data ? { ...data, sizes: sizes.get(data.id) ?? [] } : null;
 });
 
 // Hero dishes: admin-curated via featured_order, available only.

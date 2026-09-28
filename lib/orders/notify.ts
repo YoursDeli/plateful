@@ -2,6 +2,7 @@ import "server-only";
 import { isBrevoConfigured, sendTemplateEmail, templateId } from "@/lib/brevo";
 import { pointsForAmount } from "@/lib/loyalty";
 import { formatNaira } from "@/lib/money";
+import { orderLineName } from "@/lib/orders/labels";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // Sends the customer receipt + the restaurant's "new order" alert for an
@@ -38,10 +39,12 @@ export async function notifyOrderPaid(orderId: string, siteUrl: string) {
     customer_email: order.contact_email,
     fulfillment: isPickup ? "Pickup" : "Delivery",
     is_pickup: isPickup,
-    delivery_address: order.delivery_address ?? "",
+    delivery_address: [order.delivery_address, order.delivery_zone ? `(${order.delivery_zone})` : ""]
+      .filter(Boolean)
+      .join(" "),
     notes: order.notes ?? "",
     items: items.map((i) => ({
-      name: i.name,
+      name: orderLineName(i),
       quantity: i.quantity,
       line_total: formatNaira(i.line_total),
     })),

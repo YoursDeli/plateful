@@ -17,6 +17,7 @@ const itemsSchema = z
   .array(
     z.object({
       menu_item_id: z.uuid(),
+      size_id: z.uuid().nullable().default(null),
       quantity: z.number().int().min(1).max(50),
     }),
   )
@@ -32,6 +33,7 @@ const checkoutSchema = z
       .trim()
       .regex(/^\+?[0-9][0-9\s-]{6,18}$/, "Enter a valid phone number, e.g. 0803 123 4567"),
     delivery_address: z.string().trim().max(500).nullable(),
+    delivery_zone_id: z.uuid().nullable(),
     notes: z.string().trim().max(500, "Keep notes under 500 characters").nullable(),
     save_details: z.boolean(),
     apply_referral: z.boolean(),
@@ -40,9 +42,13 @@ const checkoutSchema = z
   .refine((v) => v.fulfillment === "pickup" || (v.delivery_address?.length ?? 0) >= 5, {
     path: ["delivery_address"],
     message: "Please enter a delivery address",
+  })
+  .refine((v) => v.fulfillment === "pickup" || v.delivery_zone_id !== null, {
+    path: ["delivery_zone_id"],
+    message: "Please choose your delivery area",
   });
 
-const FIELDS = ["fulfillment", "contact_name", "contact_phone", "delivery_address", "notes"] as const;
+const FIELDS = ["fulfillment", "contact_name", "contact_phone", "delivery_address", "delivery_zone_id", "notes"] as const;
 
 export async function placeOrder(_prev: CheckoutState, formData: FormData): Promise<CheckoutState> {
   const user = await getCurrentUser();
@@ -65,6 +71,7 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
     contact_name: formData.get("contact_name") ?? "",
     contact_phone: formData.get("contact_phone") ?? "",
     delivery_address: emptyToNull(formData.get("delivery_address")),
+    delivery_zone_id: emptyToNull(formData.get("delivery_zone_id")),
     notes: emptyToNull(formData.get("notes")),
     save_details: formData.get("save_details") === "on",
     apply_referral: formData.get("apply_referral") === "on",
@@ -76,7 +83,7 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
   const f = parsed.data;
 
   // Authoritative pricing happens inside create_order (one DB transaction):
-  // live menu prices, availability check, delivery fee from site_settings.
+  // live menu + bowl-size prices, availability, the delivery area's fee.
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("create_order", {
     p_items: items.data,
@@ -87,12 +94,19 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
     p_notes: f.notes,
     p_apply_referral: f.apply_referral,
     p_apply_loyalty: f.apply_loyalty,
+    p_delivery_zone_id: f.fulfillment === "delivery" ? f.delivery_zone_id : null,
   });
   if (error || !data?.[0]) {
     if (error?.message.includes("items_unavailable")) {
       return {
         code: "items_unavailable",
         error: "Some dishes in your cart just sold out or changed. We've refreshed your cart — please review it.",
+        values: formValues(formData, FIELDS),
+      };
+    }
+    if (error?.message.includes("invalid_delivery_zone")) {
+      return {
+        fieldErrors: { delivery_zone_id: ["That delivery area isn't available any more — please choose another."] },
         values: formValues(formData, FIELDS),
       };
     }

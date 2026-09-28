@@ -7,6 +7,7 @@ import { DeliveryForm } from "./delivery-form";
 import { LoyaltyForm } from "./loyalty-form";
 import { NotificationsForm } from "./notifications-form";
 import { ReferralsForm } from "./referrals-form";
+import { ZonesPanel } from "./zones-panel";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -16,12 +17,11 @@ export default async function AdminSettingsPage() {
   await requireStaff("/admin/settings");
 
   const supabase = await createClient();
-  const { data: settings, error } = await supabase
-    .from("site_settings")
-    .select("*")
-    .eq("id", 1)
-    .single();
-  if (error) throw new Error("Couldn't load site settings.");
+  const [{ data: settings, error }, { data: zones, error: zonesError }] = await Promise.all([
+    supabase.from("site_settings").select("*").eq("id", 1).single(),
+    supabase.from("delivery_zones").select("*").order("sort_order").order("name"),
+  ]);
+  if (error || zonesError) throw new Error("Couldn't load site settings.");
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -32,6 +32,7 @@ export default async function AdminSettingsPage() {
       </section>
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/65">Delivery</h2>
+        <ZonesPanel zones={zones} />
         <DeliveryForm settings={settings} />
       </section>
       <section className="flex flex-col gap-3">

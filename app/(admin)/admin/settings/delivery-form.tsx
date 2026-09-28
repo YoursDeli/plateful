@@ -11,7 +11,7 @@ const inputClass =
 export function DeliveryForm({
   settings,
 }: {
-  settings: Pick<SiteSettings, "delivery_fee" | "free_delivery_threshold">;
+  settings: Pick<SiteSettings, "free_delivery_threshold">;
 }) {
   const [state, action, pending] = useActionState(saveDelivery, initialFormState);
   const errors = state.fieldErrors ?? {};
@@ -19,43 +19,26 @@ export function DeliveryForm({
 
   return (
     <form action={action} className="flex flex-col gap-5 rounded-xl bg-white card-accent p-4 shadow-sm sm:p-6">
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-medium">
-          Delivery fee (₦)
-          <input
-            name="delivery_fee"
-            inputMode="decimal"
-            required
-            defaultValue={v ? v.delivery_fee : String(settings.delivery_fee)}
-            className={inputClass}
-          />
-          {errors.delivery_fee ? (
-            <span className="text-xs font-normal text-red-700">{errors.delivery_fee[0]}</span>
-          ) : (
-            <span className="text-xs font-normal text-neutral-dark/65">Charged on delivery orders. 0 = always free.</span>
-          )}
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium">
-          Free delivery from (₦)
-          <input
-            name="free_delivery_threshold"
-            inputMode="decimal"
-            placeholder="No threshold"
-            defaultValue={v ? v.free_delivery_threshold : (settings.free_delivery_threshold?.toString() ?? "")}
-            className={inputClass}
-          />
-          {errors.free_delivery_threshold ? (
-            <span className="text-xs font-normal text-red-700">{errors.free_delivery_threshold[0]}</span>
-          ) : (
-            <span className="text-xs font-normal text-neutral-dark/65">
-              Orders at or above this subtotal deliver free. Leave blank to always charge.
-            </span>
-          )}
-        </label>
-      </div>
+      <label className="flex flex-col gap-1.5 text-sm font-medium sm:max-w-xs">
+        Free delivery from (₦)
+        <input
+          name="free_delivery_threshold"
+          inputMode="decimal"
+          placeholder="No threshold"
+          defaultValue={v ? v.free_delivery_threshold : (settings.free_delivery_threshold?.toString() ?? "")}
+          className={inputClass}
+        />
+        {errors.free_delivery_threshold ? (
+          <span className="text-xs font-normal text-red-700">{errors.free_delivery_threshold[0]}</span>
+        ) : (
+          <span className="text-xs font-normal text-neutral-dark/65">
+            Orders at or above this subtotal deliver free, in every area. Leave blank to always charge the area price.
+          </span>
+        )}
+      </label>
 
       {state.error && <p role="alert" className="text-sm text-red-700">{state.error}</p>}
-      {state.ok && <p role="status" className="text-sm text-green-800">Delivery pricing saved.</p>}
+      {state.ok && <p role="status" className="text-sm text-green-800">Saved.</p>}
 
       <div className="flex sm:justify-end">
         <button
@@ -63,7 +46,7 @@ export function DeliveryForm({
           disabled={pending}
           className="w-full rounded-btn bg-primary px-5 py-2.5 text-sm font-medium text-secondary disabled:opacity-60 sm:w-auto"
         >
-          {pending ? "Saving…" : "Save delivery pricing"}
+          {pending ? "Saving…" : "Save"}
         </button>
       </div>
     </form>

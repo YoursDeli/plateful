@@ -51,6 +51,78 @@ export type MenuItem = {
   updated_at: string;
 };
 
+export type BowlSize = {
+  id: string;
+  name: string;
+  sort_order: number;
+  created_at: string;
+};
+
+export type MenuItemSize = {
+  menu_item_id: string;
+  size_id: string;
+  price: number;
+};
+
+// A dish's size as the storefront shows it (bowl_sizes + menu_item_sizes).
+export type DishSize = { id: string; name: string; price: number };
+
+// A dish plus the bowl sizes it comes in (empty = one price, no size).
+export type MenuDish = MenuItem & { sizes: DishSize[] };
+
+export type DeliveryZone = {
+  id: string;
+  name: string;
+  fee: number;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Faq = {
+  id: string;
+  question: string;
+  answer: string;
+  sort_order: number;
+  show_on_checkout: boolean;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export const EVENT_TYPES = [
+  "Wedding",
+  "Birthday",
+  "Corporate event",
+  "Religious event",
+  "Funeral / remembrance",
+  "Family gathering",
+  "Other",
+] as const;
+export const FOOD_TYPES = ["Soups & swallow", "Rice dishes", "Pasta", "Proteins", "Small chops", "Drinks", "Other"] as const;
+export const CATERING_STATUSES = ["new", "contacted", "quoted", "booked", "declined"] as const;
+export type CateringStatus = (typeof CATERING_STATUSES)[number];
+
+export type CateringRequest = {
+  id: string;
+  user_id: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_email: string;
+  event_type: (typeof EVENT_TYPES)[number];
+  event_date: string; // yyyy-mm-dd
+  guest_count: number;
+  food_types: string[];
+  venue: string | null;
+  budget: string | null;
+  notes: string | null;
+  status: CateringStatus;
+  staff_notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type PublicReview = {
   id: string;
   rating: number;
@@ -153,6 +225,7 @@ export type Order = {
   contact_phone: string;
   contact_email: string;
   delivery_address: string | null;
+  delivery_zone: string | null; // area name at order time
   notes: string | null;
   subtotal: number;
   delivery_fee: number;
@@ -179,6 +252,8 @@ export type OrderItem = {
   unit_price: number;
   quantity: number;
   line_total: number;
+  size_id: string | null;
+  size_name: string | null; // bowl size at order time
 };
 
 export type OrderStatusHistory = {
@@ -289,6 +364,18 @@ export type Database = {
         Pick<Favorite, "user_id" | "menu_item_id">,
         never
       >;
+      delivery_zones: Table<
+        DeliveryZone,
+        Pick<DeliveryZone, "name" | "fee"> & Partial<Pick<DeliveryZone, "sort_order" | "is_active">>
+      >;
+      bowl_sizes: Table<BowlSize, Pick<BowlSize, "name"> & Partial<Pick<BowlSize, "sort_order">>>;
+      menu_item_sizes: Table<MenuItemSize, MenuItemSize>;
+      faqs: Table<
+        Faq,
+        Pick<Faq, "question" | "answer"> & Partial<Pick<Faq, "sort_order" | "show_on_checkout" | "is_published">>
+      >;
+      // Inserts only via submit_catering_request(); staff update status/notes.
+      catering_requests: Table<CateringRequest, never, Partial<Pick<CateringRequest, "status" | "staff_notes">>>;
       reviews: Table<
         Review,
         Pick<Review, "menu_item_id" | "user_id" | "rating"> &
@@ -311,7 +398,7 @@ export type Database = {
       set_review_hidden: { Args: { p_review_id: string; p_hidden: boolean }; Returns: string | null };
       create_order: {
         Args: {
-          p_items: { menu_item_id: string; quantity: number }[];
+          p_items: { menu_item_id: string; size_id: string | null; quantity: number }[];
           p_fulfillment: Fulfillment;
           p_contact_name: string;
           p_contact_phone: string;
@@ -319,6 +406,7 @@ export type Database = {
           p_notes: string | null;
           p_apply_referral?: boolean;
           p_apply_loyalty?: boolean;
+          p_delivery_zone_id?: string | null;
         };
         Returns: {
           order_id: string;
@@ -328,6 +416,24 @@ export type Database = {
           contact_email: string;
           status: OrderStatus; // "paid" straight away when the total was ₦0
         }[];
+      };
+      set_menu_item_sizes: {
+        Args: { p_menu_item_id: string; p_prices: { size_id: string; price: number }[] };
+        Returns: undefined;
+      };
+      submit_catering_request: {
+        Args: {
+          p_contact_name: string;
+          p_contact_phone: string;
+          p_event_type: string;
+          p_event_date: string;
+          p_guest_count: number;
+          p_food_types: string[];
+          p_venue: string | null;
+          p_budget: string | null;
+          p_notes: string | null;
+        };
+        Returns: string;
       };
       claim_referral: {
         Args: { p_code: string };

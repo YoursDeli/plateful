@@ -64,28 +64,26 @@ export async function saveBranding(_prev: FormState, formData: FormData): Promis
   return { ok: true };
 }
 
-// Delivery pricing — read by create_order() at checkout (authoritative) and
-// by the checkout summary (display).
+// Free-delivery threshold — applies to every delivery area. Read by
+// create_order() at checkout (authoritative) and the checkout summary.
 const nairaField = z
   .string()
   .trim()
   .regex(/^\d{1,8}(\.\d{1,2})?$/, "Enter an amount in naira, e.g. 1500");
 
 const deliverySchema = z.object({
-  delivery_fee: nairaField.transform(Number),
   free_delivery_threshold: nairaField
     .transform(Number)
     .refine((n) => n > 0, "Must be more than 0")
     .nullable(),
 });
 
-const DELIVERY_FIELDS = ["delivery_fee", "free_delivery_threshold"] as const;
+const DELIVERY_FIELDS = ["free_delivery_threshold"] as const;
 
 export async function saveDelivery(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireStaff("/admin/settings");
 
   const parsed = deliverySchema.safeParse({
-    delivery_fee: String(formData.get("delivery_fee") ?? ""),
     free_delivery_threshold: emptyToNull(formData.get("free_delivery_threshold")),
   });
   if (!parsed.success) {
@@ -275,4 +273,64 @@ export async function saveLoyalty(_prev: FormState, formData: FormData): Promise
   }
   revalidatePath("/", "layout");
   return { ok: true };
+}
+
+// ---------------------------------------------------------------------------
+// Delivery areas (client, 2026-09-28): each area has its own delivery price;
+// create_order() charges the chosen area's fee.
+// ---------------------------------------------------------------------------
+const zoneSchema = z.object({
+  id: z.uuid().nullable(),
+  name: z.string().trim().min(1, "Enter the area name").max(80, "Keep it under 80 characters"),
+  fee: nairaField.transform(Number),
+  is_active: z.boolean(),
+});
+
+export async function saveZone(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireStaff("/admin/settings");
+  const parsed = zoneSchema.safeParse({
+    id: emptyToNull(formData.get("id")),
+    name: formData.get("name") ?? "",
+    fee: String(formData.get("fee") ?? ""),
+    is_active: formData.get("is_active") === "on",
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the area details." };
+  }
+  const { id, ...values } = parsed.data;
+
+  const supabase = await createClient();
+  let error;
+  if (id) {
+    ({ error } = await supabase.from("delivery_zones").update(values).eq("id", id));
+  } else {
+    const { data: last } = await supabase
+      .from("delivery_zones")
+      .select("sort_order")
+      .order("sort_order", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    ({ error } = await supabase
+      .from("delivery_zones")
+      .insert({ ...values, sort_order: (last?.sort_order ?? -1) + 1 }));
+  }
+  if (error) {
+    if (error.code === "23505") return { error: "An area with that name already exists." };
+    console.error("saveZone failed:", error.code, error.message);
+    return { error: "Couldn't save the area. Please try again." };
+  }
+  revalidatePath("/admin/settings");
+  revalidatePath("/checkout");
+  return { ok: true };
+}
+
+export async function deleteZone(formData: FormData) {
+  await requireStaff("/admin/settings");
+  const id = z.uuid().parse(formData.get("id"));
+  const supabase = await createClient();
+  // Past orders keep the area name they were placed with (orders.delivery_zone).
+  const { error } = await supabase.from("delivery_zones").delete().eq("id", id);
+  if (error) throw new Error("Couldn't delete the area.");
+  revalidatePath("/admin/settings");
+  revalidatePath("/checkout");
 }

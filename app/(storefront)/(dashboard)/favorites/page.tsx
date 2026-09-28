@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { FavoritesGrid } from "@/components/favorites/favorites-grid";
-import { getCategories } from "@/lib/menu";
+import { getCategories, getMenuItems } from "@/lib/menu";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Your favourites", robots: { index: false } };
@@ -22,18 +22,13 @@ export default async function FavoritesPage() {
     .order("created_at", { ascending: false });
   if (error) throw new Error("Couldn't load your favourites.");
 
+  // Dishes (with bowl sizes) come from the public menu read.
   const ids = favorites.map((f) => f.menu_item_id);
-  const [{ data: items, error: itemsError }, categories] = await Promise.all([
-    ids.length > 0
-      ? supabase.from("menu_items").select("*").in("id", ids)
-      : Promise.resolve({ data: [], error: null }),
-    getCategories(),
-  ]);
-  if (itemsError) throw new Error("Couldn't load your favourites.");
+  const [menu, categories] = await Promise.all([getMenuItems(), getCategories()]);
 
   // Most recently saved first.
   const order = new Map(ids.map((id, i) => [id, i]));
-  const sorted = [...(items ?? [])].sort((a, b) => order.get(a.id)! - order.get(b.id)!);
+  const sorted = menu.filter((m) => order.has(m.id)).sort((a, b) => order.get(a.id)! - order.get(b.id)!);
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:py-12">

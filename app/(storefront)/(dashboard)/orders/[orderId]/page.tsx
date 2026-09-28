@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { BuyAgainButton } from "@/components/orders/buy-again-button";
+import { deliverySummary, orderLineName } from "@/lib/orders/labels";
 import { OrderLiveRefresh } from "@/components/orders/live-refresh";
 import { OrderTimeline } from "@/components/orders/order-timeline";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
@@ -93,7 +94,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
           {items?.map((item) => (
             <li key={item.id} className="flex justify-between gap-3 py-2.5 text-sm">
               <span>
-                {item.name} <span className="text-neutral-dark/65">× {item.quantity}</span>
+                {orderLineName(item)} <span className="text-neutral-dark/65">× {item.quantity}</span>
               </span>
               <span className="tabular-nums">{formatNaira(item.line_total)}</span>
             </li>
@@ -126,7 +127,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
           </div>
         </dl>
         <p className="text-sm text-neutral-dark/65">
-          {order.fulfillment === "pickup" ? "Pickup order" : `Delivering to: ${order.delivery_address}`}
+          {deliverySummary(order)}
         </p>
         {order.loyalty_points_earned > 0 && (
           <p className="text-sm font-medium text-secondary">
@@ -179,7 +180,7 @@ export default async function OrderPage({ params }: PageProps<"/orders/[orderId]
           </div>
         </div>
         <BuyAgainButton
-          lines={(items ?? []).map((i) => ({ menu_item_id: i.menu_item_id, quantity: i.quantity }))}
+          lines={(items ?? []).map((i) => ({ menu_item_id: i.menu_item_id, size_id: i.size_id, quantity: i.quantity }))}
           className="rounded-btn bg-secondary px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
         />
       </div>

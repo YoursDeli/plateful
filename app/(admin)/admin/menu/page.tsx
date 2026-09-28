@@ -7,6 +7,7 @@ import { formatNaira } from "@/lib/money";
 import { createClient } from "@/lib/supabase/server";
 import type { Category, MenuItem } from "@/lib/supabase/types";
 import { deleteMenuItem, setMenuItemAvailability } from "./actions";
+import { BowlSizesPanel } from "./bowl-sizes-panel";
 import { CategoriesPanel } from "./categories-panel";
 
 export const metadata: Metadata = { title: "Food Menu" };
@@ -15,12 +16,17 @@ export default async function AdminMenuPage() {
   await requireStaff("/admin/menu");
   const supabase = await createClient();
 
-  const [{ data: categories, error: catError }, { data: items, error: itemError }] =
+  const [{ data: categories, error: catError }, { data: items, error: itemError }, { data: bowlSizes, error: sizeError }] =
     await Promise.all([
       supabase.from("categories").select("*").order("sort_order").order("name"),
       supabase.from("menu_items").select("*").order("name"),
+      supabase.from("bowl_sizes").select("*").order("sort_order").order("name"),
     ]);
-  if (catError || itemError) throw new Error("Couldn't load the menu.");
+  const { data: sizePrices, error: priceError } = await supabase.from("menu_item_sizes").select("menu_item_id, price");
+  if (catError || itemError || sizeError || priceError) throw new Error("Couldn't load the menu.");
+  // Per dish: how many bowl sizes it's priced in, and the cheapest.
+  const sizesByItem = new Map<string, number[]>();
+  for (const row of sizePrices) sizesByItem.set(row.menu_item_id, [...(sizesByItem.get(row.menu_item_id) ?? []), row.price]);
 
   const groups: { category: Category | null; items: MenuItem[] }[] = [
     ...categories.map((category) => ({
@@ -43,6 +49,7 @@ export default async function AdminMenuPage() {
       </div>
 
       <CategoriesPanel categories={categories} />
+      <BowlSizesPanel sizes={bowlSizes} />
 
       {items.length === 0 ? (
         <p className="rounded-xl border border-dashed border-neutral-dark/20 p-6 text-center text-sm text-neutral-dark/65">
@@ -60,7 +67,7 @@ export default async function AdminMenuPage() {
             ) : (
               <ul className="flex flex-col gap-3">
                 {groupItems.map((item) => (
-                  <MenuItemRow key={item.id} item={item} />
+                  <MenuItemRow key={item.id} item={item} sizePrices={sizesByItem.get(item.id) ?? []} />
                 ))}
               </ul>
             )}
@@ -71,7 +78,7 @@ export default async function AdminMenuPage() {
   );
 }
 
-function MenuItemRow({ item }: { item: MenuItem }) {
+function MenuItemRow({ item, sizePrices }: { item: MenuItem; sizePrices: number[] }) {
   return (
     <li className="flex flex-col gap-3 rounded-xl bg-white card-accent p-3 shadow-sm sm:flex-row sm:items-center">
       <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -97,12 +104,21 @@ function MenuItemRow({ item }: { item: MenuItem }) {
               <span className="rounded-full bg-neutral-dark/10 px-2 py-0.5 text-xs">Unavailable</span>
             )}
           </p>
-          <p className="text-sm">
-            <strong>{formatNaira(item.price)}</strong>
-            {item.compare_at_price !== null && (
-              <s className="ml-2 text-neutral-dark/65">{formatNaira(item.compare_at_price)}</s>
-            )}
-          </p>
+          {sizePrices.length > 0 ? (
+            <p className="text-sm">
+              <strong>From {formatNaira(Math.min(...sizePrices))}</strong>
+              <span className="ml-2 text-neutral-dark/65">
+                {sizePrices.length} bowl size{sizePrices.length === 1 ? "" : "s"}
+              </span>
+            </p>
+          ) : (
+            <p className="text-sm">
+              <strong>{formatNaira(item.price)}</strong>
+              {item.compare_at_price !== null && (
+                <s className="ml-2 text-neutral-dark/65">{formatNaira(item.compare_at_price)}</s>
+              )}
+            </p>
+          )}
         </div>
       </div>
 

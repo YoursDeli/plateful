@@ -96,7 +96,11 @@ SITE_URL=                         # optional: absolute base URL for links in ema
 - `favorites` — user_id, menu_item_id
 - `reviews` — id, menu_item_id, user_id, rating (1-5), comment (nullable), created_at — see `docs/menu-and-product-page.md` §3
 - `orders` — id, order_code (customer-facing 5-char uppercase alphanumeric, e.g. `K7Q2M`; `order_number` is an internal sequence, never displayed), user_id (**required** — account needed to checkout, see `docs/accounts-loyalty-and-images.md` §1), status, total, paystack_reference, delivery_address, created_at, referral_bonus_applied (default 0), loyalty_points_earned (default 0), loyalty_points_redeemed (default 0)
-- `order_items` — order_id, menu_item_id, quantity, unit_price
+- `order_items` — order_id, menu_item_id, quantity, unit_price, size_id + size_name (bowl size, nullable)
+- `bowl_sizes` — id, name, sort_order (shared list); `menu_item_sizes` — menu_item_id, size_id, price (a dish with any size prices must be ordered by size)
+- `delivery_zones` — id, name, fee, sort_order, is_active (checkout area dropdown; `orders.delivery_zone` keeps the name; free-delivery threshold still applies to every area)
+- `faqs` — id, question, answer, sort_order, show_on_checkout, is_published (`/faq` + checkout)
+- `catering_requests` — event quote requests (signed-in only, via `submit_catering_request()`), status `new/contacted/quoted/booked/declined`
 - `profiles` — id (= auth.uid()), full_name, phone, default_address, role (`customer` | `staff` | `admin`, default `customer`), referral_code (unique), referred_by (nullable, self-ref), referral_balance (cached, default 0), referral_earned_total (cached, default 0), loyalty_points_balance (cached, default 0), loyalty_points_earned_total (cached, default 0)
 - `site_settings` — singleton row (id = 1): brand_name (default `Plateful`), logo_url, primary_color, accent_color, referral_bonus_amount (default 200), loyalty_enabled (default true), loyalty_points_per_1000 (default 10), updated_at — powers editable branding, see `docs/branding-security-auth.md`
 - `pages` — id, slug (unique: `about`/`terms`/`privacy`), title, content, chef_photo_url (nullable), updated_at — see `docs/pages-referrals-footer.md` §2–4

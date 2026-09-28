@@ -5,18 +5,19 @@ import { useCart } from "@/lib/cart/store";
 import { createClient } from "@/lib/supabase/client";
 
 // "Add all items from this order to cart" (docs/site-sections-and-features.md
-// §7). Uses TODAY's menu — current price, only dishes still on the menu and
-// available — then opens the cart so the customer sees exactly what was added.
+// §7). Uses TODAY's menu — current price (per bowl size), only dishes and
+// sizes still on offer — then opens the cart so the customer sees exactly
+// what was added.
 export function BuyAgainButton({
   lines,
   className,
 }: {
-  lines: { menu_item_id: string | null; quantity: number }[];
+  lines: { menu_item_id: string | null; size_id: string | null; quantity: number }[];
   className?: string;
 }) {
   const [message, setMessage] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const ids = lines.map((l) => l.menu_item_id).filter((id): id is string => Boolean(id));
+  const ids = [...new Set(lines.map((l) => l.menu_item_id).filter((id): id is string => Boolean(id)))];
 
   async function buyAgain() {
     setMessage(null);
@@ -25,18 +26,36 @@ export function BuyAgainButton({
       return;
     }
     setPending(true);
-    const { data } = await createClient()
-      .from("menu_items")
-      .select("id, name, price, image_url, is_available")
-      .in("id", ids);
-    const available = new Map((data ?? []).filter((d) => d.is_available).map((d) => [d.id, d]));
+    const supabase = createClient();
+    const [{ data: dishes }, { data: prices }, { data: sizes }] = await Promise.all([
+      supabase.from("menu_items").select("id, name, price, image_url, is_available").in("id", ids),
+      supabase.from("menu_item_sizes").select("menu_item_id, size_id, price").in("menu_item_id", ids),
+      supabase.from("bowl_sizes").select("id, name"),
+    ]);
+    const available = new Map((dishes ?? []).filter((d) => d.is_available).map((d) => [d.id, d]));
+    const sizeName = new Map((sizes ?? []).map((s) => [s.id, s.name]));
+    const sized = new Set((prices ?? []).map((p) => p.menu_item_id));
+    const priceOf = new Map((prices ?? []).map((p) => [`${p.menu_item_id}:${p.size_id}`, p.price]));
 
     const cart = useCart.getState();
     let added = 0;
     for (const line of lines) {
       const dish = line.menu_item_id ? available.get(line.menu_item_id) : undefined;
       if (!dish) continue;
-      cart.add({ menuItemId: dish.id, name: dish.name, unitPrice: dish.price, imageUrl: dish.image_url }, line.quantity);
+      // The same size must still be offered; single-price dishes stay unsized.
+      const sizePrice = line.size_id ? priceOf.get(`${dish.id}:${line.size_id}`) : undefined;
+      if (line.size_id ? sizePrice === undefined : sized.has(dish.id)) continue;
+      cart.add(
+        {
+          menuItemId: dish.id,
+          sizeId: line.size_id,
+          sizeName: line.size_id ? (sizeName.get(line.size_id) ?? null) : null,
+          name: dish.name,
+          unitPrice: sizePrice ?? dish.price,
+          imageUrl: dish.image_url,
+        },
+        line.quantity,
+      );
       added++;
     }
     setPending(false);
@@ -46,7 +65,7 @@ export function BuyAgainButton({
       setMessage("None of these dishes are available right now.");
       return;
     }
-    if (skipped > 0) setMessage(`${skipped} dish${skipped === 1 ? " isn't" : "es aren't"} available today — added the rest.`);
+    if (skipped > 0) setMessage(`${skipped} item${skipped === 1 ? " isn't" : "s aren't"} available today — added the rest.`);
     cart.open();
   }
 

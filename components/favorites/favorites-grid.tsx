@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { MenuItemCard } from "@/components/menu/menu-item-card";
 import { useFavorites } from "@/lib/favorites/store";
-import type { Category, MenuItem } from "@/lib/supabase/types";
+import type { Category, MenuDish } from "@/lib/supabase/types";
 
 // /favorites: server passes the user's saved dishes; once the store has
 // loaded, un-hearting a dish removes its card immediately.
-export function FavoritesGrid({ items, categories }: { items: MenuItem[]; categories: Category[] }) {
+export function FavoritesGrid({ items, categories }: { items: MenuDish[]; categories: Category[] }) {
   const ids = useFavorites((s) => s.ids);
   const ready = useFavorites((s) => s.status === "ready");
   const visible = ready ? items.filter((i) => ids.has(i.id)) : items;
@@ -43,7 +43,7 @@ export function FavoritesGrid({ items, categories }: { items: MenuItem[]; catego
 
 // Home page row (docs/site-sections-and-features.md §1.4): only for signed-in
 // visitors with favourites. Filled client-side so the home page stays cached.
-export function HomeFavoritesRow({ items, categories }: { items: MenuItem[]; categories: Category[] }) {
+export function HomeFavoritesRow({ items, categories }: { items: MenuDish[]; categories: Category[] }) {
   const ids = useFavorites((s) => s.ids);
   const ready = useFavorites((s) => s.status === "ready");
   if (!ready || ids.size === 0) return null;
