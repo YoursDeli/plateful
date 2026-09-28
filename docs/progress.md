@@ -125,9 +125,9 @@ from `main`; Paystack in **test** mode).
 - [ ] Bowl sizes (shared list in Admin → Food Menu; price per size in each dish; size picker on cards/hero/dish page; size on cart, orders, emails) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
 - [ ] FAQ (`/faq`, footer link, checkout section; Admin → Pages → FAQ) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
 - [ ] Events & Catering quote requests (`/catering`, home section, footer link; Account → Event requests; Admin → Event requests; emails to restaurant + customer) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
-- [ ] Scrolling announcement bar under the header (Admin → Settings → Announcement bar; seeded with the bowls notice) — *built 2026-09-28 — awaiting migration + live check*
-- [ ] Full-width Add to cart on product cards; Food Menu categories as a full-width dropdown — *built 2026-09-28 — awaiting live check*
-- [ ] Upsell pairings (Soup → Swallow; Rice → Protein, Sides and Extras): "Goes well with" on dish pages + "Complete your meal" in the cart; editable per category in Admin → Food Menu → Categories — *built 2026-09-28 — awaiting migration + live check*
+- [ ] Scrolling announcement bar under the header (Admin → Settings → Announcement bar; seeded with the bowls notice) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
+- [ ] Full-width Add to cart on product cards; Food Menu categories as a full-width dropdown — *built 2026-09-28, pushed — awaiting live check (Netlify builds paused)*
+- [ ] Upsell pairings (Soup → Swallow; Rice → Protein, Sides and Extras): "Goes well with" on dish pages + "Complete your meal" in the cart; editable per category in Admin → Food Menu → Categories — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
 
 ### 13. Polish
 - [ ] Animations / transitions (reduced-motion respected) — page fade-in on every storefront page (`template.tsx`) — *done 2026-09-25, live — awaiting user verification*
@@ -586,7 +586,6 @@ from `main`; Paystack in **test** mode).
 
 ## Open Blockers
 
-- **Run migration `20261007000000_announcement_upsell.sql`** (user) — then push.
 - **Netlify build credits used up** (2026-09-25): production builds paused until the billing cycle resets or the plan is upgraded. All commits are on GitHub; after the reset, Netlify → Deploys → Trigger deploy → Deploy site. Push in batches from now on (one build per work session), not per change.
 - **Brevo template wording** (user): in the Order confirmation template,
   change the points line to "You'll earn {{ params.points_earned }} loyalty
@@ -760,3 +759,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-28** — Built client additions: delivery areas, bowl sizes, FAQ, Events & Catering requests. tsc/lint clean; build needs the migration (new tables). Not pushed.
 - **2026-09-28** — Client-additions migration applied (verified: 4 areas, 10 FAQs, anon writes refused); full build clean; pushed.
 - **2026-09-28** — Built announcement bar, full-width card button, category dropdown, upsell pairings. Build/lint/tsc clean. Not pushed until migration runs.
+- **2026-09-28** — Announcement/upsell migration applied (verified: notice text set; Soup → Swallow, Rice → Protein + Sides and Extras); pushed.
