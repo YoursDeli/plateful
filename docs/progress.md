@@ -768,3 +768,4 @@ Paystack in **test** mode). Old Netlify site: builds stopped.
 - **2026-09-28** — Built announcement bar, full-width card button, category dropdown, upsell pairings. Build/lint/tsc clean. Not pushed until migration runs.
 - **2026-09-28** — Announcement/upsell migration applied (verified: notice text set; Soup → Swallow, Rice → Protein + Sides and Extras); pushed.
 - **2026-09-28** — Moved hosting to Vercel (https://deliciously-yours-zeta.vercel.app); smoke-checked live; docs updated.
+- **2026-09-28** — Google sign-in failed with `disabled_client` (Google Cloud OAuth client disabled — not a code or Vercel issue). User re-enabled/re-created the Web OAuth client (redirect URI `https://<project-ref>.supabase.co/auth/v1/callback`, JS origin = Vercel URL) and updated Supabase → Auth → Google. Working again.
