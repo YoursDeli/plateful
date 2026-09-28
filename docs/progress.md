@@ -121,10 +121,10 @@ from `main`; Paystack in **test** mode).
 - [ ] Chef photo upload (`/admin/pages/about`) — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 14. Client additions (2026-09-28)
-- [ ] Delivery areas with prices (checkout dropdown; admin Settings → Delivery) — *built 2026-09-28 — awaiting migration + live check*
-- [ ] Bowl sizes (shared list in Admin → Food Menu; price per size in each dish; size picker on cards/hero/dish page; size on cart, orders, emails) — *built 2026-09-28 — awaiting migration + live check*
-- [ ] FAQ (`/faq`, footer link, checkout section; Admin → Pages → FAQ) — *built 2026-09-28 — awaiting migration + live check*
-- [ ] Events & Catering quote requests (`/catering`, home section, footer link; Account → Event requests; Admin → Event requests; emails to restaurant + customer) — *built 2026-09-28 — awaiting migration + live check*
+- [ ] Delivery areas with prices (checkout dropdown; admin Settings → Delivery) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
+- [ ] Bowl sizes (shared list in Admin → Food Menu; price per size in each dish; size picker on cards/hero/dish page; size on cart, orders, emails) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
+- [ ] FAQ (`/faq`, footer link, checkout section; Admin → Pages → FAQ) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
+- [ ] Events & Catering quote requests (`/catering`, home section, footer link; Account → Event requests; Admin → Event requests; emails to restaurant + customer) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
 
 ### 13. Polish
 - [ ] Animations / transitions (reduced-motion respected) — page fade-in on every storefront page (`template.tsx`) — *done 2026-09-25, live — awaiting user verification*
@@ -575,7 +575,6 @@ from `main`; Paystack in **test** mode).
 
 ## Open Blockers
 
-- **Run migration `20261006000000_zones_sizes_faq_catering.sql`** (user) — this batch isn't pushed until it's applied (and Netlify builds are paused anyway).
 - **Netlify build credits used up** (2026-09-25): production builds paused until the billing cycle resets or the plan is upgraded. All commits are on GitHub; after the reset, Netlify → Deploys → Trigger deploy → Deploy site. Push in batches from now on (one build per work session), not per change.
 - **Brevo template wording** (user): in the Order confirmation template,
   change the points line to "You'll earn {{ params.points_earned }} loyalty
@@ -747,3 +746,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-25** — Hero rest between turns reduced to 3s (client). Pushed live.
 - **2026-09-25** — Netlify free build credits exhausted; production builds paused. Code all on GitHub. Proposed batching pushes to one build per session.
 - **2026-09-28** — Built client additions: delivery areas, bowl sizes, FAQ, Events & Catering requests. tsc/lint clean; build needs the migration (new tables). Not pushed.
+- **2026-09-28** — Client-additions migration applied (verified: 4 areas, 10 FAQs, anon writes refused); full build clean; pushed.
