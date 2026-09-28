@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { initialFormState } from "@/lib/form-state";
 import type { Category } from "@/lib/supabase/types";
-import { createCategory, deleteCategory, moveCategory, renameCategory } from "./actions";
+import { createCategory, deleteCategory, moveCategory, renameCategory, setCategoryUpsells } from "./actions";
 
 const inputClass =
   "min-w-0 flex-1 rounded-lg border border-neutral-dark/20 bg-white px-3 py-2 text-base outline-none focus:border-secondary focus:ring-2 focus:ring-primary sm:text-sm";
@@ -21,6 +21,7 @@ export function CategoriesPanel({ categories }: { categories: Category[] }) {
             <CategoryRow
               key={category.id}
               category={category}
+              allCategories={categories}
               isFirst={index === 0}
               isLast={index === categories.length - 1}
             />
@@ -34,10 +35,12 @@ export function CategoriesPanel({ categories }: { categories: Category[] }) {
 
 function CategoryRow({
   category,
+  allCategories,
   isFirst,
   isLast,
 }: {
   category: Category;
+  allCategories: Category[];
   isFirst: boolean;
   isLast: boolean;
 }) {
@@ -99,7 +102,56 @@ function CategoryRow({
         </div>
       </div>
       {state.error && <p role="alert" className="text-sm text-red-700">{state.error}</p>}
+      <UpsellPicker category={category} allCategories={allCategories} />
     </li>
+  );
+}
+
+// "Goes well with": categories suggested alongside this one on dish pages
+// and in the cart.
+function UpsellPicker({ category, allCategories }: { category: Category; allCategories: Category[] }) {
+  const [state, action, pending] = useActionState(setCategoryUpsells, initialFormState);
+  const others = allCategories.filter((c) => c.id !== category.id);
+  if (others.length === 0) return null;
+  const names = others.filter((c) => category.upsell_category_ids.includes(c.id)).map((c) => c.name);
+
+  return (
+    <details className="ml-1 text-sm">
+      <summary className="cursor-pointer text-neutral-dark/70">
+        Goes well with: {names.length > 0 ? names.join(", ") : "nothing yet"}
+      </summary>
+      <form action={action} className="mt-2 flex flex-col gap-2 rounded-lg bg-neutral-light p-3">
+        <input type="hidden" name="id" value={category.id} />
+        <p className="text-xs text-neutral-dark/65">
+          Suggest these with {category.name} dishes (dish page and cart).
+        </p>
+        <div className="flex flex-wrap gap-x-4 gap-y-2">
+          {others.map((c) => (
+            <label key={c.id} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="upsell"
+                value={c.id}
+                defaultChecked={category.upsell_category_ids.includes(c.id)}
+                className="size-4 accent-secondary"
+              />
+              {c.name}
+            </label>
+          ))}
+        </div>
+        <div className="flex items-center justify-end gap-3">
+          {state.error && <p role="alert" className="text-sm text-red-700">{state.error}</p>}
+          {state.ok && <p role="status" className="text-sm text-green-800">Saved.</p>}
+          <button
+            type="submit"
+            disabled={pending}
+            className="rounded-btn border border-secondary px-3 py-1.5 text-sm text-secondary disabled:opacity-60"
+          >
+            {pending ? "Saving…" : "Save pairings"}
+          </button>
+        </div>
+      </form>
+    </details>
   );
 }
 

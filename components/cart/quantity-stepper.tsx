@@ -8,12 +8,14 @@ export function QuantityStepper({
   min = 0,
   label,
   size = "md",
+  fullWidth = false,
 }: {
   value: number;
   onChange: (next: number) => void;
   min?: number;
   label: string;
   size?: "sm" | "md";
+  fullWidth?: boolean;
 }) {
   const btn =
     size === "sm"
@@ -23,7 +25,7 @@ export function QuantityStepper({
     <div
       role="group"
       aria-label={`Quantity for ${label}`}
-      className="inline-flex items-center rounded-btn border border-secondary/25 bg-white"
+      className={`items-center rounded-btn border border-secondary/25 bg-white ${fullWidth ? "flex w-full justify-between" : "inline-flex"}`}
     >
       <button
         type="button"

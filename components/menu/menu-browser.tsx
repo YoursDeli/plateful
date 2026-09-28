@@ -63,24 +63,21 @@ export function MenuBrowser({
       ].filter((s) => s.items.length > 0)
     : [{ id: "results", title: null, items: filtered }];
 
-  const chip = (active: boolean) =>
-    `shrink-0 rounded-btn px-4 py-2 text-sm font-medium transition ${
-      active
-        ? "bg-secondary text-white shadow"
-        : "bg-white text-secondary ring-1 ring-secondary/15 hover:bg-primary/40"
-    }`;
+  const field =
+    "w-full rounded-btn border border-secondary/15 bg-white py-3 text-base outline-none focus:border-secondary focus:ring-2 focus:ring-primary";
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <label className="relative sm:max-w-xs sm:flex-1">
+      {/* Search + full-width category dropdown (client: better than chips on phones). */}
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <label className="relative">
           <span className="sr-only">Search the menu</span>
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search dishes…"
-            className="w-full rounded-btn border border-secondary/15 bg-white py-2.5 pr-4 pl-10 text-base outline-none focus:border-secondary focus:ring-2 focus:ring-primary sm:text-sm"
+            className={`${field} pr-4 pl-10`}
           />
           <svg aria-hidden="true" viewBox="0 0 24 24" className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-secondary/60" fill="none" stroke="currentColor" strokeWidth={2}>
             <circle cx="11" cy="11" r="7" />
@@ -88,26 +85,24 @@ export function MenuBrowser({
           </svg>
         </label>
         {categories.length > 0 && (
-          <div
-            role="group"
-            aria-label="Filter by category"
-            className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
-          >
-            <button type="button" aria-pressed={category === ALL} onClick={() => selectCategory(ALL)} className={chip(category === ALL)}>
-              All
-            </button>
-            {categories.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                aria-pressed={category === c.id}
-                onClick={() => selectCategory(c.id)}
-                className={chip(category === c.id)}
-              >
-                {c.name}
-              </button>
-            ))}
-          </div>
+          <label className="relative">
+            <span className="sr-only">Filter by category</span>
+            <select
+              value={category}
+              onChange={(e) => selectCategory(e.target.value)}
+              className={`${field} cursor-pointer appearance-none pr-10 pl-4 font-medium text-secondary`}
+            >
+              <option value={ALL}>All categories</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-secondary" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </label>
         )}
       </div>
 

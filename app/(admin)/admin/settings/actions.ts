@@ -334,3 +334,25 @@ export async function deleteZone(formData: FormData) {
   revalidatePath("/admin/settings");
   revalidatePath("/checkout");
 }
+
+// Scrolling announcement under the header (client). Blank = hidden.
+export async function saveAnnouncement(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireStaff("/admin/settings");
+  const parsed = z
+    .object({ announcement_text: z.string().trim().max(300, "Keep it under 300 characters").nullable() })
+    .safeParse({ announcement_text: emptyToNull(formData.get("announcement_text")) });
+  if (!parsed.success) {
+    return {
+      fieldErrors: z.flattenError(parsed.error).fieldErrors,
+      values: formValues(formData, ["announcement_text"]),
+    };
+  }
+  const supabase = await createClient();
+  const { error } = await supabase.from("site_settings").update(parsed.data).eq("id", 1);
+  if (error) {
+    console.error("saveAnnouncement failed:", error.code, error.message);
+    return { error: "Couldn't save the announcement.", values: formValues(formData, ["announcement_text"]) };
+  }
+  revalidatePath("/", "layout");
+  return { ok: true };
+}

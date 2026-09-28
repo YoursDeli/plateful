@@ -17,10 +17,12 @@ export function AddToCartControl({
   item,
   size = "md",
   label = "Add to cart",
+  fullWidth = false,
 }: {
   item: CartableItem;
   size?: "sm" | "md";
   label?: string;
+  fullWidth?: boolean;
 }) {
   const key = lineKey(item.id, null);
   const quantity = useCart((s) => s.items.find((i) => i.key === key)?.quantity ?? 0);
@@ -29,23 +31,26 @@ export function AddToCartControl({
 
   if (!item.is_available) {
     return (
-      <span className="inline-flex items-center rounded-btn bg-neutral-dark/10 px-4 py-2 text-sm font-medium text-neutral-dark/65">
+      <span className={`items-center justify-center rounded-btn bg-neutral-dark/10 px-4 py-2 text-sm font-medium text-neutral-dark/65 ${fullWidth ? "flex w-full" : "inline-flex"}`}>
         Sold out
       </span>
     );
   }
 
   if (item.sizes && item.sizes.length > 0) {
-    return <SizePickerButton dish={{ ...item, sizes: item.sizes }} label={label} size={size} />;
+    return <SizePickerButton dish={{ ...item, sizes: item.sizes }} label={label} size={size} fullWidth={fullWidth} />;
   }
 
   if (quantity > 0) {
-    return <QuantityStepper value={quantity} onChange={(q) => setQuantity(key, q)} label={item.name} size={size} />;
+    return (
+      <QuantityStepper value={quantity} onChange={(q) => setQuantity(key, q)} label={item.name} size={size} fullWidth={fullWidth} />
+    );
   }
 
   return (
     <CtaButton
       size={size}
+      fullWidth={fullWidth}
       onClick={() =>
         add({
           menuItemId: item.id,

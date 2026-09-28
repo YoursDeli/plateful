@@ -63,9 +63,12 @@ export function MenuItemCard({
             </span>
           </div>
         )}
-        <div className="relative z-10 mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
+        <div className="mt-auto flex flex-col gap-3 pt-2">
           <PriceRow item={item} />
-          <AddToCartControl item={item} size="sm" />
+          {/* Full width (client); z-10 keeps it above the card's stretched link. */}
+          <div className="relative z-10">
+            <AddToCartControl item={item} fullWidth />
+          </div>
         </div>
       </div>
     </article>

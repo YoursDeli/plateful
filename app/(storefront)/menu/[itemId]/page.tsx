@@ -8,7 +8,8 @@ import { PriceRow } from "@/components/menu/price-row";
 import { ProductPurchase } from "@/components/menu/product-purchase";
 import { RatingRow } from "@/components/menu/rating-row";
 import { ShareButtonCluster } from "@/components/ui/share-button-cluster";
-import { getCategories, getMenuItem, getReviews } from "@/lib/menu";
+import { MenuItemCard } from "@/components/menu/menu-item-card";
+import { getCategories, getMenuItem, getMenuItems, getReviews } from "@/lib/menu";
 
 // All dish pages render on first visit, then stay cached until an admin edit
 // revalidates them (docs: "All paths at runtime" → empty generateStaticParams).
@@ -36,11 +37,23 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
   const { itemId } = await params;
   if (!isUuid(itemId)) notFound();
 
-  const [item, categories] = await Promise.all([getMenuItem(itemId), getCategories()]);
+  const [item, categories, menu] = await Promise.all([getMenuItem(itemId), getCategories(), getMenuItems()]);
   if (!item) notFound();
 
   const reviews = item.review_count > 0 ? await getReviews(item.id) : [];
   const category = categories.find((c) => c.id === item.category_id);
+  const categoryName = new Map(categories.map((c) => [c.id, c.name]));
+
+  // Upsell (client): dishes from this category's "goes well with" categories,
+  // in the admin's category order; bestsellers first within each.
+  const pairedIds = category?.upsell_category_ids ?? [];
+  const goesWellWith = pairedIds
+    .flatMap((id) =>
+      menu
+        .filter((m) => m.category_id === id && m.is_available && m.id !== item.id)
+        .sort((a, b) => Number(b.badge === "Bestseller") - Number(a.badge === "Bestseller")),
+    )
+    .slice(0, 4);
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-6 sm:py-10">
@@ -103,6 +116,24 @@ export default async function MenuItemPage({ params }: PageProps<"/menu/[itemId]
           )}
         </div>
       </div>
+
+      {goesWellWith.length > 0 && (
+        <section aria-labelledby="pairs-heading" className="flex flex-col gap-4 border-t border-secondary/10 pt-8">
+          <h2 id="pairs-heading" className="font-display text-2xl font-semibold text-secondary">
+            Goes well with
+          </h2>
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+            {goesWellWith.map((dish) => (
+              <li key={dish.id}>
+                <MenuItemCard
+                  item={dish}
+                  categoryName={dish.category_id ? categoryName.get(dish.category_id) : null}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Read-only (client): reviews are written from the customer dashboard
           (/account/reviews). "No reviews yet" until the first one is posted. */}

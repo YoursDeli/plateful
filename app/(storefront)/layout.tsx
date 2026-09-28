@@ -1,6 +1,7 @@
 import { CartHydrator } from "@/components/cart/cart-hydrator";
 import { CartPanel } from "@/components/cart/cart-panel";
 import { FavoritesSync } from "@/components/favorites/favorites-sync";
+import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getSiteSettings } from "@/lib/site-settings";
@@ -16,6 +17,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
         Skip to content
       </a>
       <SiteHeader settings={settings} />
+      <AnnouncementBar text={settings.announcement_text} />
       <div id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
         {children}
       </div>

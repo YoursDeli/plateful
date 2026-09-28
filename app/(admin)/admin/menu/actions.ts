@@ -372,3 +372,24 @@ export async function moveBowlSize(formData: FormData) {
   }
   revalidateMenu();
 }
+
+// Upsell pairings (client): which categories to suggest with this one
+// ("Goes well with" on dish pages, "Complete your meal" in the cart).
+export async function setCategoryUpsells(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireStaff("/admin/menu");
+  const id = idSchema.safeParse(formData.get("id"));
+  const upsells = z.array(z.uuid()).max(20).safeParse(formData.getAll("upsell").map(String));
+  if (!id.success || !upsells.success) return { error: "Couldn't read the pairings." };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("categories")
+    .update({ upsell_category_ids: upsells.data.filter((u) => u !== id.data) })
+    .eq("id", id.data);
+  if (error) {
+    console.error("setCategoryUpsells failed:", error.code, error.message);
+    return { error: "Couldn't save the pairings." };
+  }
+  revalidateMenu();
+  return { ok: true };
+}

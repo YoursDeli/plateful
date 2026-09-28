@@ -92,7 +92,7 @@ SITE_URL=                         # optional: absolute base URL for links in ema
 ## 5. Core Data Model (starting point)
 
 - `menu_items` — id, name, description, price, category, image_url, is_available, created_at, compare_at_price (nullable, for discount display), badge (nullable, admin-set), avg_rating (cached), review_count (cached, default 0), featured_order (nullable; hero position, see `docs/hero-section-design.md` §3)
-- `categories` — id, name, sort_order
+- `categories` — id, name, sort_order, upsell_category_ids ("goes well with" categories: dish page + cart suggestions)
 - `favorites` — user_id, menu_item_id
 - `reviews` — id, menu_item_id, user_id, rating (1-5), comment (nullable), created_at — see `docs/menu-and-product-page.md` §3
 - `orders` — id, order_code (customer-facing 5-char uppercase alphanumeric, e.g. `K7Q2M`; `order_number` is an internal sequence, never displayed), user_id (**required** — account needed to checkout, see `docs/accounts-loyalty-and-images.md` §1), status, total, paystack_reference, delivery_address, created_at, referral_bonus_applied (default 0), loyalty_points_earned (default 0), loyalty_points_redeemed (default 0)

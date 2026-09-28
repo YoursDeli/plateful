@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BLOCKING_NOTICES, cartSubtotal, useCart, type CartItemNotice } from "@/lib/cart/store";
 import { formatNaira } from "@/lib/money";
+import { CartSuggestions } from "./cart-suggestions";
 import { QuantityStepper } from "./quantity-stepper";
 
 const NOTICE_TEXT: Record<CartItemNotice, string> = {
@@ -90,6 +91,8 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
           </li>
         ))}
       </ul>
+
+      <CartSuggestions onNavigate={onNavigate} />
 
       <div className="flex flex-col gap-3 border-t border-secondary/10 pt-4">
         <div className="flex items-baseline justify-between">

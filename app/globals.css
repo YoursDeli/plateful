@@ -38,6 +38,9 @@
   /* Hero plate idle spin. The dish-to-dish move is the orbit wheel's CSS
      transition in components/hero/hero-section.tsx. */
   --animate-plate-spin: plate-spin 60s linear infinite;
+  /* Announcement bar: the track holds the text twice, so sliding it left by
+     half its width loops seamlessly. Speed comes from --marquee-duration. */
+  --animate-marquee: marquee var(--marquee-duration, 30s) linear infinite;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -57,6 +60,9 @@
   }
   @keyframes plate-spin {
     to { transform: rotate(360deg); }
+  }
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
   }
 }
 

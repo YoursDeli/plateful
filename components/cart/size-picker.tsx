@@ -16,10 +16,12 @@ export function SizePickerButton({
   dish,
   label = "Add to cart",
   size = "md",
+  fullWidth = false,
 }: {
   dish: Dish;
   label?: string;
   size?: "sm" | "md";
+  fullWidth?: boolean;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [sizeId, setSizeId] = useState(dish.sizes[0]?.id ?? "");
@@ -48,7 +50,7 @@ export function SizePickerButton({
 
   return (
     <>
-      <CtaButton size={size} onClick={() => dialogRef.current?.showModal()}>
+      <CtaButton size={size} fullWidth={fullWidth} onClick={() => dialogRef.current?.showModal()}>
         {label}
       </CtaButton>
       <dialog

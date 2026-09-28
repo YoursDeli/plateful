@@ -27,6 +27,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   tiktok_url: null,
   facebook_url: null,
   x_url: null,
+  announcement_text: null,
   updated_at: new Date(0).toISOString(),
 };
 

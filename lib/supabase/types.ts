@@ -31,6 +31,7 @@ export type Category = {
   id: string;
   name: string;
   sort_order: number;
+  upsell_category_ids: string[]; // "goes well with" categories
   created_at: string;
 };
 
@@ -159,6 +160,7 @@ export type SiteSettings = {
   tiktok_url: string | null;
   facebook_url: string | null;
   x_url: string | null;
+  announcement_text: string | null;
   updated_at: string;
 };
 
@@ -303,7 +305,7 @@ export type Database = {
       >;
       categories: Table<
         Category,
-        Pick<Category, "name"> & Partial<Pick<Category, "sort_order">>
+        Pick<Category, "name"> & Partial<Pick<Category, "sort_order" | "upsell_category_ids">>
       >;
       menu_items: Table<
         MenuItem,
@@ -347,6 +349,7 @@ export type Database = {
             | "tiktok_url"
             | "facebook_url"
             | "x_url"
+            | "announcement_text"
           >
         >
       >;

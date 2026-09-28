@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { requireStaff } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { AnnouncementForm } from "./announcement-form";
 import { BrandingForm } from "./branding-form";
 import { ContactForm } from "./contact-form";
 import { DeliveryForm } from "./delivery-form";
@@ -11,7 +12,7 @@ import { ZonesPanel } from "./zones-panel";
 
 export const metadata: Metadata = { title: "Settings" };
 
-// Branding, Delivery, Referrals, Loyalty, Contact & footer, Notifications.
+// Announcement bar, Branding, Delivery, Referrals, Loyalty, Contact & footer, Notifications.
 // About / Terms / Privacy text is edited under Admin → Pages.
 export default async function AdminSettingsPage() {
   await requireStaff("/admin/settings");
@@ -26,6 +27,10 @@ export default async function AdminSettingsPage() {
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
       <h1 className="font-display text-2xl font-semibold text-secondary sm:text-3xl">Settings</h1>
+      <section className="flex flex-col gap-3">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/65">Announcement bar</h2>
+        <AnnouncementForm text={settings.announcement_text} />
+      </section>
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-dark/65">Branding</h2>
         <BrandingForm settings={settings} />
