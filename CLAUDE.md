@@ -21,8 +21,8 @@ need revisiting (menu → vendor-scoped, orders → vendor-scoped).
 | Database & Auth | Supabase (Postgres) | Row-level security for orders/favorites scoped to `auth.uid()` |
 | Payments | Paystack | Checkout via Paystack Inline or Standard redirect; verified server-side |
 | Transactional email | Brevo (formerly Sendinblue) | Order confirmations, receipts, status updates |
-| Hosting | Netlify (frontend) + Supabase (backend) | Netlify's OpenNext adapter is auto-detected (no `netlify.toml` needed); `proxy.ts` runs as an Edge Function, so it must not use `fs` or native addons. See `docs/progress.md` decision 2026-09-24 |
-| Image handling | Supabase Storage (public `images` bucket) | Menu item photos, chef photo, brand logo — staff-only uploads enforced by Storage RLS; resized by `next/image` (Netlify Image CDN); see `docs/accounts-loyalty-and-images.md` §3 |
+| Hosting | Vercel (frontend) + Supabase (backend) | Live at https://deliciously-yours-zeta.vercel.app; auto-deploys from `main`, no config file. Moved from Netlify 2026-09-28 (free build credits ran out). Hobby plan = non-commercial: upgrade or move before real orders. See `docs/progress.md` |
+| Image handling | Supabase Storage (public `images` bucket) | Menu item photos, chef photo, brand logo — staff-only uploads enforced by Storage RLS; resized by `next/image` (Vercel image optimization); see `docs/accounts-loyalty-and-images.md` §3 |
 
 ## 3. Folder Structure (proposed)
 

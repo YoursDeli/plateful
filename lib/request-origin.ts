@@ -1,7 +1,7 @@
 import "server-only";
 import { headers } from "next/headers";
 
-// This deployment's public origin (localhost, LAN IP, or the Netlify URL),
+// This deployment's public origin (localhost, LAN IP, or the Vercel URL),
 // for absolute links: Paystack callback URLs and links inside emails.
 // SITE_URL, when set, wins (useful once there's a custom domain).
 export async function requestOrigin() {

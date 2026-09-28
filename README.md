@@ -1,6 +1,6 @@
 # Plateful
 
-**Live (test mode):** https://deliciously-yours.netlify.app — Netlify, auto-deploys from `main`.
+**Live (test mode):** https://deliciously-yours-zeta.vercel.app — Vercel, auto-deploys from `main`.
 
 Single-restaurant food ordering site. Project docs live in [`CLAUDE.md`](CLAUDE.md)
 and [`docs/`](docs/) — start with [`docs/progress.md`](docs/progress.md).
@@ -38,23 +38,26 @@ Then visit `/admin/menu`.
 - `npm run build` — production build
 - `npm run lint` — ESLint
 
-## Deploying (Netlify)
+## Deploying (Vercel)
 
-Netlify auto-detects Next.js (OpenNext adapter) — no `netlify.toml` needed;
-Node version comes from `.nvmrc`.
+Vercel runs Next.js natively — no config file needed.
 
-1. Netlify → **Add new project → Import from Git → GitHub →** this repo.
-   Build command `npm run build`, publish directory `.next` (auto-filled).
-2. **Before the first deploy**, add every variable from `.env.local` under
-   *Environment variables* (mark keys as secret). `NEXT_PUBLIC_SUPABASE_URL`
-   must be present at **build** time — `next.config.ts` uses it to allow
-   Supabase Storage images.
-3. After the first deploy, set `SITE_URL=https://<your-site>.netlify.app`
-   and redeploy. If visitors see "This site is private", set Project
-   configuration → Access & security → **Visitor access** to public.
-4. Supabase → Auth → URL Configuration: Site URL = the Netlify URL; add
-   `https://<your-site>.netlify.app/**` to Redirect URLs.
-5. Paystack → Settings → API Keys & Webhooks (Test): Webhook URL =
-   `https://<your-site>.netlify.app/api/paystack/webhook`.
-6. Brevo → Security → Authorised IPs: Netlify has no fixed IPs — if IP
+1. Vercel → **Add New… → Project → Import Git Repository →** this repo.
+   Framework preset **Next.js**, root directory `./` (both auto-filled).
+2. **Before the first deploy**, paste the contents of `.env.local` into the
+   first *Environment Variables* key box (Vercel splits it into entries).
+   `NEXT_PUBLIC_SUPABASE_URL` must be present at **build** time —
+   `next.config.ts` uses it to allow Supabase Storage images.
+3. After the first deploy, add `SITE_URL=https://<your-project>.vercel.app`
+   and redeploy (Deployments → ⋯ → Redeploy).
+4. Supabase → Auth → URL Configuration: Site URL = the Vercel URL; add
+   `https://<your-project>.vercel.app/**` to Redirect URLs.
+5. Paystack → Settings → API Keys & Webhooks (Test): Callback URL =
+   `https://<your-project>.vercel.app/checkout/verify`, Webhook URL =
+   `https://<your-project>.vercel.app/api/paystack/webhook`.
+6. Brevo → Security → Authorised IPs: Vercel has no fixed IPs — if IP
    blocking is on, turn it off (or order emails will be rejected).
+
+Notes: the Hobby (free) plan is for personal, non-commercial use — move to
+Pro (or another host) before taking real orders. Hobby also blocks deploys of
+a **private** repo when the commit author isn't the Vercel account owner.

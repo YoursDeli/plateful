@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
-// Images live in the Supabase Storage `images` bucket; next/image (Netlify
-// Image CDN in production) resizes them, so allow only that bucket's public path.
+// Images live in the Supabase Storage `images` bucket; next/image (Vercel
+// image optimization in production) resizes them, so allow only that bucket's public path.
 const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
   ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
   : null;

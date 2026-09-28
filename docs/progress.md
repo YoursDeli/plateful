@@ -8,8 +8,8 @@
 Last updated: 2026-09-25
 Current phase: **Steps 0–7 verified live; 8, 9, 10 + UI changes live (awaiting user verification). Step 11 live (awaiting user verification). Next: step 13 polish.**
 
-Live site: **https://deliciously-yours.netlify.app** (Netlify, auto-deploys
-from `main`; Paystack in **test** mode).
+Live site: **https://deliciously-yours-zeta.vercel.app** (Vercel, auto-deploys from `main`;
+Paystack in **test** mode). Old Netlify site: builds stopped.
 
 ---
 
@@ -121,13 +121,13 @@ from `main`; Paystack in **test** mode).
 - [ ] Chef photo upload (`/admin/pages/about`) — *built 2026-09-25, migration applied, live — awaiting user verification*
 
 ### 14. Client additions (2026-09-28)
-- [ ] Delivery areas with prices (checkout dropdown; admin Settings → Delivery) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
-- [ ] Bowl sizes (shared list in Admin → Food Menu; price per size in each dish; size picker on cards/hero/dish page; size on cart, orders, emails) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
-- [ ] FAQ (`/faq`, footer link, checkout section; Admin → Pages → FAQ) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
-- [ ] Events & Catering quote requests (`/catering`, home section, footer link; Account → Event requests; Admin → Event requests; emails to restaurant + customer) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
-- [ ] Scrolling announcement bar under the header (Admin → Settings → Announcement bar; seeded with the bowls notice) — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
-- [ ] Full-width Add to cart on product cards; Food Menu categories as a full-width dropdown — *built 2026-09-28, pushed — awaiting live check (Netlify builds paused)*
-- [ ] Upsell pairings (Soup → Swallow; Rice → Protein, Sides and Extras): "Goes well with" on dish pages + "Complete your meal" in the cart; editable per category in Admin → Food Menu → Categories — *built 2026-09-28, migration applied, pushed — awaiting live check (Netlify builds paused)*
+- [ ] Delivery areas with prices (checkout dropdown; admin Settings → Delivery) — *built 2026-09-28, migration applied, pushed — awaiting live check (now on Vercel)*
+- [ ] Bowl sizes (shared list in Admin → Food Menu; price per size in each dish; size picker on cards/hero/dish page; size on cart, orders, emails) — *built 2026-09-28, migration applied, pushed — awaiting live check (now on Vercel)*
+- [ ] FAQ (`/faq`, footer link, checkout section; Admin → Pages → FAQ) — *built 2026-09-28, migration applied, pushed — awaiting live check (now on Vercel)*
+- [ ] Events & Catering quote requests (`/catering`, home section, footer link; Account → Event requests; Admin → Event requests; emails to restaurant + customer) — *built 2026-09-28, migration applied, pushed — awaiting live check (now on Vercel)*
+- [ ] Scrolling announcement bar under the header (Admin → Settings → Announcement bar; seeded with the bowls notice) — *built 2026-09-28, migration applied, pushed — awaiting live check (now on Vercel)*
+- [ ] Full-width Add to cart on product cards; Food Menu categories as a full-width dropdown — *built 2026-09-28, pushed — awaiting live check (now on Vercel)*
+- [ ] Upsell pairings (Soup → Swallow; Rice → Protein, Sides and Extras): "Goes well with" on dish pages + "Complete your meal" in the cart; editable per category in Admin → Food Menu → Categories — *built 2026-09-28, migration applied, pushed — awaiting live check (now on Vercel)*
 
 ### 13. Polish
 - [ ] Animations / transitions (reduced-motion respected) — page fade-in on every storefront page (`template.tsx`) — *done 2026-09-25, live — awaiting user verification*
@@ -582,19 +582,26 @@ from `main`; Paystack in **test** mode).
   already has). Seeded by category name: Soup → Swallow; Rice → Protein, Sides and Extras.
   Food Menu filter is a full-width dropdown (was chips); product-card Add to cart is full width.
 
+- **2026-09-28** — **Hosting moved Netlify → Vercel** (https://deliciously-yours-zeta.vercel.app). Netlify's free
+  build credits ran out (one build per small push). No code changes needed (only comments);
+  env vars copied, `SITE_URL` set, Supabase Site/Redirect URLs and Paystack callback/webhook
+  pointed at Vercel. Verified: all pages 200/404/307 as expected, security headers + CSP
+  present, image optimization working, webhook rejects unsigned POSTs (401).
+
 ---
 
 ## Open Blockers
 
-- **Netlify build credits used up** (2026-09-25): production builds paused until the billing cycle resets or the plan is upgraded. All commits are on GitHub; after the reset, Netlify → Deploys → Trigger deploy → Deploy site. Push in batches from now on (one build per work session), not per change.
+- **Vercel Hobby is non-commercial**: before real customers/payments, upgrade to Vercel Pro or move to a host that allows commercial use on its free tier.
+- **Paystack live mode** not switched on yet (test keys) — do before launch.
 - **Brevo template wording** (user): in the Order confirmation template,
   change the points line to "You'll earn {{ params.points_earned }} loyalty
   points when this order is delivered." (repo copy already updated).
 - **Still to verify on live** (user): 8a buttons; step-8 flows not yet
   exercised (new order code, customer cancel, refund tracking, pickup);
   today's radius + side-nav changes.
-- **Before re-privatising the GitHub repo**: pick a deploy path (see
-  2026-09-29 Netlify decision) or deploys silently stop.
+- **Before re-privatising the GitHub repo**: Vercel Hobby blocks private-repo deploys whose
+  commit author isn't the Vercel account owner — align the git author/email or upgrade first.
 - Terms & Conditions and Privacy Policy are seeded as **drafts** — need
   client/legal sign-off, then untick "Draft" in Admin → Pages.
 - **TS types are hand-written** (`lib/supabase/types.ts`) since the Supabase CLI
@@ -760,3 +767,4 @@ from `main`; Paystack in **test** mode).
 - **2026-09-28** — Client-additions migration applied (verified: 4 areas, 10 FAQs, anon writes refused); full build clean; pushed.
 - **2026-09-28** — Built announcement bar, full-width card button, category dropdown, upsell pairings. Build/lint/tsc clean. Not pushed until migration runs.
 - **2026-09-28** — Announcement/upsell migration applied (verified: notice text set; Soup → Swallow, Rice → Protein + Sides and Extras); pushed.
+- **2026-09-28** — Moved hosting to Vercel (https://deliciously-yours-zeta.vercel.app); smoke-checked live; docs updated.
