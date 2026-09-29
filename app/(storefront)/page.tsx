@@ -97,7 +97,7 @@ export default async function HomePage() {
               Planning an event?
             </h2>
             <p className="text-sm text-white/80">
-              Weddings, birthdays, office parties and more — tell us about it and we&apos;ll send you a quote.
+              Weddings, Corporate Events, Family Gathering and more — tell us about it and we&apos;ll send you a quote.
             </p>
           </div>
           <Link

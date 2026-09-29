@@ -92,15 +92,9 @@ export type Faq = {
   updated_at: string;
 };
 
-export const EVENT_TYPES = [
-  "Wedding",
-  "Birthday",
-  "Corporate event",
-  "Religious event",
-  "Funeral / remembrance",
-  "Family gathering",
-  "Other",
-] as const;
+// Offered on the catering form (client, 2026-09-29). Older requests may still
+// hold "Birthday" / "Religious event" (kept valid in the database).
+export const EVENT_TYPES = ["Wedding", "Corporate event", "Funeral", "Family gathering", "Other"] as const;
 export const FOOD_TYPES = ["Soups & swallow", "Rice dishes", "Pasta", "Proteins", "Small chops", "Drinks", "Other"] as const;
 export const CATERING_STATUSES = ["new", "contacted", "quoted", "booked", "declined"] as const;
 export type CateringStatus = (typeof CATERING_STATUSES)[number];
@@ -111,7 +105,7 @@ export type CateringRequest = {
   contact_name: string;
   contact_phone: string;
   contact_email: string;
-  event_type: (typeof EVENT_TYPES)[number];
+  event_type: string;
   event_date: string; // yyyy-mm-dd
   guest_count: number;
   food_types: string[];

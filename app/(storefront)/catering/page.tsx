@@ -7,7 +7,7 @@ import { CateringForm } from "./catering-form";
 
 export const metadata: Metadata = {
   title: "Events & Catering",
-  description: "Request a quote for weddings, birthdays, corporate events and more.",
+  description: "Request a quote for weddings, corporate events, family gatherings and more.",
 };
 
 // Catering / event quote requests (client, 2026-09-28): a form instead of a
@@ -22,7 +22,7 @@ export default async function CateringPage() {
         <p className="text-sm font-semibold tracking-wider text-secondary/80 uppercase">Events &amp; Catering</p>
         <h1 className="font-display text-4xl font-semibold text-secondary sm:text-5xl">Let us cook for your event</h1>
         <p className="text-neutral-dark/75">
-          Weddings, birthdays, office parties, church programmes, family gatherings — {settings.brand_name} can cater
+          Weddings, corporate events, family gatherings, funerals — {settings.brand_name} can cater
           it. Tell us about your event and we&apos;ll get back to you with a quote. There&apos;s no payment now.
         </p>
       </header>
