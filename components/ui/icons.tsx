@@ -67,3 +67,14 @@ export function TikTokIcon({ size = 24, className }: IconProps) {
     </svg>
   );
 }
+
+// Shopping cart (handle, basket, two wheels) — header cart + Add to cart buttons.
+export function CartIcon({ size = 24, className }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M2.5 3.5h2.2l2.5 11.1a1.6 1.6 0 0 0 1.6 1.3h8.6a1.6 1.6 0 0 0 1.6-1.2L21 7.5H5.6" />
+      <circle cx="9.5" cy="19.8" r="1.4" />
+      <circle cx="17.3" cy="19.8" r="1.4" />
+    </svg>
+  );
+}

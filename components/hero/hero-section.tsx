@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AddToCartControl } from "@/components/cart/add-to-cart-control";
 import { PriceRow } from "@/components/menu/price-row";
 import { formatNaira } from "@/lib/money";
@@ -45,6 +45,20 @@ export function HeroSection({ items }: { items: MenuDish[] }) {
     }, AUTO_CYCLE_MS + TURN_MS);
     return () => clearTimeout(timer);
   }, [turn, count]);
+
+  // Keep the current thumbnail centred in the (phone-sized) strip. Scrolls
+  // only the strip itself, never the page.
+  const stripRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const strip = stripRef.current;
+    const thumb = strip?.children[activeIndex] as HTMLElement | undefined;
+    if (!strip || !thumb) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    strip.scrollTo({
+      left: thumb.offsetLeft - (strip.clientWidth - thumb.offsetWidth) / 2,
+      behavior: reduce ? "auto" : "smooth",
+    });
+  }, [activeIndex]);
 
   function turnBy(steps: number) {
     if (steps === 0) return;
@@ -113,7 +127,7 @@ export function HeroSection({ items }: { items: MenuDish[] }) {
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <AddToCartControl item={active} label="Order now" />
+              <AddToCartControl item={active} label="Order now" variant="liquid" />
               <Link
                 href={`/menu/${active.id}`}
                 className="rounded-btn px-4 py-2.5 text-sm font-medium text-secondary underline-offset-4 hover:underline"
@@ -123,12 +137,14 @@ export function HeroSection({ items }: { items: MenuDish[] }) {
             </div>
 
             {count > 1 && (
-              <div
-                role="group"
-                aria-label="Choose a featured dish"
-                className="-mx-5 mt-8 flex items-center gap-4 overflow-x-auto px-5 py-3 sm:-mx-8 sm:px-8 md:mx-0 md:px-1"
-              >
+              <div role="group" aria-label="Choose a featured dish" className="mt-8 flex items-center gap-3 sm:gap-4">
                 <ArrowButton label="Previous featured dish" path="m15 6-6 6 6 6" onClick={() => turnBy(-1)} />
+                {/* Phones: a window exactly 3 thumbnails wide (client); the
+                    current dish is kept in the middle. Wider screens show more. */}
+                <div
+                  ref={stripRef}
+                  className="relative flex w-[9.75rem] gap-3 overflow-x-auto px-1.5 py-2 [scrollbar-width:none] sm:w-auto sm:min-w-0 sm:gap-4 [&::-webkit-scrollbar]:hidden"
+                >
                 {items.map((item, i) => {
                   const isActive = i === activeIndex;
                   return (
@@ -138,7 +154,7 @@ export function HeroSection({ items }: { items: MenuDish[] }) {
                       onClick={() => goTo(i)}
                       aria-pressed={isActive}
                       aria-label={`View ${item.name}, ${formatNaira(item.price)}`}
-                      className={`relative size-12 shrink-0 overflow-hidden rounded-full bg-primary/40 transition duration-300 ${
+                      className={`relative size-10 shrink-0 overflow-hidden rounded-full bg-primary/40 transition duration-300 sm:size-12 ${
                         isActive
                           ? "-translate-y-1 scale-110 shadow-md ring-[3px] ring-secondary"
                           : "opacity-80 ring-2 ring-neutral-dark/70 hover:-translate-y-0.5 hover:opacity-100"
@@ -148,6 +164,7 @@ export function HeroSection({ items }: { items: MenuDish[] }) {
                     </button>
                   );
                 })}
+                </div>
                 <ArrowButton label="Next featured dish" path="m9 6 6 6-6 6" onClick={() => turnBy(1)} />
               </div>
             )}

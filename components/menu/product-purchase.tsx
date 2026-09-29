@@ -7,6 +7,7 @@ import { CtaButton } from "@/components/ui/cta-button";
 import { useCart } from "@/lib/cart/store";
 import { formatNaira } from "@/lib/money";
 import type { DishSize, MenuItem } from "@/lib/supabase/types";
+import { CartIcon } from "@/components/ui/icons";
 
 // Dish page: choose a bowl size (if the dish has sizes) and a quantity, then
 // add them (opens the cart panel).
@@ -52,6 +53,7 @@ export function ProductPurchase({
               open();
             }}
           >
+            {item.is_available && <CartIcon className="size-[1.15em] shrink-0" />}
             {item.is_available ? `Add to cart · ${formatNaira(unitPrice * qty)}` : "Sold out today"}
           </CtaButton>
         </div>

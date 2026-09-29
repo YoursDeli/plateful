@@ -778,3 +778,4 @@ Paystack in **test** mode). Old Netlify site: builds stopped.
 - **2026-09-29** — Catering event types trimmed + home catering copy updated. Build clean. Not pushed until migration runs.
 - **2026-09-29** — Event-types migration applied (verified via updated FAQ answer); pushed.
 - **2026-09-29** — Liquid button (client snippet) replaces the Lavender storefront CTAs (12 places); see `docs/ui-components-and-styling.md`. Pushed.
+- **2026-09-29** — Hero: Liquid "Order now"; phone thumbnails smaller, 3 visible, current kept centred. Cart icon on every Add to cart / Order now button (shared `CartIcon`). Pushed.

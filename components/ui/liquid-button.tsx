@@ -75,6 +75,10 @@ const Wrapper = styled.span<{ $tone: Tone; $full: boolean }>`
   .liquid-face {
     position: relative;
     z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     width: 100%;
     padding: 11px 20px;
     border-radius: var(--btn-radius);

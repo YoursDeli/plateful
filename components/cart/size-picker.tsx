@@ -2,10 +2,12 @@
 
 import { useRef, useState } from "react";
 import { CtaButton } from "@/components/ui/cta-button";
+import { LiquidButton } from "@/components/ui/liquid-button";
 import { useCart } from "@/lib/cart/store";
 import { formatNaira } from "@/lib/money";
 import type { DishSize, MenuItem } from "@/lib/supabase/types";
 import { QuantityStepper } from "./quantity-stepper";
+import { CartIcon } from "@/components/ui/icons";
 
 type Dish = Pick<MenuItem, "id" | "name" | "image_url"> & { sizes: DishSize[] };
 
@@ -17,11 +19,13 @@ export function SizePickerButton({
   label = "Add to cart",
   size = "md",
   fullWidth = false,
+  variant = "cta",
 }: {
   dish: Dish;
   label?: string;
   size?: "sm" | "md";
   fullWidth?: boolean;
+  variant?: "cta" | "liquid";
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [sizeId, setSizeId] = useState(dish.sizes[0]?.id ?? "");
@@ -50,9 +54,17 @@ export function SizePickerButton({
 
   return (
     <>
-      <CtaButton size={size} fullWidth={fullWidth} onClick={() => dialogRef.current?.showModal()}>
-        {label}
-      </CtaButton>
+      {variant === "liquid" ? (
+        <LiquidButton fullWidth={fullWidth} onClick={() => dialogRef.current?.showModal()}>
+          <CartIcon className="size-[1.15em] shrink-0" />
+          {label}
+        </LiquidButton>
+      ) : (
+        <CtaButton size={size} fullWidth={fullWidth} onClick={() => dialogRef.current?.showModal()}>
+          <CartIcon className="size-[1.15em] shrink-0" />
+          {label}
+        </CtaButton>
+      )}
       <dialog
         ref={dialogRef}
         aria-labelledby={`size-title-${dish.id}`}
@@ -87,6 +99,7 @@ export function SizePickerButton({
           </div>
 
           <CtaButton size="lg" fullWidth onClick={addToCart}>
+            <CartIcon className="size-[1.15em] shrink-0" />
             Add to cart
           </CtaButton>
         </div>

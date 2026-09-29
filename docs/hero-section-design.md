@@ -135,4 +135,7 @@ The client supplied a reference video; the hero now follows it:
   wheel one step either way, thumbnails take the shortest way round, and
   any manual turn restarts the rest timer. Users with reduced motion get no auto-cycle, instant swaps and no
   spin. The card text has no `aria-live` (it would announce every 5s).
+- **2026-09-29 (client)**: "Order now" uses the Liquid button (`AddToCartControl variant="liquid"`).
+  Thumbnails are smaller on phones (40px) and sit in a strip exactly 3 wide between the
+  arrows; the strip scrolls itself (never the page) to keep the current dish centred.
 
