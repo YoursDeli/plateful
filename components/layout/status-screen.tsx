@@ -21,7 +21,5 @@ export function StatusScreen({
   );
 }
 
-export const primaryAction =
-  "rounded-btn bg-primary px-5 py-2.5 text-sm font-medium text-secondary transition hover:brightness-95";
 export const secondaryAction =
   "rounded-btn border border-secondary/20 bg-white px-5 py-2.5 text-sm font-medium text-secondary transition hover:bg-primary/20";

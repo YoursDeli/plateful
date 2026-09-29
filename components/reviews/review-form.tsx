@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { submitReview } from "@/app/(storefront)/(dashboard)/account/reviews/actions";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 const LABELS = ["Poor", "Fair", "Good", "Very good", "Excellent"];
 
@@ -105,13 +106,9 @@ export function ReviewForm({
         >
           Cancel
         </button>
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary disabled:opacity-60"
-        >
+        <LiquidButton type="submit" disabled={pending}>
           {pending ? "Posting…" : editing ? "Update review" : "Post review"}
-        </button>
+        </LiquidButton>
       </div>
     </form>
   );

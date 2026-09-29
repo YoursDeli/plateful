@@ -132,3 +132,16 @@ using "anywhere needed" site-wide, each instance should get: (a) its label
 text set to the actual action, (b) its color recolored to the Lavender/Velvet
 pair unless brand-specific (WhatsApp green/teal is fine to keep), and (c) an
 accessible `aria-label` where the button is icon-only.
+
+## Liquid button (client snippet, 2026-09-29)
+
+`components/ui/liquid-button.tsx` — from `docs/ui-snippets/liquid-button.jsx`: a glossy
+uppercase pill that drips "liquid" drops from its base (SVG goo filter). Replaces the plain
+Lavender CTA on the storefront: home "Request a quote", every empty-state "Browse the menu",
+the not-found / error screens, "New request", "Write a review" / "Post review", referral
+"Copy link". Add to cart / Pay keep `CtaButton`; admin buttons unchanged.
+Adaptations: brand colours via `tone` (`dark` = Velvet on light surfaces, `light` = Lavender
+on Velvet cards); sizes to its label (dropped fixed 120px width and `margin-left: 20%`);
+drops fall ~60px and fade (not 400px down the page); hover jump toned down (1.08 / 2°);
+unique filter id per instance; renders a link (`href`) or a button; focus ring + disabled.
+

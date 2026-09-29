@@ -13,6 +13,7 @@ import { formatPoints, pointsForAmount } from "@/lib/loyalty";
 import { formatNaira } from "@/lib/money";
 import type { Fulfillment, Profile, SiteSettings } from "@/lib/supabase/types";
 import { placeOrder, type CheckoutState } from "./actions";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 type Pricing = Pick<SiteSettings, "free_delivery_threshold">;
 type Zone = { id: string; name: string; fee: number };
@@ -48,9 +49,9 @@ export function CheckoutView({
     return (
       <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-secondary/20 px-6 py-14 text-center">
         <p className="font-display text-2xl text-secondary">Your cart is empty</p>
-        <Link href="/menu" className="rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary">
+        <LiquidButton href="/menu">
           Browse the menu
-        </Link>
+        </LiquidButton>
       </div>
     );
   }

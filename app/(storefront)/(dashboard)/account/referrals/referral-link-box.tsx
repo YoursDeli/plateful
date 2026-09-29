@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ShareButtonCluster } from "@/components/ui/share-button-cluster";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 export function ReferralLinkBox({ link, brandName }: { link: string; brandName: string }) {
   const [copied, setCopied] = useState(false);
@@ -18,8 +19,8 @@ export function ReferralLinkBox({ link, brandName }: { link: string; brandName: 
           className="min-w-0 flex-1 rounded-btn border border-white/20 bg-white/10 px-4 py-3 font-mono text-sm text-white outline-none focus:ring-2 focus:ring-primary"
         />
         <div className="flex items-center gap-3">
-          <button
-            type="button"
+          <LiquidButton
+            tone="light"
             onClick={async () => {
               try {
                 await navigator.clipboard.writeText(link);
@@ -29,10 +30,9 @@ export function ReferralLinkBox({ link, brandName }: { link: string; brandName: 
                 // Clipboard blocked — the field is selectable as a fallback.
               }
             }}
-            className="rounded-btn bg-primary px-5 py-3 text-sm font-semibold text-secondary"
           >
             {copied ? "Copied" : "Copy link"}
-          </button>
+          </LiquidButton>
           <ShareButtonCluster
             text={`Order from ${brandName} with my link`}
             url={link}

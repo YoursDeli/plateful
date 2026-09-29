@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { formatEventDate } from "@/lib/catering/format";
 import { CATERING_STATUS } from "@/lib/catering/status";
 import { createClient } from "@/lib/supabase/server";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 export const metadata: Metadata = { title: "Event requests", robots: { index: false } };
 
@@ -26,9 +27,7 @@ export default async function MyCateringPage({ searchParams }: PageProps<"/accou
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8 sm:py-12">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="font-display text-3xl font-semibold text-secondary sm:text-4xl">Event requests</h1>
-        <Link href="/catering" className="rounded-btn bg-primary px-4 py-2 text-sm font-semibold text-secondary">
-          New request
-        </Link>
+        <LiquidButton href="/catering">New request</LiquidButton>
       </div>
 
       {sent === "1" && (

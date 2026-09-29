@@ -6,6 +6,7 @@ import { BLOCKING_NOTICES, cartSubtotal, useCart, type CartItemNotice } from "@/
 import { formatNaira } from "@/lib/money";
 import { CartSuggestions } from "./cart-suggestions";
 import { QuantityStepper } from "./quantity-stepper";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 const NOTICE_TEXT: Record<CartItemNotice, string> = {
   price_changed: "Price updated since you added this.",
@@ -32,13 +33,9 @@ export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <p className="font-display text-xl text-secondary">Your cart is empty</p>
         <p className="text-sm text-neutral-dark/65">Find something delicious on the menu.</p>
-        <Link
-          href="/menu"
-          onClick={onNavigate}
-          className="rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary"
-        >
+        <LiquidButton href="/menu" onClick={onNavigate}>
           Browse the menu
-        </Link>
+        </LiquidButton>
       </div>
     );
   }

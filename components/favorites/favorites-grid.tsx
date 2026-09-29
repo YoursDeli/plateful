@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MenuItemCard } from "@/components/menu/menu-item-card";
 import { useFavorites } from "@/lib/favorites/store";
 import type { Category, MenuDish } from "@/lib/supabase/types";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 // /favorites: server passes the user's saved dishes; once the store has
 // loaded, un-hearting a dish removes its card immediately.
@@ -20,9 +21,9 @@ export function FavoritesGrid({ items, categories }: { items: MenuDish[]; catego
         <p className="max-w-sm text-sm text-neutral-dark/65">
           Tap the heart on any dish to save it here for quick reordering.
         </p>
-        <Link href="/menu" className="rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary">
+        <LiquidButton href="/menu">
           Browse the menu
-        </Link>
+        </LiquidButton>
       </div>
     );
   }

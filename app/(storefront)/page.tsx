@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/hero/hero-section";
 import { MenuItemCard } from "@/components/menu/menu-item-card";
 import { getCategories, getFeaturedItems, getMenuItems, getPopularItems } from "@/lib/menu";
 import { getSiteSettings } from "@/lib/site-settings";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 export const revalidate = 3600;
 
@@ -100,12 +101,11 @@ export default async function HomePage() {
               Weddings, Corporate Events, Family Gathering and more — tell us about it and we&apos;ll send you a quote.
             </p>
           </div>
-          <Link
-            href="/catering"
-            className="shrink-0 rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary transition hover:brightness-95"
-          >
-            Request a quote
-          </Link>
+          <div className="shrink-0">
+            <LiquidButton href="/catering" tone="light">
+              Request a quote
+            </LiquidButton>
+          </div>
         </section>
       </div>
     </main>

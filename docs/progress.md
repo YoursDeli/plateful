@@ -777,3 +777,4 @@ Paystack in **test** mode). Old Netlify site: builds stopped.
 - **2026-09-28** — Google sign-in failed with `disabled_client` (Google Cloud OAuth client disabled — not a code or Vercel issue). User re-enabled/re-created the Web OAuth client (redirect URI `https://<project-ref>.supabase.co/auth/v1/callback`, JS origin = Vercel URL) and updated Supabase → Auth → Google. Working again.
 - **2026-09-29** — Catering event types trimmed + home catering copy updated. Build clean. Not pushed until migration runs.
 - **2026-09-29** — Event-types migration applied (verified via updated FAQ answer); pushed.
+- **2026-09-29** — Liquid button (client snippet) replaces the Lavender storefront CTAs (12 places); see `docs/ui-components-and-styling.md`. Pushed.

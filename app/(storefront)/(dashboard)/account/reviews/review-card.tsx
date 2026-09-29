@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ReviewForm } from "@/components/reviews/review-form";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 export type ReviewCardDish = {
   id: string;
@@ -71,20 +72,27 @@ export function ReviewCard({ dish, review }: { dish: ReviewCardDish; review: Rev
         />
       ) : (
         <div className="flex">
-          <button
-            type="button"
-            onClick={() => {
-              setSaved(false);
-              setOpen(true);
-            }}
-            className={
-              review
-                ? "rounded-btn border border-secondary/25 px-4 py-2 text-sm font-medium text-secondary hover:bg-primary/30"
-                : "rounded-btn bg-primary px-4 py-2 text-sm font-semibold text-secondary"
-            }
-          >
-            {review ? "Edit review" : "Write a review"}
-          </button>
+          {review ? (
+            <button
+              type="button"
+              onClick={() => {
+                setSaved(false);
+                setOpen(true);
+              }}
+              className="rounded-btn border border-secondary/25 px-4 py-2 text-sm font-medium text-secondary hover:bg-primary/30"
+            >
+              Edit review
+            </button>
+          ) : (
+            <LiquidButton
+              onClick={() => {
+                setSaved(false);
+                setOpen(true);
+              }}
+            >
+              Write a review
+            </LiquidButton>
+          )}
         </div>
       )}
     </li>

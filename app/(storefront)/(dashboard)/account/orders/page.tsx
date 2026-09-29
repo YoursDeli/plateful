@@ -8,6 +8,7 @@ import { statusLabel } from "@/lib/orders/status";
 import { getSiteSettings } from "@/lib/site-settings";
 import { createClient } from "@/lib/supabase/server";
 import type { OrderStatus } from "@/lib/supabase/types";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 export const metadata: Metadata = { title: "Your orders", robots: { index: false } };
 
@@ -54,9 +55,9 @@ export default async function OrderHistoryPage() {
       {orders.length === 0 ? (
         <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-secondary/20 px-6 py-14 text-center">
           <p className="font-display text-2xl text-secondary">No orders yet</p>
-          <Link href="/menu" className="rounded-btn bg-primary px-5 py-2.5 text-sm font-semibold text-secondary">
+          <LiquidButton href="/menu">
             Browse the menu
-          </Link>
+          </LiquidButton>
         </div>
       ) : (
         <ul className="flex flex-col gap-3">

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { StatusScreen, primaryAction, secondaryAction } from "@/components/layout/status-screen";
+import { StatusScreen, secondaryAction } from "@/components/layout/status-screen";
+import { LiquidButton } from "@/components/ui/liquid-button";
 
 // Anything that throws while rendering a storefront page. The header and
 // footer stay; only the page area is replaced. Details go to the console
@@ -24,9 +25,7 @@ export default function StorefrontError({
       title="That didn't load properly"
       message="It's on our side, not yours. Please try again — your cart is safe."
     >
-      <button type="button" onClick={reset} className={primaryAction}>
-        Try again
-      </button>
+      <LiquidButton onClick={reset}>Try again</LiquidButton>
       <Link href="/" className={secondaryAction}>
         Go home
       </Link>
